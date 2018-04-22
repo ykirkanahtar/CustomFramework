@@ -5,16 +5,9 @@ using CustomFramework.WebApiUtils.Business;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
 {
-    public interface IUserUtilManager : IBusinessManager
+    public interface IUserUtilManager : IBusinessManager<UserUtil, UserUtilRequest, int>
+                                        , IBusinessManagerUpdate<UserUtil, UserUtilUpdateRequest, int>
     {
-        Task<UserUtil> CreateAsync(UserUtilRequest request);
-
-        Task<UserUtil> UpdateSpecialValueAsync(int id, string specialValue);
-
-        Task DeleteAsync(int id);
-
-        Task<UserUtil> GetByIdAsync(int id);
-
         Task<UserUtil> GetByUserIdAsync(int userId);
     }
 }

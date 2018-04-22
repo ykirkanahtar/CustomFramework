@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Net;
-using System.Security.Authentication;
 using CustomFramework.WebApiUtils.Constants;
 using CustomFramework.WebApiUtils.Resources;
 using CustomFramework.WebApiUtils.Utils.Exceptions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -95,7 +94,7 @@ namespace CustomFramework.WebApiUtils.Contracts
 
         private string GetDefaultMessageForException(Exception exception)
         {
-            var returnMessage = DefaultResponseMessages.AnErrorHasOccured;
+            var returnMessage = string.Empty;
 
             var message = exception.Message;
 
@@ -108,22 +107,7 @@ namespace CustomFramework.WebApiUtils.Contracts
             if (message.Contains("See the inner exception for details"))
                 message = exception.InnerException.InnerException.InnerException.Message;
 
-            if (exception is DuplicateNameException)
-                returnMessage = DefaultResponseMessages.RecordExistsError;
-            else if (exception is KeyNotFoundException)
-                returnMessage = DefaultResponseMessages.NotFoundError;
-            else if (exception is ArgumentException)
-                returnMessage = DefaultResponseMessages.ArgumentExceptionError;
-            else if (exception is AuthenticationException)
-            {
-                returnMessage = DefaultResponseMessages.LoginError;
-                message = string.Empty;
-            }
-            else if (exception is UnauthorizedAccessException)
-            {
-                returnMessage = DefaultResponseMessages.UnauthorizedAccessError;
-                message = string.Empty;
-            }
+            returnMessage = new ExceptionOperation(exception).GetReturnMessage(ref message);
 
             var localizatedReturnMessage = _localizationService.GetValue(returnMessage);
             return string.IsNullOrEmpty(message) ? $"{localizatedReturnMessage}" : $"{localizatedReturnMessage} : {_localizationService.GetValue(message)}";

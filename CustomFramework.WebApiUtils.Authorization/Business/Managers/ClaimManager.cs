@@ -20,7 +20,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
-    public class ClaimManager : BaseBusinessManagerWithApiRequest<ClaimManager, ApiRequest>, IClaimManager
+    public class ClaimManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IClaimManager
     {
         public ClaimManager(IUnitOfWork unitOfWork, ILogger<ClaimManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) 
             : base(unitOfWork, logger, mapper, apiRequestAccessor)

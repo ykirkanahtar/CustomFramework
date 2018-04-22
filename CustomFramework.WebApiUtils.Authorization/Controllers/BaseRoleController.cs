@@ -4,90 +4,76 @@ using AutoMapper;
 using CustomFramework.Authorization.Attributes;
 using CustomFramework.Authorization.Enums;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
-using CustomFramework.WebApiUtils.Authorization.Enums;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Response;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class BaseRoleController : Controller
+    public class BaseRoleController : BaseControllerWithAuthorizationAndUpdate<Role, RoleRequest, RoleRequest, RoleResponse, IRoleManager, int>
     {
-        private readonly IRoleManager _roleManager;
-        private readonly ILocalizationService _localizationService;
-        private readonly ILogger<BaseRoleController> _logger;
-        private readonly IMapper _mapper;
-
         public BaseRoleController(IRoleManager roleManager, ILocalizationService localizationService, ILogger<BaseRoleController> logger, IMapper mapper)
+            : base(roleManager, localizationService, logger, mapper)
         {
-            _roleManager = roleManager;
-            _localizationService = localizationService;
-            _logger = logger;
-            _mapper = mapper;
+
         }
 
         [Route("create")]
         [HttpPost]
-        [Permission(nameof(AuthorizationEntities.Role), Crud.Create)]
+        [Permission(nameof(Role), Crud.Create)]
         public async Task<IActionResult> Create([FromBody] RoleRequest request)
         {
-            var result = await _roleManager.CreateAsync(request);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(_mapper.Map<Role, RoleResponse>(result)));
+            return await BaseCreate(request);
         }
 
-        [Route("{id:int}/update/rolename")]
+        [Route("{id}/update")]
         [HttpPut]
-        [Permission(nameof(AuthorizationEntities.Role), Crud.Update)]
-        public async Task<IActionResult> UpdateRoleName(int id, [FromBody] RoleRequest request)
+        [Permission(nameof(Role), Crud.Update)]
+        public async Task<IActionResult> Update(int id, [FromBody] RoleRequest request)
         {
-            var result = await _roleManager.UpdateAsync(id, request);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(_mapper.Map<Role, RoleResponse>(result)));
+            return await BaseUpdate(id, request);
         }
 
         [Route("delete/{id:int}")]
         [HttpDelete]
-        [Permission(nameof(AuthorizationEntities.Role), Crud.Delete)]
+        [Permission(nameof(Role), Crud.Delete)]
         public async Task<IActionResult> Delete(int id)
         {
-            await _roleManager.DeleteAsync(id);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(true));
+            return await BaseDelete(id);
         }
 
-        [Route("get/id/{id:int}")]
+        [Route("get/id/{id}")]
         [HttpGet]
-        [Permission(nameof(AuthorizationEntities.Role), Crud.Select)]
+        [Permission(nameof(Role), Crud.Select)]
         public async Task<IActionResult> GetById(int id)
         {
-            var result = await _roleManager.GetByIdAsync(id);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(_mapper.Map<Role, RoleResponse>(result)));
+            return await BaseGetById(id);
         }
 
         [Route("get/rolename/{rolename}")]
         [HttpGet]
-        [Permission(nameof(AuthorizationEntities.Role), Crud.Select)]
+        [Permission(nameof(Role), Crud.Select)]
         public async Task<IActionResult> GetByRoleName(string roleName)
         {
-            var result = await _roleManager.GetByNameAsync(roleName);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(_mapper.Map<Role, RoleResponse>(result)));
+            var result = await Manager.GetByNameAsync(roleName);
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<Role, RoleResponse>(result)));
         }
-
 
         [Route("getall")]
         [HttpGet]
-        [Permission(nameof(AuthorizationEntities.Role), Crud.Select)]
+        [Permission(nameof(Role), Crud.Select)]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _roleManager.GetAllAsync();
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(
-                _mapper.Map<IList<Role>, IList<RoleResponse>>(result.EntityList),
+            var result = await Manager.GetAllAsync();
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                Mapper.Map<IList<Role>, IList<RoleResponse>>(result.EntityList),
                 result.Count));
         }
-
-
     }
 }

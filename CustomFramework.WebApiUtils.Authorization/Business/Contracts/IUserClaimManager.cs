@@ -6,11 +6,8 @@ using CustomFramework.WebApiUtils.Utils;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
 {
-    public interface IUserClaimManager : IBusinessManager
+    public interface IUserClaimManager : IBusinessManager<UserClaim, UserClaimRequest, int>
     {
-        Task<bool> AddUserToClaimAsync(UserClaimRequest request);
-        Task<bool> RemoveUserFromClaimAsync(int userClaimId);
-        Task<UserClaim> GetByIdAsync(int id);
         Task<bool> UserIsAuthorizedForClaimAsync(int userId, int claimId);
         Task<CustomEntityList<User>> GetUsersByClaimIdAsync(int claimId);
         Task<CustomEntityList<Claim>> GetClaimsByUserIdAsync(int userId);

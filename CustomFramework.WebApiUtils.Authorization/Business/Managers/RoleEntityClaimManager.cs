@@ -22,7 +22,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
-    public class RoleEntityClaimManager : BaseBusinessManagerWithApiRequest<RoleEntityClaimManager, ApiRequest>, IRoleEntityClaimManager
+    public class RoleEntityClaimManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IRoleEntityClaimManager
     {
         public RoleEntityClaimManager(IUnitOfWork unitOfWork, ILogger<RoleEntityClaimManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
             : base(unitOfWork, logger, mapper, apiRequestAccessor)

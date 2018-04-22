@@ -11,17 +11,11 @@ namespace CustomFramework.SampleWebApi.AutoMapper
         {
             Map();
 
-            CreateMap<Match, MatchResponse>();
-            CreateMap<MatchRequest, Match>();
+            CreateMap<Customer, CustomerResponse>();
+            CreateMap<CustomerRequest, Customer>();
 
-            CreateMap<Player, PlayerResponse>();
-            CreateMap<PlayerRequest, Player>();
-
-            CreateMap<Stat, StatResponse>();
-            CreateMap<StatRequest, Stat>();
-
-            CreateMap<Team, TeamResponse>();
-            CreateMap<TeamRequest, Team>();
+            CreateMap<CurrentAccount, CurrentAccountResponse>();
+            CreateMap<CurrentAccountRequest, CurrentAccount>();
         }
     }
 }

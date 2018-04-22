@@ -23,9 +23,10 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
-    public class UserManager : BaseBusinessManagerWithApiRequest<UserManager, ApiRequest>, IUserManager
+    public class UserManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IUserManager
     {
-        public UserManager(IUnitOfWork unitOfWork, ILogger<UserManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) : base(unitOfWork, logger, mapper, apiRequestAccessor)
+        public UserManager(IUnitOfWork unitOfWork, ILogger<UserManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) 
+            : base(unitOfWork, logger, mapper, apiRequestAccessor)
         {
 
         }

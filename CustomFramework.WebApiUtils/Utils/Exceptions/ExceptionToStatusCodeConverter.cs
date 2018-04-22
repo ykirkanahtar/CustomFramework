@@ -9,20 +9,7 @@ namespace CustomFramework.WebApiUtils.Utils.Exceptions
     {
         public static HttpStatusCode ExceptionToStatusCode(this Exception exception)
         {
-            switch (exception)
-            {
-                case KeyNotFoundException _:
-                    return HttpStatusCode.NotFound;
-                case DuplicateNameException _:
-                    return HttpStatusCode.BadRequest;
-                case ArgumentException _:
-                    return HttpStatusCode.BadRequest;
-                case UnauthorizedAccessException _:
-                    return HttpStatusCode.Unauthorized;
-                default:
-                    return HttpStatusCode.InternalServerError;
-            }
+            return new ExceptionOperation(exception).GetHttpStatusCode();
         }
-
     }
 }

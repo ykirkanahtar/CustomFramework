@@ -7,12 +7,9 @@ using CustomFramework.WebApiUtils.Utils;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
 {
-    public interface IClaimManager : IBusinessManager
+    public interface IClaimManager : IBusinessManager<Claim, ClaimRequest, int>
+                                    , IBusinessManagerUpdate<Claim, ClaimRequest, int>
     {
-        Task<Claim> CreateAsync(ClaimRequest request);
-        Task<Claim> UpdateAsync(int id, ClaimRequest request);
-        Task DeleteAsync(int id);
-        Task<Claim> GetByIdAsync(int id);
         Task<Claim> GetByCustomClaimAsync(CustomClaim customClaim);
         Task<CustomEntityList<Claim>> GetAllAsync();
     }

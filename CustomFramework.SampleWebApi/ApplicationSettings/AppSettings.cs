@@ -1,4 +1,6 @@
-﻿namespace CustomFramework.SampleWebApi.ApplicationSettings
+﻿using CustomFramework.WebApiUtils.Authorization.Utils;
+
+namespace CustomFramework.SampleWebApi.ApplicationSettings
 {
     public class AppSettings
     {

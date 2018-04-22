@@ -6,12 +6,9 @@ using CustomFramework.WebApiUtils.Utils;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
 {
-    public interface IRoleManager : IBusinessManager
+    public interface IRoleManager : IBusinessManager<Role, RoleRequest, int>
+                                    , IBusinessManagerUpdate<Role, RoleRequest, int>
     {
-        Task<Role> CreateAsync(RoleRequest request);
-        Task<Role> UpdateAsync(int id, RoleRequest request);
-        Task DeleteAsync(int id);
-        Task<Role> GetByIdAsync(int id);
         Task<Role> GetByNameAsync(string name);
         Task<CustomEntityList<Role>> GetAllAsync();
     }

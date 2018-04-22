@@ -7,11 +7,8 @@ using CustomFramework.WebApiUtils.Utils;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
 {
-    public interface IRoleClaimManager : IBusinessManager
+    public interface IRoleClaimManager : IBusinessManager<RoleClaim, RoleClaimRequest, int>
     {
-        Task<bool> AddRoleToClaimAsync(RoleClaimRequest request);
-        Task<bool> RemoveRoleFromClaimAsync(int id);
-        Task<RoleClaim> GetByIdAsync(int id);
         Task<bool> RolesAreAuthorizedForClaimAsync(IList<Role> roles, int claimId);
         Task<CustomEntityList<Role>> GetRolesByClaimIdAsync(int claimId);
         Task<CustomEntityList<Claim>> GetClaimsByRoleIdAsync(int roleId);

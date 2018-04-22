@@ -16,9 +16,10 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
-    public class ClientApplicationUtilManager : BaseBusinessManagerWithApiRequest<ClientApplicationUtilManager, ApiRequest>, IClientApplicationUtilManager
+    public class ClientApplicationUtilManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IClientApplicationUtilManager
     {
-        public ClientApplicationUtilManager(IUnitOfWork unitOfWork, ILogger<ClientApplicationUtilManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) : base(unitOfWork, logger, mapper, apiRequestAccessor)
+        public ClientApplicationUtilManager(IUnitOfWork unitOfWork, ILogger<ClientApplicationUtilManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
+            : base(unitOfWork, logger, mapper, apiRequestAccessor)
         {
 
         }
@@ -36,12 +37,12 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
-        public Task<ClientApplicationUtil> UpdateSpecialValueAsync(int id, string specialValue)
+        public Task<ClientApplicationUtil> UpdateAsync(int id, ClientApplicationUtilUpdateRequest request)
         {
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
-                result.SpecialValue = specialValue;
+                Mapper.Map(request, result);
 
                 UnitOfWork.GetRepository<ClientApplicationUtil, int>().Update(result);
                 await UnitOfWork.SaveChangesAsync();
@@ -84,6 +85,5 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 return result[0];
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
-    }
-
+   }
 }

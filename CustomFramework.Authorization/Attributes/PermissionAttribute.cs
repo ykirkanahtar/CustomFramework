@@ -23,6 +23,5 @@ namespace CustomFramework.Authorization.Attributes
             Entity = entity;
             Crud = crud;
         }
-
     }
 }

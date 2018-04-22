@@ -18,27 +18,23 @@ namespace CustomFramework.SampleWebApi.Data
 
         }
 
-        public virtual DbSet<Match> Matches { get; set; }
-        public virtual DbSet<Player> Players { get; set; }
-        public virtual DbSet<Stat> Stats { get; set; }
-        public virtual DbSet<Team> Teams { get; set; }
+        public virtual DbSet<Customer> Customers { get; set; }
+        public virtual DbSet<CurrentAccount> CurrentAccounts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfiguration(new MatchModelConfiguration<Match>());
-            modelBuilder.ApplyConfiguration(new PlayerModelConfiguration<Player>());
-            modelBuilder.ApplyConfiguration(new StatModelConfiguration<Stat>());
-            modelBuilder.ApplyConfiguration(new TeamModelConfiguration<Team>());
+            modelBuilder.ApplyConfiguration(new CustomerModelConfiguration<Customer>());
+            modelBuilder.ApplyConfiguration(new CurrentAccountModelConfiguration<CurrentAccount>());
 
-            Startup.SeedData.SeedClientApplicationData(modelBuilder);
+            Startup.SeedAuthorizationData.SeedClientApplicationData(modelBuilder);
 
-            Startup.SeedData.SeedUserData(modelBuilder);
+            Startup.SeedAuthorizationData.SeedUserData(modelBuilder);
 
-            Startup.SeedData.SeedRoleData(modelBuilder);
+            Startup.SeedAuthorizationData.SeedRoleData(modelBuilder);
 
-            Startup.SeedData.SeedRoleEntityData(modelBuilder);
+            Startup.SeedAuthorizationData.SeedRoleEntityData(modelBuilder);
 
             //https://stackoverflow.com/questions/46526230/disable-cascade-delete-on-ef-core-2-globally
             var cascadeFKs = modelBuilder.Model.GetEntityTypes()

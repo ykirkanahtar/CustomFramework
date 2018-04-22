@@ -17,14 +17,15 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
-    public class UserClaimManager : BaseBusinessManagerWithApiRequest<UserClaimManager, ApiRequest>, IUserClaimManager
+    public class UserClaimManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IUserClaimManager
     {
-        public UserClaimManager(IUnitOfWork unitOfWork, ILogger<UserClaimManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) : base(unitOfWork, logger, mapper, apiRequestAccessor)
+        public UserClaimManager(IUnitOfWork unitOfWork, ILogger<UserClaimManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) 
+            : base(unitOfWork, logger, mapper, apiRequestAccessor)
         {
 
         }
 
-        public Task<bool> AddUserToClaimAsync(UserClaimRequest request)
+        public Task<UserClaim> CreateAsync(UserClaimRequest request)
         {
             return CommonOperationWithTransactionAsync(async () =>
             {
@@ -43,11 +44,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 UnitOfWork.GetRepository<UserClaim, int>().Add(result);
 
                 await UnitOfWork.SaveChangesAsync();
-                return true;
+                return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
-        public Task<bool> RemoveUserFromClaimAsync(int id)
+        public Task DeleteAsync(int id)
         {
             return CommonOperationWithTransactionAsync(async () =>
             {
@@ -56,7 +57,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 UnitOfWork.GetRepository<UserClaim, int>().Delete(result);
 
                 await UnitOfWork.SaveChangesAsync();
-                return true;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 

@@ -4,88 +4,78 @@ using AutoMapper;
 using CustomFramework.Authorization.Attributes;
 using CustomFramework.Authorization.Enums;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
-using CustomFramework.WebApiUtils.Authorization.Enums;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Response;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class BaseRoleEntityClaimController : Controller
+    public class BaseRoleEntityClaimController
+        : BaseControllerWithAuthorizationAndUpdate<RoleEntityClaim, RoleEntityClaimRequest, EntityClaimRequest, RoleEntityClaimResponse, IRoleEntityClaimManager, int>
     {
-        private readonly IRoleEntityClaimManager _roleEntityClaimManager;
-        private readonly ILocalizationService _localizationService;
-        private readonly ILogger<BaseRoleEntityClaimController> _logger;
-        private readonly IMapper _mapper;
-
         public BaseRoleEntityClaimController(IRoleEntityClaimManager roleEntityClaimManager, ILocalizationService localizationService, ILogger<BaseRoleEntityClaimController> logger, IMapper mapper)
+            : base(roleEntityClaimManager, localizationService, logger, mapper)
         {
-            _roleEntityClaimManager = roleEntityClaimManager;
-            _localizationService = localizationService;
-            _logger = logger;
-            _mapper = mapper;
+
         }
 
         [Route("create")]
         [HttpPost]
-        [Permission(nameof(AuthorizationEntities.RoleEntityClaim), Crud.Create)]
+        [Permission(nameof(RoleEntityClaim), Crud.Create)]
         public async Task<IActionResult> Create([FromBody] RoleEntityClaimRequest request)
         {
-            var result = await _roleEntityClaimManager.CreateAsync(request);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(_mapper.Map<RoleEntityClaim, RoleEntityClaimResponse>(result)));
+            return await BaseCreate(request);
         }
 
-        [Route("{id:int}/update")]
+        [Route("{id}/update")]
         [HttpPut]
-        [Permission(nameof(AuthorizationEntities.RoleEntityClaim), Crud.Update)]
+        [Permission(nameof(RoleEntityClaim), Crud.Update)]
         public async Task<IActionResult> Update(int id, [FromBody] EntityClaimRequest request)
         {
-            var result = await _roleEntityClaimManager.UpdateAsync(id, request);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(_mapper.Map<RoleEntityClaim, RoleEntityClaimResponse>(result)));
+            return await BaseUpdate(id, request);
         }
 
         [Route("delete/{id:int}")]
         [HttpDelete]
-        [Permission(nameof(AuthorizationEntities.RoleEntityClaim), Crud.Delete)]
+        [Permission(nameof(RoleEntityClaim), Crud.Delete)]
         public async Task<IActionResult> Delete(int id)
         {
-            await _roleEntityClaimManager.DeleteAsync(id);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(true));
+            return await BaseDelete(id);
         }
 
-        [Route("get/id/{id:int}")]
+        [Route("get/id/{id}")]
         [HttpGet]
-        [Permission(nameof(AuthorizationEntities.RoleEntityClaim), Crud.Select)]
-        public async Task<IActionResult> GetBydId(int id)
+        [Permission(nameof(RoleEntityClaim), Crud.Select)]
+        public async Task<IActionResult> GetById(int id)
         {
-            var result = await _roleEntityClaimManager.GetByIdAsync(id);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(_mapper.Map<RoleEntityClaim, RoleEntityClaimResponse>(result)));
+            return await BaseGetById(id);
         }
 
         [Route("getall/entity/{entity}")]
         [HttpGet]
-        [Permission(nameof(AuthorizationEntities.RoleEntityClaim), Crud.Select)]
+        [Permission(nameof(RoleEntityClaim), Crud.Select)]
         public async Task<IActionResult> GetAllByEntity(string entity)
         {
-            var result = await _roleEntityClaimManager.GetAllByEntityAsync(entity);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(
-                _mapper.Map<IList<RoleEntityClaim>, IList<RoleEntityClaimResponse>>(result.EntityList),
+            var result = await Manager.GetAllByEntityAsync(entity);
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                Mapper.Map<IList<RoleEntityClaim>, IList<RoleEntityClaimResponse>>(result.EntityList),
                 result.Count));
         }
 
         [Route("getall/roleid/{roleid:int}")]
         [HttpGet]
-        [Permission(nameof(AuthorizationEntities.RoleEntityClaim), Crud.Select)]
+        [Permission(nameof(RoleEntityClaim), Crud.Select)]
         public async Task<IActionResult> GetAllByRoleId(int roleId)
         {
-            var result = await _roleEntityClaimManager.GetAllByRoleIdAsync(roleId);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(
-                _mapper.Map<IList<RoleEntityClaim>, IList<RoleEntityClaimResponse>>(result.EntityList),
+            var result = await Manager.GetAllByRoleIdAsync(roleId);
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                Mapper.Map<IList<RoleEntityClaim>, IList<RoleEntityClaimResponse>>(result.EntityList),
                 result.Count));
         }
     }

@@ -18,14 +18,15 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
-    public class RoleClaimManager : BaseBusinessManagerWithApiRequest<RoleClaimManager, ApiRequest>, IRoleClaimManager
+    public class RoleClaimManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IRoleClaimManager
     {
-        public RoleClaimManager(IUnitOfWork unitOfWork, ILogger<RoleClaimManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) : base(unitOfWork, logger, mapper, apiRequestAccessor)
+        public RoleClaimManager(IUnitOfWork unitOfWork, ILogger<RoleClaimManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) 
+            : base(unitOfWork, logger, mapper, apiRequestAccessor)
         {
 
         }
 
-        public Task<bool> AddRoleToClaimAsync(RoleClaimRequest request)
+        public Task<RoleClaim> CreateAsync(RoleClaimRequest request)
         {
             return CommonOperationWithTransactionAsync(async () =>
             {
@@ -44,11 +45,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 UnitOfWork.GetRepository<RoleClaim, int>().Add(result);
 
                 await UnitOfWork.SaveChangesAsync();
-                return true;
+                return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
-        public Task<bool> RemoveRoleFromClaimAsync(int id)
+        public Task DeleteAsync(int id)
         {
             return CommonOperationWithTransactionAsync(async () =>
             {
@@ -57,7 +58,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 UnitOfWork.GetRepository<RoleClaim, int>().Delete(result);
 
                 await UnitOfWork.SaveChangesAsync();
-                return true;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 

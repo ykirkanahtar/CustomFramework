@@ -15,9 +15,10 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
-    public class UserUtilManager : BaseBusinessManagerWithApiRequest<UserUtilManager, ApiRequest>, IUserUtilManager
+    public class UserUtilManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IUserUtilManager
     {
-        public UserUtilManager(IUnitOfWork unitOfWork, ILogger<UserUtilManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) : base(unitOfWork, logger, mapper, apiRequestAccessor)
+        public UserUtilManager(IUnitOfWork unitOfWork, ILogger<UserUtilManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) 
+            : base(unitOfWork, logger, mapper, apiRequestAccessor)
         {
 
         }
@@ -35,12 +36,12 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
-        public Task<UserUtil> UpdateSpecialValueAsync(int id, string specialValue)
+        public Task<UserUtil> UpdateAsync(int id, UserUtilUpdateRequest request)
         {
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
-                result.SpecialValue = specialValue;
+                Mapper.Map(request, result);
 
                 UnitOfWork.GetRepository<UserUtil, int>().Update(result);
                 await UnitOfWork.SaveChangesAsync();

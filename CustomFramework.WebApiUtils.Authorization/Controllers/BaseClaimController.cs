@@ -4,86 +4,75 @@ using AutoMapper;
 using CustomFramework.Authorization.Attributes;
 using CustomFramework.Authorization.Enums;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
-using CustomFramework.WebApiUtils.Authorization.Enums;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Response;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class BaseClaimController : Controller
+    public class BaseClaimController : BaseControllerWithAuthorizationAndUpdate<Claim, ClaimRequest, ClaimRequest, ClaimResponse, IClaimManager, int>
     {
-        private readonly IClaimManager _claimManager;
-        private readonly ILocalizationService _localizationService;
-        private readonly ILogger<BaseClaimController> _logger;
-        private readonly IMapper _mapper;
-
         public BaseClaimController(IClaimManager claimManager, ILocalizationService localizationService, ILogger<BaseClaimController> logger, IMapper mapper)
+            : base(claimManager, localizationService, logger, mapper)
         {
-            _claimManager = claimManager;
-            _localizationService = localizationService;
-            _logger = logger;
-            _mapper = mapper;
+
         }
 
         [Route("create")]
         [HttpPost]
-        [Permission(nameof(AuthorizationEntities.Claim), Crud.Create)]
+        [Permission(nameof(Claim), Crud.Create)]
         public async Task<IActionResult> Create([FromBody] ClaimRequest request)
         {
-            var result = await _claimManager.CreateAsync(request);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(_mapper.Map<Claim, ClaimResponse>(result)));
+            return await BaseCreate(request);
         }
 
-        [Route("{id:int}/update")]
+        [Route("{id}/update")]
         [HttpPut]
-        [Permission(nameof(AuthorizationEntities.Claim), Crud.Update)]
+        [Permission(nameof(Claim), Crud.Update)]
         public async Task<IActionResult> Update(int id, [FromBody] ClaimRequest request)
         {
-            var result = await _claimManager.UpdateAsync(id, request);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(_mapper.Map<Claim, ClaimResponse>(result)));
+            return await BaseUpdate(id, request);
         }
 
         [Route("delete/{id:int}")]
         [HttpDelete]
-        [Permission(nameof(AuthorizationEntities.Claim), Crud.Delete)]
+        [Permission(nameof(Claim), Crud.Delete)]
         public async Task<IActionResult> Delete(int id)
         {
-            await _claimManager.DeleteAsync(id);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(true));
+            return await BaseDelete(id);
         }
 
-        [Route("get/id/{id:int}")]
+        [Route("get/id/{id}")]
         [HttpGet]
-        [Permission(nameof(AuthorizationEntities.Claim), Crud.Select)]
+        [Permission(nameof(Claim), Crud.Select)]
         public async Task<IActionResult> GetById(int id)
         {
-            var result = await _claimManager.GetByIdAsync(id);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(_mapper.Map<Claim, ClaimResponse>(result)));
+            return await BaseGetById(id);
         }
 
         [Route("get/customclaim/{customclaim}")]
         [HttpGet]
-        [Permission(nameof(AuthorizationEntities.Claim), Crud.Select)]
+        [Permission(nameof(Claim), Crud.Select)]
         public async Task<IActionResult> GetByCustomClaim(CustomClaim customClaim)
         {
-            var result = await _claimManager.GetByCustomClaimAsync(customClaim);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(_mapper.Map<Claim, ClaimResponse>(result)));
+            var result = await Manager.GetByCustomClaimAsync(customClaim);
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<Claim, ClaimResponse>(result)));
         }
 
         [Route("getall")]
         [HttpGet]
-        [Permission(nameof(AuthorizationEntities.Claim), Crud.Select)]
+        [Permission(nameof(Claim), Crud.Select)]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _claimManager.GetAllAsync();
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(
-                _mapper.Map<IList<Claim>, IList<ClaimResponse>>(result.EntityList),
+            var result = await Manager.GetAllAsync();
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result.EntityList),
                 result.Count));
         }
     }

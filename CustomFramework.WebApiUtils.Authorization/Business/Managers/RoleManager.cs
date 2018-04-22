@@ -18,7 +18,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
-    public class RoleManager : BaseBusinessManagerWithApiRequest<RoleManager, ApiRequest>, IRoleManager
+    public class RoleManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IRoleManager
     {
         public RoleManager(IUnitOfWork unitOfWork, ILogger<RoleManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) : base(unitOfWork, logger, mapper, apiRequestAccessor)
         {

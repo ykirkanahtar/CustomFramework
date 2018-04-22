@@ -4,79 +4,69 @@ using AutoMapper;
 using CustomFramework.Authorization.Attributes;
 using CustomFramework.Authorization.Enums;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
-using CustomFramework.WebApiUtils.Authorization.Enums;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Response;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class BaseUserClaimController : Controller
+    public class BaseUserClaimController : BaseControllerWithAuthorization<UserClaim, UserClaimRequest, UserClaimResponse, IUserClaimManager, int>
     {
-        private readonly IUserClaimManager _userClaimManager;
-        private readonly ILocalizationService _localizationService;
-        private readonly ILogger<BaseUserClaimController> _logger;
-        private readonly IMapper _mapper;
-
         public BaseUserClaimController(IUserClaimManager userClaimManager, ILocalizationService localizationService, ILogger<BaseUserClaimController> logger, IMapper mapper)
+            : base(userClaimManager, localizationService, logger, mapper)
         {
-            _userClaimManager = userClaimManager;
-            _localizationService = localizationService;
-            _logger = logger;
-            _mapper = mapper;
+
         }
 
-        [Route("addusertoclaim")]
+        [Route("create")]
         [HttpPost]
-        [Permission(nameof(AuthorizationEntities.UserClaim), Crud.Create)]
-        public async Task<IActionResult> AddUserToClaim([FromBody] UserClaimRequest request)
+        [Permission(nameof(UserClaim), Crud.Create)]
+        public async Task<IActionResult> Create([FromBody] UserClaimRequest request)
         {
-            var result = await _userClaimManager.AddUserToClaimAsync(request);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(result));
+            return await BaseCreate(request);
         }
 
-        [Route("{id:int}/removeuserfromclaim")]
-        [HttpPut]
-        [Permission(nameof(AuthorizationEntities.UserClaim), Crud.Delete)]
-        public async Task<IActionResult> RemoveUserFromClaim(int id)
+        [Route("delete/{id:int}")]
+        [HttpDelete]
+        [Permission(nameof(UserClaim), Crud.Delete)]
+        public async Task<IActionResult> Delete(int id)
         {
-            var result = await _userClaimManager.RemoveUserFromClaimAsync(id);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(result));
+            return await BaseDelete(id);
         }
 
-        [Route("get/id/{id:int}")]
+        [Route("get/id/{id}")]
         [HttpGet]
-        [Permission(nameof(AuthorizationEntities.UserClaim), Crud.Select)]
+        [Permission(nameof(UserClaim), Crud.Select)]
         public async Task<IActionResult> GetById(int id)
         {
-            var result = await _userClaimManager.GetByIdAsync(id);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(_mapper.Map<UserClaim, UserClaimResponse>(result)));
+            return await BaseGetById(id);
         }
 
         [Route("get/users/claimid/{id:int}")]
         [HttpGet]
-        [Permission(nameof(AuthorizationEntities.UserClaim), Crud.Select)]
+        [Permission(nameof(UserClaim), Crud.Select)]
         public async Task<IActionResult> GetUsersByClaimId(int claimId)
         {
-            var result = await _userClaimManager.GetUsersByClaimIdAsync(claimId);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(
-                _mapper.Map<IList<User>, IList<UserResponse>>(result.EntityList),
+            var result = await Manager.GetUsersByClaimIdAsync(claimId);
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                Mapper.Map<IList<User>, IList<UserResponse>>(result.EntityList),
                 result.Count));
         }
 
         [Route("get/claim/userid/{id:int}")]
         [HttpGet]
-        [Permission(nameof(AuthorizationEntities.UserClaim), Crud.Select)]
+        [Permission(nameof(UserClaim), Crud.Select)]
         public async Task<IActionResult> GetClaimsByUserId(int userId)
         {
-            var result = await _userClaimManager.GetClaimsByUserIdAsync(userId);
-            return Ok(new ApiResponse(_localizationService, _logger).Ok(
-                _mapper.Map<IList<Claim>, IList<ClaimResponse>>(result.EntityList),
+            var result = await Manager.GetClaimsByUserIdAsync(userId);
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result.EntityList),
                 result.Count));
         }
     }

@@ -17,15 +17,16 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
-    public class UserRoleManager : BaseBusinessManagerWithApiRequest<UserRoleManager, ApiRequest>, IUserRoleManager
+    public class UserRoleManager : BaseBusinessManagerWithApiRequest< ApiRequest>, IUserRoleManager
     {
 
-        public UserRoleManager(IUnitOfWork unitOfWork, ILogger<UserRoleManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) : base(unitOfWork, logger, mapper, apiRequestAccessor)
+        public UserRoleManager(IUnitOfWork unitOfWork, ILogger<UserRoleManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) 
+            : base(unitOfWork, logger, mapper, apiRequestAccessor)
         {
 
         }
 
-        public Task<bool> AddUserToRoleAsync(UserRoleRequest request)
+        public Task<UserRole> CreateAsync(UserRoleRequest request)
         {
             return CommonOperationWithTransactionAsync(async () =>
             {
@@ -48,11 +49,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 UnitOfWork.GetRepository<UserRole, int>().Add(result);
 
                 await UnitOfWork.SaveChangesAsync();
-                return true;
+                return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
-        public Task<bool> RemoveUserFromRoleAsync(int id)
+        public Task DeleteAsync(int id)
         {
             return CommonOperationWithTransactionAsync(async () =>
             {
@@ -61,7 +62,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 UnitOfWork.GetRepository<UserRole, int>().Delete(result);
 
                 await UnitOfWork.SaveChangesAsync();
-                return true;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 

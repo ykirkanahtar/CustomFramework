@@ -10,13 +10,13 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Business
 {
-    public abstract class BaseBusinessManager<TManager> where TManager : IBusinessManager
+    public abstract class BaseBusinessManager
     {
         protected readonly IUnitOfWork UnitOfWork;
-        protected readonly ILogger<TManager> Logger;
+        protected readonly ILogger<BaseBusinessManager> Logger;
         protected readonly IMapper Mapper;
 
-        protected BaseBusinessManager(IUnitOfWork unitOfWork, ILogger<TManager> logger, IMapper mapper)
+        protected BaseBusinessManager(IUnitOfWork unitOfWork, ILogger<BaseBusinessManager> logger, IMapper mapper)
         {
             UnitOfWork = unitOfWork;
             Logger = logger;

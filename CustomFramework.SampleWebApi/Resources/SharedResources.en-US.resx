@@ -117,49 +117,52 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AnUnkonwnErrorHasOccured" xml:space="preserve">
-    <value>An unknown error has occured</value>
+  <data name="AnErrorHasOccured" xml:space="preserve">
+    <value>An error has occured</value>
   </data>
-  <data name="clientapplicationcode" xml:space="preserve">
-    <value>client application code</value>
+  <data name="ArgumentExceptionError" xml:space="preserve">
+    <value>Invalid argument</value>
   </data>
-  <data name="ClientApplicationLoginError" xml:space="preserve">
-    <value>Client application login error</value>
+  <data name="CannotBeNullError" xml:space="preserve">
+    <value>Property can not be null</value>
   </data>
-  <data name="clientapplicationname" xml:space="preserve">
-    <value>client application name</value>
+  <data name="CurrentAccountCode" xml:space="preserve">
+    <value>Current Account Code</value>
+  </data>
+  <data name="CurrentAccountName" xml:space="preserve">
+    <value>Current Account Name</value>
+  </data>
+  <data name="CustomerNo" xml:space="preserve">
+    <value>Customer No</value>
   </data>
   <data name="DuplicateRecordForUniqueValueError" xml:space="preserve">
-    <value>Duplicate record for unique value</value>
+    <value>Duplicate records exist for unique value</value>
   </data>
-  <data name="email" xml:space="preserve">
-    <value>e-mail</value>
+  <data name="EmailFormatError" xml:space="preserve">
+    <value>Email format is invalid</value>
   </data>
   <data name="LoginError" xml:space="preserve">
     <value>Login error</value>
   </data>
-  <data name="name" xml:space="preserve">
-    <value>name</value>
+  <data name="MaxLengthError" xml:space="preserve">
+    <value>Max length error</value>
+  </data>
+  <data name="ModelStateErrors" xml:space="preserve">
+    <value>model state errors are</value>
+  </data>
+  <data name="ModelStateValidError" xml:space="preserve">
+    <value>Invalid model state</value>
+  </data>
+  <data name="NotFoundError" xml:space="preserve">
+    <value>Record not found</value>
+  </data>
+  <data name="RecordExistsError" xml:space="preserve">
+    <value>Record already exists</value>
   </data>
   <data name="Success" xml:space="preserve">
-    <value>The operation has completed successfully</value>
+    <value>Operation completed successfully</value>
   </data>
   <data name="UnauthorizedAccessError" xml:space="preserve">
     <value>Unauthorized access</value>
-  </data>
-  <data name="username" xml:space="preserve">
-    <value>user name</value>
-  </data>
-  <data name="ClientApplication" xml:space="preserve">
-    <value>client application</value>
-  </data>
-  <data name="NotFoundError" xml:space="preserve">
-    <value>Not Found :</value>
-  </data>
-  <data name="Token" xml:space="preserve">
-    <value>token</value>
-  </data>
-  <data name="User" xml:space="preserve">
-    <value>user</value>
   </data>
 </root>

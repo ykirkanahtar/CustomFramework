@@ -1,6 +1,4 @@
-﻿using System;
-using CustomFramework.Data.Enums;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CustomFramework.Data.ModelConfiguration
@@ -10,7 +8,7 @@ namespace CustomFramework.Data.ModelConfiguration
     {
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
-            builder.Property(p => p.Id);
+            builder.Property(p => p.Id).ValueGeneratedOnAdd();
 
             builder.Property(p => p.CreateDateTime)
                 .IsRequired();

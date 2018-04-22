@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Resources\" />
-    <Folder Include="Response\" />
-    <Folder Include="Request\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

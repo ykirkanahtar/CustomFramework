@@ -21,10 +21,11 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
-    public class UserEntityClaimManager : BaseBusinessManagerWithApiRequest<UserEntityClaimManager, ApiRequest>, IUserEntityClaimManager
+    public class UserEntityClaimManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IUserEntityClaimManager
     {
 
-        public UserEntityClaimManager(IUnitOfWork unitOfWork, ILogger<UserEntityClaimManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) : base(unitOfWork, logger, mapper, apiRequestAccessor)
+        public UserEntityClaimManager(IUnitOfWork unitOfWork, ILogger<UserEntityClaimManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) 
+            : base(unitOfWork, logger, mapper, apiRequestAccessor)
         {
 
         }

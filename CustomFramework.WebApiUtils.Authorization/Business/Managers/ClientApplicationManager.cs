@@ -22,9 +22,10 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
-    public class ClientApplicationManager : BaseBusinessManagerWithApiRequest<ClientApplicationManager, ApiRequest>, IClientApplicationManager
+    public class ClientApplicationManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IClientApplicationManager
     {
-        public ClientApplicationManager(IUnitOfWork unitOfWork, ILogger<ClientApplicationManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) : base(unitOfWork, logger, mapper, apiRequestAccessor)
+        public ClientApplicationManager(IUnitOfWork unitOfWork, ILogger<ClientApplicationManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) 
+            : base(unitOfWork, logger, mapper, apiRequestAccessor)
         {
 
         }
@@ -53,7 +54,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
-        public Task<ClientApplication> UpdateClientApplicationAsync(int id, ClientApplicationUpdateRequest request)
+        public Task<ClientApplication> UpdateAsync(int id, ClientApplicationUpdateRequest request)
         {
             return CommonOperationWithTransactionAsync(async () =>
             {
