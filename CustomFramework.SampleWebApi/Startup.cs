@@ -10,12 +10,19 @@ using CustomFramework.SampleWebApi.ApplicationSettings;
 using CustomFramework.SampleWebApi.Business;
 using CustomFramework.SampleWebApi.Data;
 using CustomFramework.SampleWebApi.Data.Seeding;
+using CustomFramework.SampleWebApi.Filters;
+using CustomFramework.SampleWebApi.Models;
+using CustomFramework.SampleWebApi.Request;
 using CustomFramework.SampleWebApi.Resources;
+using CustomFramework.SampleWebApi.Validators;
 using CustomFramework.WebApiUtils.Authorization.Data.Seeding;
 using CustomFramework.WebApiUtils.Authorization.Extensions;
+using CustomFramework.WebApiUtils.Authorization.Filters;
 using CustomFramework.WebApiUtils.Extensions;
 using CustomFramework.WebApiUtils.Middlewares;
 using CustomFramework.WebApiUtils.Resources;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -118,12 +125,22 @@ namespace CustomFramework.SampleWebApi
             services.AddTransient<ICustomerManager2, CustomerManager2>();
             /*********Managers*********/
 
-            services.AddMvc()
+            /************Fluent Validation************/
+            services.AddTransient<IValidator<CustomerRequest>, CustomerValidator>();
+            services.AddTransient<IValidator<CurrentAccountRequest>, CurrentAccountValidator>();
+            /************Fluent Validation************/
+
+
+            services.AddMvc(options =>
+                {
+                    options.Filters.Add(typeof(ValidateModelAttribute));
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(options =>
                     {
                         options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    });
+                    })
+                .AddFluentValidation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

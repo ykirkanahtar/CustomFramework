@@ -1,11 +1,12 @@
 ﻿using CustomFramework.WebApiUtils.Authorization.Constants;
 using CustomFramework.WebApiUtils.Authorization.Models;
+using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Constants;
 using FluentValidation;
 
 namespace CustomFramework.WebApiUtils.Authorization.Validators
 {
-    public class UserValidator : AbstractValidator<User>
+    public class UserValidator : AbstractValidator<UserRequest>
     {
         public UserValidator()
         {
@@ -22,12 +23,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Validators
                 .MaximumLength(100)
                 .WithMessage($"{ValidatorConstants.MaxLengthError} : {AuthorizationConstants.Email}, 100")
                 .EmailAddress().WithMessage($"{ValidatorConstants.EmailFormatError}");
-
-            RuleFor(x => x.EmailConfirmCode)
-                .NotEmpty().WithMessage(
-                    $"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.EmailConfirmCode}")
-                .Length(6).WithMessage(
-                    $"{ValidatorConstants.MaxLengthError} : {AuthorizationConstants.EmailConfirmCode}, 6");
         }
     }
 }

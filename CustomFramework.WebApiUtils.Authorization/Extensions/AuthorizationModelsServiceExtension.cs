@@ -3,7 +3,7 @@ using CustomFramework.WebApiUtils.Authorization.Business.Managers;
 using CustomFramework.WebApiUtils.Authorization.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Data.DataInitializers;
 using CustomFramework.WebApiUtils.Authorization.Handlers;
-using CustomFramework.WebApiUtils.Authorization.Models;
+using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Utils;
 using CustomFramework.WebApiUtils.Authorization.Validators;
 using FluentValidation;
@@ -44,15 +44,15 @@ namespace CustomFramework.WebApiUtils.Authorization.Extensions
             /************Seed Data************/
 
             /************Fluent Validation************/
-            services.AddTransient<IValidator<Claim>, ClaimValidator>();
-            services.AddTransient<IValidator<ClientApplication>, ClientApplicationValidator>();
-            services.AddTransient<IValidator<Role>, RoleValidator>();
-            services.AddTransient<IValidator<RoleClaim>, RoleClaimValidator>();
-            services.AddTransient<IValidator<RoleEntityClaim>, RoleEntityClaimValidator>();
-            services.AddTransient<IValidator<User>, UserValidator>();
-            services.AddTransient<IValidator<UserClaim>, UserClaimValidator>();
-            services.AddTransient<IValidator<UserEntityClaim>, UserEntityClaimValidator>();
-            services.AddTransient<IValidator<UserRole>, UserRoleValidator>();
+            services.AddTransient<IValidator<ClaimRequest>, ClaimValidator>();
+            services.AddTransient<IValidator<ClientApplicationRequest>, ClientApplicationValidator>();
+            services.AddTransient<IValidator<RoleRequest>, RoleValidator>();
+            services.AddTransient<IValidator<RoleClaimRequest>, RoleClaimValidator>();
+            services.AddTransient<IValidator<RoleEntityClaimRequest>, RoleEntityClaimValidator>();
+            services.AddTransient<IValidator<UserRequest>, UserValidator>();
+            services.AddTransient<IValidator<UserClaimRequest>, UserClaimValidator>();
+            services.AddTransient<IValidator<UserEntityClaimRequest>, UserEntityClaimValidator>();
+            services.AddTransient<IValidator<UserRoleRequest>, UserRoleValidator>();
             /************Fluent Validation************/
 
             return services;

@@ -12,6 +12,7 @@ using CustomFramework.SampleWebApi.Response;
 using CustomFramework.WebApiUtils.Authorization.Controllers;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -30,6 +31,7 @@ namespace CustomFramework.SampleWebApi.Controllers
 
         [Route("create")]
         [HttpPost]
+        //[AllowAnonymous]
         [Permission(nameof(Customer), Crud.Create)]
         public async Task<IActionResult> Create([FromBody] CustomerRequest request)
         {

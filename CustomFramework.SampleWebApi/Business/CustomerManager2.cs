@@ -26,38 +26,6 @@ namespace CustomFramework.SampleWebApi.Business
             _currentAccountManager = currentAccountManager;
         }
 
-        public async Task UniqueCheckForCustomerNoAsync(string customerNo, int? id = null)
-        {
-            var predicate = PredicateBuilder.New<Customer>();
-            predicate = predicate.And(p => p.CustomerNo == customerNo);
-
-            if (id != null)
-            {
-                predicate = predicate.And(p => p.Id != id);
-            }
-
-            var tempResult = await UnitOfWork.GetRepository<Customer, int>().GetAll(predicate: predicate).ToListAsync();
-
-            BusinessUtil.CheckUniqueValue(tempResult, WebApiResourceConstants.CustomerNo);
-        }
-
-        public Customer AddToRepository(Customer entity)
-        {
-            UnitOfWork.GetRepository<Customer, int>().Add(entity);
-            return entity;
-        }
-
-        public Customer UpdateRepository(Customer entity)
-        {
-            UnitOfWork.GetRepository<Customer, int>().Update(entity);
-            return entity;
-        }
-
-        public void DeleteFromRepository(Customer entity)
-        {
-            UnitOfWork.GetRepository<Customer, int>().Delete(entity);
-        }
-
         public Task<Customer> CreateAsync(CustomerRequest request)
         {
             return CommonOperationWithTransactionAsync(async () =>
@@ -83,6 +51,12 @@ namespace CustomFramework.SampleWebApi.Business
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
+        public Customer AddToRepository(Customer entity)
+        {
+            UnitOfWork.GetRepository<Customer, int>().Add(entity);
+            return entity;
+        }
+
         public Task<Customer> UpdateAsync(int id, CustomerRequest request)
         {
             return CommonOperationWithTransactionAsync(async () =>
@@ -99,6 +73,12 @@ namespace CustomFramework.SampleWebApi.Business
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
+        public Customer UpdateRepository(Customer entity)
+        {
+            UnitOfWork.GetRepository<Customer, int>().Update(entity);
+            return entity;
+        }
+
         public Task DeleteAsync(int id)
         {
             return CommonOperationWithTransactionAsync(async () =>
@@ -109,6 +89,26 @@ namespace CustomFramework.SampleWebApi.Business
 
                 await UnitOfWork.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
+        }
+
+        public void DeleteFromRepository(Customer entity)
+        {
+            UnitOfWork.GetRepository<Customer, int>().Delete(entity);
+        }
+
+        public async Task UniqueCheckForCustomerNoAsync(string customerNo, int? id = null)
+        {
+            var predicate = PredicateBuilder.New<Customer>();
+            predicate = predicate.And(p => p.CustomerNo == customerNo);
+
+            if (id != null)
+            {
+                predicate = predicate.And(p => p.Id != id);
+            }
+
+            var tempResult = await UnitOfWork.GetRepository<Customer, int>().GetAll(predicate: predicate).ToListAsync();
+
+            BusinessUtil.CheckUniqueValue(tempResult, WebApiResourceConstants.CustomerNo);
         }
 
         public Task<Customer> GetByIdAsync(int id)
