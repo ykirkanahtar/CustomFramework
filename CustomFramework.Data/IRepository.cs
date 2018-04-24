@@ -13,14 +13,12 @@ namespace CustomFramework.Data
         IQueryable<TEntity> GetAll(
             Expression<Func<TEntity, bool>> predicate = null
             , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
-            , Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null
             , ISkipTake skipTake = null
         );
 
         IQueryable<TEntity> GetAll(out int rowCount
             , Expression<Func<TEntity, bool>> predicate = null
             , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
-            , Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null
             , ISkipTake skipTake = null
         );
 

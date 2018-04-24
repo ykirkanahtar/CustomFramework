@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Data;
+using CustomFramework.Data.Utils;
 using CustomFramework.SampleWebApi.Constants;
 using CustomFramework.SampleWebApi.Models;
 using CustomFramework.SampleWebApi.Request;
@@ -117,9 +118,7 @@ namespace CustomFramework.SampleWebApi.Business
         {
             return CommonOperationAsync(async () =>
                 {
-                    return await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(predicate: p => p.Id == id
-                                                                                        , include: source => source.Include(p => p.Customer)
-                                                                                        ).FirstOrDefaultAsync();
+                    return await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(predicate: p => p.Id == id).IncludeMultiple(p => p.Customer).FirstOrDefaultAsync();
                 }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
                 BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
@@ -128,9 +127,7 @@ namespace CustomFramework.SampleWebApi.Business
         {
             return CommonOperationAsync(async () => new CustomEntityList<CurrentAccount>
             {
-                EntityList = await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(out var count
-                                                                                        , include: source => source.Include(p => p.Customer)
-                                                                                         ).ToListAsync(),
+                EntityList = await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(out var count).IncludeMultiple(p => p.Customer).ToListAsync(),
                 Count = count,
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }

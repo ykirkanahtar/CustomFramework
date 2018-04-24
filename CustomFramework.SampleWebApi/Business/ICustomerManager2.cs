@@ -12,9 +12,9 @@ namespace CustomFramework.SampleWebApi.Business
         Customer AddToRepository(Customer entity);
         void DeleteFromRepository(Customer entity);
         Task<CustomEntityList<Customer>> GetAllAsync();
-        Task<CustomEntityList<Customer>> GetAllFromRepo();
-        Task<Customer> GetFromRepoById(int id);
-        Task UniqueCheckForCustomerNoAsync(string customerNo, int? id = null);
+        Task<CustomEntityList<Customer>> GetAllFromRepoAsync();
+        Task<Customer> GetFromRepoByIdAsync(int id);
+        void UniqueCheckForCustomerNo(string customerNo, int? id = null);
         Customer UpdateRepository(Customer entity);
     }
 }

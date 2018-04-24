@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using CustomFramework.WebApiUtils.Constants;
 using CustomFramework.WebApiUtils.Resources;
@@ -78,17 +79,20 @@ namespace CustomFramework.WebApiUtils.Contracts
             return this;
         }
 
-        public ApiResponse ModelStateError(ModelStateDictionary modelState, Exception exception)
+        public ApiResponse ModelStateError(ModelStateDictionary modelState)
         {
+            var modelstateString = modelState.ModelStateToString(_localizationService);
+
+
             ErrorResponse = new ErrorResponse(
-                null
-                , modelState.ModelStateToString()
+                new ValidationException()
+                , modelstateString
             );
 
             StatusCode = HttpStatusCode.BadRequest;
             Message = _localizationService.GetValue(DefaultResponseMessages.ModelStateErrors);
 
-            _logger.LogError(0, exception, Message);
+            _logger.LogError(0, Message);
             return this;
         }
 

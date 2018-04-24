@@ -57,6 +57,27 @@ namespace CustomFramework.WebApiUtils.Business
             }
         }
 
+        protected T CommonOperation<T>(Func<T> func
+            , BusinessBaseRequest businessBaseRequest
+            , BusinessUtilMethod businessUtilMethod
+            , string additionalInfo
+            , bool critical = false)
+        {
+            try
+            {
+                var result = func.Invoke();
+                BusinessUtil.Execute(businessUtilMethod, result, additionalInfo, critical);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
+                throw;
+            }
+        }
+
+
         protected async Task<T> CommonOperationWithTransactionAsync<T>(Func<Task<T>> func, BusinessBaseRequest businessBaseRequest)
         {
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))

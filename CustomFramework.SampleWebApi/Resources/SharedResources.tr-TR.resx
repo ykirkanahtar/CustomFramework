@@ -132,8 +132,14 @@
   <data name="CurrentAccountName" xml:space="preserve">
     <value>Cari hesap adı</value>
   </data>
+  <data name="CustomerName" xml:space="preserve">
+    <value>Müşteri Adı</value>
+  </data>
   <data name="CustomerNo" xml:space="preserve">
     <value>Müşteri numarası</value>
+  </data>
+  <data name="CustomerSurname" xml:space="preserve">
+    <value>Müşteri Soyadı</value>
   </data>
   <data name="DuplicateRecordForUniqueValueError" xml:space="preserve">
     <value>Tekil değer için birden fazla kayıt var</value>

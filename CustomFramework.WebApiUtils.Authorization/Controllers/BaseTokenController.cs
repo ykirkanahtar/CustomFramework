@@ -43,7 +43,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
         public async Task<IActionResult> Login([FromBody] Login login)
         {
             if (!ModelState.IsValid)
-                throw new ArgumentException(ModelState.ModelStateToString());
+                throw new ArgumentException(ModelState.ModelStateToString(_localizationService));
 
             var clientApplication =
                 await _clientApplicationManager.LoginAsync(login.ClientApplicationCode, login.ClientApplicationPassword);

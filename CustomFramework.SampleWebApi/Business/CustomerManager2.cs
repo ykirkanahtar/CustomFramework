@@ -1,7 +1,9 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Data;
+using CustomFramework.Data.Utils;
 using CustomFramework.SampleWebApi.Constants;
 using CustomFramework.SampleWebApi.Models;
 using CustomFramework.SampleWebApi.Request;
@@ -32,7 +34,7 @@ namespace CustomFramework.SampleWebApi.Business
             {
                 var result = Mapper.Map<Customer>(request);
 
-                await UniqueCheckForCustomerNoAsync(request.CustomerNo);
+                UniqueCheckForCustomerNo(request.CustomerNo);
 
                 AddToRepository(result);
 
@@ -64,7 +66,7 @@ namespace CustomFramework.SampleWebApi.Business
                 var result = await GetByIdAsync(id);
                 Mapper.Map(request, result);
 
-                await UniqueCheckForCustomerNoAsync(request.CustomerNo);
+                UniqueCheckForCustomerNo(request.CustomerNo);
 
                 UpdateRepository(result);
                 await UnitOfWork.SaveChangesAsync();
@@ -96,7 +98,7 @@ namespace CustomFramework.SampleWebApi.Business
             UnitOfWork.GetRepository<Customer, int>().Delete(entity);
         }
 
-        public async Task UniqueCheckForCustomerNoAsync(string customerNo, int? id = null)
+        public void UniqueCheckForCustomerNo(string customerNo, int? id = null)
         {
             var predicate = PredicateBuilder.New<Customer>();
             predicate = predicate.And(p => p.CustomerNo == customerNo);
@@ -106,7 +108,7 @@ namespace CustomFramework.SampleWebApi.Business
                 predicate = predicate.And(p => p.Id != id);
             }
 
-            var tempResult = await UnitOfWork.GetRepository<Customer, int>().GetAll(predicate: predicate).ToListAsync();
+            var tempResult = UnitOfWork.GetRepository<Customer, int>().GetAll(predicate: predicate).ToList();
 
             BusinessUtil.CheckUniqueValue(tempResult, WebApiResourceConstants.CustomerNo);
         }
@@ -115,33 +117,28 @@ namespace CustomFramework.SampleWebApi.Business
         {
             return CommonOperationAsync(async () =>
                 {
-                    return await GetFromRepoById(id);
+                    return await GetFromRepoByIdAsync(id);
                 }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
                 BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
-
-        public async Task<Customer> GetFromRepoById(int id)
+        public async Task<Customer> GetFromRepoByIdAsync(int id)
         {
-            return await UnitOfWork.GetRepository<Customer, int>().GetAll(predicate: p => p.Id == id
-                , include: source => source.Include(p => p.CurrentAccounts)
-            ).FirstOrDefaultAsync();
+            return await UnitOfWork.GetRepository<Customer, int>().GetAll(predicate: p => p.Id == id).IncludeMultiple(p => p.CurrentAccounts).FirstOrDefaultAsync();
         }
 
         public Task<CustomEntityList<Customer>> GetAllAsync()
         {
             return CommonOperationAsync(async () =>
             {
-                return await GetAllFromRepo();
+                return await GetAllFromRepoAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }
 
-        public async Task<CustomEntityList<Customer>> GetAllFromRepo()
+        public async Task<CustomEntityList<Customer>> GetAllFromRepoAsync()
         {
             return new CustomEntityList<Customer>
             {
-                EntityList = await UnitOfWork.GetRepository<Customer, int>().GetAll(out var count
-                    , include: source => source.Include(p => p.CurrentAccounts)
-                ).ToListAsync(),
+                EntityList = await UnitOfWork.GetRepository<Customer, int>().GetAll(out var count).IncludeMultiple(p => p.CurrentAccounts).ToListAsync(),
                 Count = count,
             };
         }

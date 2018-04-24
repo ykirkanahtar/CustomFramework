@@ -26,37 +26,29 @@ namespace CustomFramework.Data
         public IQueryable<TEntity> GetAll(
              Expression<Func<TEntity, bool>> predicate = null
             , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
-            , Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null
             , ISkipTake skipTake = null
         )
         {
-            return GetAll(false, out var _, predicate, orderBy, include, skipTake);
+            return GetAll(false, out var _, predicate, orderBy, skipTake);
         }
 
         public IQueryable<TEntity> GetAll(out int rowCount
                                                         , Expression<Func<TEntity, bool>> predicate = null
                                                         , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
-                                                        , Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null
                                                         , ISkipTake skipTake = null
                                                         )
         {
-            return GetAll(true, out rowCount, predicate, orderBy, include, skipTake);
+            return GetAll(true, out rowCount, predicate, orderBy, skipTake);
         }
 
         private IQueryable<TEntity> GetAll(bool calculateRowCount
                 , out int rowCount
                 , Expression<Func<TEntity, bool>> predicate = null
                 , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
-                , Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null
                 , ISkipTake skipTake = null
         )
         {
             IQueryable<TEntity> query = _dbSet;
-
-            if (include != null)
-            {
-                query = include(query);
-            }
 
             query = query.Where(predicate != null ? PredicateBuild(predicate) : PredicateBuild());
 

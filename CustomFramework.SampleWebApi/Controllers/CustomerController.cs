@@ -31,7 +31,6 @@ namespace CustomFramework.SampleWebApi.Controllers
 
         [Route("create")]
         [HttpPost]
-        //[AllowAnonymous]
         [Permission(nameof(Customer), Crud.Create)]
         public async Task<IActionResult> Create([FromBody] CustomerRequest request)
         {
@@ -64,7 +63,8 @@ namespace CustomFramework.SampleWebApi.Controllers
 
         [Route("getall")]
         [HttpGet]
-        [Permission(nameof(Customer), Crud.Select)]
+        [AllowAnonymous]
+        //[Permission(nameof(Customer), Crud.Select)]
         public async Task<IActionResult> GetAll(int skip, int take)
         {
             var result = await Manager.GetAllAsync();

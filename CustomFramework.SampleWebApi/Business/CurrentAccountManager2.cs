@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Data;
+using CustomFramework.Data.Utils;
 using CustomFramework.SampleWebApi.Constants;
 using CustomFramework.SampleWebApi.Models;
 using CustomFramework.SampleWebApi.Request;
@@ -134,14 +135,13 @@ namespace CustomFramework.SampleWebApi.Business
 
         public async Task<CurrentAccount> GetFromRepoById(int id)
         {
-            return await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(predicate: p => p.Id == id
-                , include: source => source.Include(p => p.Customer)
-            ).FirstOrDefaultAsync();
+            return await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(predicate: p => p.Id == id).IncludeMultiple(p => p.Customer)
+            .FirstOrDefaultAsync();
         }
 
         public Task<CustomEntityList<CurrentAccount>> GetAllAsync()
         {
-            return CommonOperationAsync(async () => 
+            return CommonOperationAsync(async () =>
             {
                 return await GetAllFromRepo();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
@@ -151,9 +151,7 @@ namespace CustomFramework.SampleWebApi.Business
         {
             return new CustomEntityList<CurrentAccount>
             {
-                EntityList = await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(out var count
-                    , include: source => source.Include(p => p.Customer)
-                ).ToListAsync(),
+                EntityList = await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(out var count).IncludeMultiple(p => p.Customer).ToListAsync(),
                 Count = count,
             };
         }

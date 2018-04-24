@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Data;
+using CustomFramework.Data.Utils;
 using CustomFramework.SampleWebApi.Constants;
 using CustomFramework.SampleWebApi.Models;
 using CustomFramework.SampleWebApi.Request;
@@ -22,7 +23,7 @@ namespace CustomFramework.SampleWebApi.Business
         public CustomerManager(IUnitOfWork unitOfWork, ILogger<CustomerManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
             : base(unitOfWork, logger, mapper, apiRequestAccessor)
         {
-            
+
         }
 
         public Task<Customer> CreateAsync(CustomerRequest request)
@@ -123,9 +124,7 @@ namespace CustomFramework.SampleWebApi.Business
         {
             return CommonOperationAsync(async () =>
                 {
-                    return await UnitOfWork.GetRepository<Customer, int>().GetAll(predicate: p => p.Id == id
-                                                                                 , include: source => source.Include(p => p.CurrentAccounts)
-                                                                                 ).FirstOrDefaultAsync();
+                    return await UnitOfWork.GetRepository<Customer, int>().GetAll(predicate: p => p.Id == id).IncludeMultiple(p => p.CurrentAccounts).FirstOrDefaultAsync();
                 }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
                 BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
@@ -134,9 +133,7 @@ namespace CustomFramework.SampleWebApi.Business
         {
             return CommonOperationAsync(async () => new CustomEntityList<Customer>
             {
-                EntityList = await UnitOfWork.GetRepository<Customer, int>().GetAll(out var count
-                                                                                   , include: source => source.Include(p => p.CurrentAccounts)
-                                                                                   ).ToListAsync(),
+                EntityList = await UnitOfWork.GetRepository<Customer, int>().GetAll(out var count).IncludeMultiple(p => p.CurrentAccounts).ToListAsync(),
                 Count = count,
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }

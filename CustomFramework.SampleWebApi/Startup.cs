@@ -10,8 +10,6 @@ using CustomFramework.SampleWebApi.ApplicationSettings;
 using CustomFramework.SampleWebApi.Business;
 using CustomFramework.SampleWebApi.Data;
 using CustomFramework.SampleWebApi.Data.Seeding;
-using CustomFramework.SampleWebApi.Filters;
-using CustomFramework.SampleWebApi.Models;
 using CustomFramework.SampleWebApi.Request;
 using CustomFramework.SampleWebApi.Resources;
 using CustomFramework.SampleWebApi.Validators;
