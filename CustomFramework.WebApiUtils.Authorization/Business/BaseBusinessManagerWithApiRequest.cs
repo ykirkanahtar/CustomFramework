@@ -12,8 +12,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Business
     {
         protected readonly IApiRequest ApiRequestAccessor;
 
-        public BaseBusinessManagerWithApiRequest(IUnitOfWork unitOfWork, ILogger<BaseBusinessManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
-            : base(unitOfWork, logger, mapper)
+        public BaseBusinessManagerWithApiRequest(ILogger<BaseBusinessManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
+            : base(logger, mapper)
         {
             ApiRequestAccessor = apiRequestAccessor.GetApiRequest<TApiRequest>();
         }

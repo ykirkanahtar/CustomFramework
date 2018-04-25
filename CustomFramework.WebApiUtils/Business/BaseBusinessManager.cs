@@ -12,13 +12,11 @@ namespace CustomFramework.WebApiUtils.Business
 {
     public abstract class BaseBusinessManager
     {
-        protected readonly IUnitOfWork UnitOfWork;
         protected readonly ILogger<BaseBusinessManager> Logger;
         protected readonly IMapper Mapper;
 
-        protected BaseBusinessManager(IUnitOfWork unitOfWork, ILogger<BaseBusinessManager> logger, IMapper mapper)
+        protected BaseBusinessManager(ILogger<BaseBusinessManager> logger, IMapper mapper)
         {
-            UnitOfWork = unitOfWork;
             Logger = logger;
             Mapper = mapper;
         }
@@ -40,13 +38,12 @@ namespace CustomFramework.WebApiUtils.Business
         protected async Task<T> CommonOperationAsync<T>(Func<Task<T>> func
                                                         , BusinessBaseRequest businessBaseRequest
                                                         , BusinessUtilMethod businessUtilMethod
-                                                        , string additionalInfo
-                                                        , bool critical = false)
+                                                        , string additionalInfo)
         {
             try
             {
                 var result = await func.Invoke();
-                BusinessUtil.Execute(businessUtilMethod, result, additionalInfo, critical);
+                BusinessUtil.Execute(businessUtilMethod, result, additionalInfo);
 
                 return result;
             }
@@ -60,13 +57,12 @@ namespace CustomFramework.WebApiUtils.Business
         protected T CommonOperation<T>(Func<T> func
             , BusinessBaseRequest businessBaseRequest
             , BusinessUtilMethod businessUtilMethod
-            , string additionalInfo
-            , bool critical = false)
+            , string additionalInfo)
         {
             try
             {
                 var result = func.Invoke();
-                BusinessUtil.Execute(businessUtilMethod, result, additionalInfo, critical);
+                BusinessUtil.Execute(businessUtilMethod, result, additionalInfo);
 
                 return result;
             }

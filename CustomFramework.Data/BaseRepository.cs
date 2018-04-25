@@ -1,14 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
+using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Enums;
+using CustomFramework.Data.Utils;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
 namespace CustomFramework.Data
 {
-    public class BaseRepository<TEntity, TKey> : IRepository<TEntity>, IDisposable
+    public class BaseRepository<TEntity, TKey> : IRepository<TEntity, TKey>, IDisposable
            where TEntity : BaseModel<TKey>
     {
         private readonly DbContext _dbContext;
@@ -23,49 +27,89 @@ namespace CustomFramework.Data
 
         #region IRepository members
 
+        public async Task<TEntity> GetByIdAsync(TKey id)
+        {
+            return await _dbContext.Set<TEntity>().FindAsync(id);
+        }
+
+        public TEntity GetById(TKey id)
+        {
+            return _dbContext.Set<TEntity>().Find(id);
+        }
+
+        public IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> predicate)
+        {
+            return _dbSet.Where(PredicateBuild(predicate));
+        }
+
         public IQueryable<TEntity> GetAll(
-             Expression<Func<TEntity, bool>> predicate = null
+            Expression<Func<TEntity, bool>> predicate = null
             , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
-            , ISkipTake skipTake = null
-        )
-        {
-            return GetAll(false, out var _, predicate, orderBy, skipTake);
-        }
-
-        public IQueryable<TEntity> GetAll(out int rowCount
-                                                        , Expression<Func<TEntity, bool>> predicate = null
-                                                        , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
-                                                        , ISkipTake skipTake = null
-                                                        )
-        {
-            return GetAll(true, out rowCount, predicate, orderBy, skipTake);
-        }
-
-        private IQueryable<TEntity> GetAll(bool calculateRowCount
-                , out int rowCount
-                , Expression<Func<TEntity, bool>> predicate = null
-                , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
-                , ISkipTake skipTake = null
         )
         {
             IQueryable<TEntity> query = _dbSet;
 
             query = query.Where(predicate != null ? PredicateBuild(predicate) : PredicateBuild());
 
-            rowCount = 0;
-            if (calculateRowCount) rowCount = query.Count();
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+
+            return query;
+        }
+
+        public async Task<ICustomQueryable<TEntity>> GetAllWithPagingAsync(
+            IPaging paging
+            , Expression<Func<TEntity, bool>> predicate = null
+            , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
+        )
+        {
+            IQueryable<TEntity> query = _dbSet;
+
+            query = query.Where(predicate != null ? PredicateBuild(predicate) : PredicateBuild());
+
+            var rowCount = await query.CountAsync();
 
             if (orderBy != null)
             {
                 query = orderBy(query);
             }
 
-            if (skipTake != null)
-                query = query.Skip(skipTake.Skip).Take(skipTake.Take);
+            query = query.Skip(Math.Abs(paging.PageIndex - 1) * paging.PageSize).Take(paging.PageSize);
 
-            return query;
+            return new CustomQueryable<TEntity>
+            {
+                Result = query,
+                Count = rowCount,
+            };
         }
 
+        public ICustomQueryable<TEntity> GetAllWithPaging(
+            IPaging paging
+            , Expression<Func<TEntity, bool>> predicate = null
+            , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
+        )
+        {
+            IQueryable<TEntity> query = _dbSet;
+
+            query = query.Where(predicate != null ? PredicateBuild(predicate) : PredicateBuild());
+
+            var rowCount = query.Count();
+
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+
+            query = query.Skip((paging.PageIndex - 1) * paging.PageSize).Take(paging.PageSize);
+
+            return new CustomQueryable<TEntity>
+            {
+                Result = query,
+                Count = rowCount,
+            };
+        }
 
         public void Add(TEntity entity)
         {

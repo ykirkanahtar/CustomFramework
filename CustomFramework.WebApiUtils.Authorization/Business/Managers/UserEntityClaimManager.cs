@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Authorization;
 using CustomFramework.Authorization.Enums;
 using CustomFramework.Data;
+using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Constants;
 using CustomFramework.WebApiUtils.Authorization.Contracts;
+using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Utils;
@@ -23,11 +26,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
     public class UserEntityClaimManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IUserEntityClaimManager
     {
-
-        public UserEntityClaimManager(IUnitOfWork unitOfWork, ILogger<UserEntityClaimManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) 
-            : base(unitOfWork, logger, mapper, apiRequestAccessor)
+        private readonly IUnitOfWorkAuthorization _uow;
+        public UserEntityClaimManager(IUnitOfWorkAuthorization uow, ILogger<UserEntityClaimManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
+            : base(logger, mapper, apiRequestAccessor)
         {
-
+            _uow = uow;
         }
 
         public Task<UserEntityClaim> CreateAsync(UserEntityClaimRequest request)
@@ -36,11 +39,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             {
                 var result = Mapper.Map<UserEntityClaim>(request);
 
-                await UniqueCheckForUserAndEntityAsync(result);
+                var tempResult = await _uow.UserEntityClaims.GetByUserIdAndEntityAsync(result.UserId, result.Entity);
+                tempResult.CheckUniqueValue(AuthorizationConstants.Entity);
 
-                UnitOfWork.GetRepository<UserEntityClaim, int>().Add(result);
-
-                await UnitOfWork.SaveChangesAsync();
+                _uow.UserEntityClaims.Add(result);
+                await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
@@ -52,8 +55,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 var result = await GetByIdAsync(id);
                 Mapper.Map(request, result);
 
-                UnitOfWork.GetRepository<UserEntityClaim, int>().Update(result);
-                await UnitOfWork.SaveChangesAsync();
+                _uow.UserEntityClaims.Update(result);
+                await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
@@ -63,100 +66,37 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
-
-                UnitOfWork.GetRepository<UserEntityClaim, int>().Delete(result);
-
-                await UnitOfWork.SaveChangesAsync();
+                _uow.UserEntityClaims.Delete(result);
+                await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
         public Task<UserEntityClaim> GetByIdAsync(int id)
         {
-            return CommonOperationAsync(async () =>
-            {
-                return await UnitOfWork.GetRepository<UserEntityClaim, int>().GetAll(predicate: p => p.Id == id).FirstOrDefaultAsync();
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
-            BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.UserEntityClaims.GetByIdAsync(id), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+                BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
+
         }
 
         public Task<bool> UserIsAuthorizedForEntityClaimAsync(int userId, string entity, Crud crud)
         {
             return CommonOperationAsync(async () =>
             {
-                var predicate = PredicateBuilder.New<UserEntityClaim>();
-                predicate = predicate.And(p => p.UserId == userId);
-                predicate = predicate.And(p => p.Entity == entity);
-
-                PredicateBuilderForCrud(ref predicate, crud);
-
-                return (await UnitOfWork.GetRepository<UserEntityClaim, int>().GetAll(predicate: predicate).ToListAsync()).Count > 0;
-
+                var result = await _uow.UserEntityClaims.UserIsAuthorizedForEntityClaimAsync(userId, entity, crud);
+                return result.Count > 0;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }
 
-        public Task<CustomEntityList<UserEntityClaim>> GetAllByEntityAsync(string entity)
+        public Task<ICustomList<UserEntityClaim>> GetAllByEntityAsync(string entity)
         {
-            return CommonOperationAsync(async () =>
-            {
-                return new CustomEntityList<UserEntityClaim>
-                {
-                    EntityList = await UnitOfWork.GetRepository<UserEntityClaim, int>().GetAll(out var count, predicate: p => p.Entity == entity).ToListAsync(),
-                    Count = count,
-                };
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.UserEntityClaims.GetAllByEntityAsync(entity), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+                BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
-        public Task<CustomEntityList<UserEntityClaim>> GetAllByUserIdAsync(int userId)
+        public Task<ICustomList<UserEntityClaim>> GetAllByUserIdAsync(int userId)
         {
-            return CommonOperationAsync(async () =>
-            {
-                return new CustomEntityList<UserEntityClaim>
-                {
-                    EntityList = await UnitOfWork.GetRepository<UserEntityClaim, int>().GetAll(out var count, predicate: p => p.UserId == userId).Select(p => p).ToListAsync(),
-                    Count = count,
-                };
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.UserEntityClaims.GetAllByUserIdAsync(userId), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+                BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
-
-        #region Validations
-        private async Task UniqueCheckForUserAndEntityAsync(UserEntityClaim entity, int? id = null)
-        {
-            var predicate = PredicateBuilder.New<UserEntityClaim>();
-            predicate = predicate.And(p => p.UserId == entity.UserId);
-            predicate = predicate.And(p => p.Entity == entity.Entity);
-
-            if (id != null)
-            {
-                predicate = predicate.And(p => p.Id != id);
-            }
-
-            var tempResult = await UnitOfWork.GetRepository<UserEntityClaim, int>().GetAll(predicate: predicate).ToListAsync();
-
-            BusinessUtil.CheckUniqueValue(tempResult, AuthorizationConstants.Entity);
-        }
-
-        #endregion
-
-        private static void PredicateBuilderForCrud(ref ExpressionStarter<UserEntityClaim> predicate, Crud crud)
-        {
-            switch (crud)
-            {
-                case Crud.Create:
-                    predicate = predicate.And(p => p.CanCreate);
-                    break;
-                case Crud.Update:
-                    predicate = predicate.And(p => p.CanUpdate);
-                    break;
-                case Crud.Delete:
-                    predicate = predicate.And(p => p.CanDelete);
-                    break;
-                case Crud.Select:
-                    predicate = predicate.And(p => p.CanSelect);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(crud), crud, null);
-            }
-        }
-
     }
 }

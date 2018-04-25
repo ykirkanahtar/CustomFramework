@@ -1,8 +1,8 @@
 ﻿namespace CustomFramework.Data
 {
-    public interface ISkipTake
+    public interface IPaging
     {
-        int Skip { get; }
-        int Take { get; }
+        int PageIndex { get; }
+        int PageSize { get; }
     }
 }

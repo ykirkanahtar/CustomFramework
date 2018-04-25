@@ -9,10 +9,12 @@ using CustomFramework.Data.Extensions;
 using CustomFramework.SampleWebApi.ApplicationSettings;
 using CustomFramework.SampleWebApi.Business;
 using CustomFramework.SampleWebApi.Data;
+using CustomFramework.SampleWebApi.Data.Repositories;
 using CustomFramework.SampleWebApi.Data.Seeding;
 using CustomFramework.SampleWebApi.Request;
 using CustomFramework.SampleWebApi.Resources;
 using CustomFramework.SampleWebApi.Validators;
+using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Data.Seeding;
 using CustomFramework.WebApiUtils.Authorization.Extensions;
 using CustomFramework.WebApiUtils.Authorization.Filters;
@@ -27,6 +29,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -115,12 +118,19 @@ namespace CustomFramework.SampleWebApi
                 options.RequestCultureProviders.Insert(0, new AcceptLanguageHeaderRequestCultureProvider());
             });
 
+
+            services.AddTransient<IUnitOfWorkSampleWebApi, UnitOfWorkSampleWebApi>();
+            services.AddScoped<DbContext, ApplicationContext>();
+            services.AddScoped<AuthorizationContext, ApplicationContext>();
+
+            /*********Repositories*********/
+            services.AddTransient<ICustomerRepository, CustomerRepository>();
+            services.AddTransient<ICurrentAccountRepository, CurrentAccountRepository>();
+            /*********Repositories*********/
+
             /*********Managers*********/
             services.AddTransient<ICustomerManager, CustomerManager>();
             services.AddTransient<ICurrentAccountManager, CurrentAccountManager>();
-
-            services.AddTransient<ICurrentAccountManager2, CurrentAccountManager2>();
-            services.AddTransient<ICustomerManager2, CustomerManager2>();
             /*********Managers*********/
 
             /************Fluent Validation************/

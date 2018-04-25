@@ -1,27 +1,25 @@
-﻿using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
-using CustomFramework.Data;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Contracts;
+using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Utils;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Enums;
-using CustomFramework.WebApiUtils.Utils;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
     public class ClientApplicationUtilManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IClientApplicationUtilManager
     {
-        public ClientApplicationUtilManager(IUnitOfWork unitOfWork, ILogger<ClientApplicationUtilManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
-            : base(unitOfWork, logger, mapper, apiRequestAccessor)
+        private readonly IUnitOfWorkAuthorization _uow;
+        public ClientApplicationUtilManager(IUnitOfWorkAuthorization uow, ILogger<ClientApplicationUtilManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
+            : base(logger, mapper, apiRequestAccessor)
         {
-
+            _uow = uow;
         }
 
         public Task<ClientApplicationUtil> CreateAsync(ClientApplicationUtilRequest request)
@@ -30,8 +28,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             {
                 var result = Mapper.Map<ClientApplicationUtil>(request);
 
-                UnitOfWork.GetRepository<ClientApplicationUtil, int>().Add(result);
-                await UnitOfWork.SaveChangesAsync();
+                _uow.ClientApplicationUtils.Add(result);
+                await _uow.SaveChangesAsync();
                 return result;
 
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -44,10 +42,9 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 var result = await GetByIdAsync(id);
                 Mapper.Map(request, result);
 
-                UnitOfWork.GetRepository<ClientApplicationUtil, int>().Update(result);
-                await UnitOfWork.SaveChangesAsync();
+                _uow.ClientApplicationUtils.Update(result);
+                await _uow.SaveChangesAsync();
                 return result;
-
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
@@ -56,34 +53,21 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
-
-                UnitOfWork.GetRepository<ClientApplicationUtil, int>().Delete(result);
-
-                await UnitOfWork.SaveChangesAsync();
+                _uow.ClientApplicationUtils.Delete(result);
+                await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
         public Task<ClientApplicationUtil> GetByIdAsync(int id)
         {
-            return CommonOperationAsync(async () =>
-            {
-                return await UnitOfWork.GetRepository<ClientApplicationUtil, int>().GetAll(p => p.Id == id)
-                    .FirstOrDefaultAsync();
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.ClientApplicationUtils.GetByIdAsync(id), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+                BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
         public Task<ClientApplicationUtil> GetByClientApplicationIdAsync(int clientApplicationId)
         {
-            return CommonOperationAsync(async () =>
-            {
-                var result = await UnitOfWork.GetRepository<ClientApplicationUtil, int>()
-                    .GetAll(predicate: p => p.ClientApplicationId == clientApplicationId)
-                    .Select(p => p)
-                    .ToListAsync();
-
-                BusinessUtil.UniqueGenericListChecker(result, GetType().Name);
-                return result[0];
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.ClientApplicationUtils.GetByClientApplicationIdAsync(clientApplicationId), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+                BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
-   }
+    }
 }

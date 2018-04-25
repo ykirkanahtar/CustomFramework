@@ -1,13 +1,17 @@
-﻿using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
+﻿using CustomFramework.Data;
+using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Business.Managers;
 using CustomFramework.WebApiUtils.Authorization.Contracts;
+using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Data.DataInitializers;
+using CustomFramework.WebApiUtils.Authorization.Data.Repositories;
 using CustomFramework.WebApiUtils.Authorization.Handlers;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Utils;
 using CustomFramework.WebApiUtils.Authorization.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CustomFramework.WebApiUtils.Authorization.Extensions
@@ -16,10 +20,26 @@ namespace CustomFramework.WebApiUtils.Authorization.Extensions
     {
         public static IServiceCollection AddAuthorizationModels(this IServiceCollection services)
         {
+            services.AddTransient<IUnitOfWorkAuthorization, UnitOfWorkAuthorization>();
+            services.AddScoped<DbContext, AuthorizationContext>();
             services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
             services.AddTransient<IApiRequestAccessor, ApiRequestAccessor>();
             services.AddTransient<IApiRequest, ApiRequest>();
             services.AddSingleton<IToken, Token>();
+
+            /*********Repositories*********/
+            services.AddTransient<IClaimRepository, ClaimRepository>();
+            services.AddTransient<IClientApplicationRepository, ClientApplicationRepository>();
+            services.AddTransient<IClientApplicationUtilRepository, ClientApplicationUtilRepository>();
+            services.AddTransient<IRoleClaimRepository, RoleClaimRepository>();
+            services.AddTransient<IRoleEntityClaimRepository, RoleEntityClaimRepository>();
+            services.AddTransient<IRoleRepository, RoleRepository>();
+            services.AddTransient<IUserClaimRepository, UserClaimRepository>();
+            services.AddTransient<IUserEntityClaimRepository, UserEntityClaimRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IUserRoleRepository, UserRoleRepository>();
+            services.AddTransient<IUserUtilRepository, UserUtilRepository>();
+            /*********Repositories*********/
 
             /**********Managers***********/
             services.AddTransient<IClaimManager, ClaimManager>();

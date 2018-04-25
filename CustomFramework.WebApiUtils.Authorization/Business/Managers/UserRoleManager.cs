@@ -1,29 +1,27 @@
-﻿using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
-using CustomFramework.Data;
+using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Contracts;
+using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Utils;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Enums;
 using CustomFramework.WebApiUtils.Utils;
-using LinqKit;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
-    public class UserRoleManager : BaseBusinessManagerWithApiRequest< ApiRequest>, IUserRoleManager
+    public class UserRoleManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IUserRoleManager
     {
-
-        public UserRoleManager(IUnitOfWork unitOfWork, ILogger<UserRoleManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) 
-            : base(unitOfWork, logger, mapper, apiRequestAccessor)
+        private readonly IUnitOfWorkAuthorization _uow;
+        public UserRoleManager(IUnitOfWorkAuthorization uow, ILogger<UserRoleManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
+            : base(logger, mapper, apiRequestAccessor)
         {
-
+            _uow = uow;
         }
 
         public Task<UserRole> CreateAsync(UserRoleRequest request)
@@ -38,17 +36,16 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
                 /******************References Table Check Values****************/
                 /***************************************************************/
-                await BusinessUtil.GetByIntIdChecker<Role, IRepository<Role>>(result.RoleId, UnitOfWork.GetRepository<Role, int>());
-
-                await BusinessUtil.GetByIntIdChecker<User, IRepository<User>>(result.UserId, UnitOfWork.GetRepository<User, int>());
+                (await _uow.Roles.GetByIdAsync(result.RoleId)).CheckRecordIsExist(typeof(Role).Name);
+                (await _uow.Users.GetByIdAsync(result.UserId)).CheckRecordIsExist(typeof(User).Name);
                 /***************************************************************/
                 /***************************************************************/
 
-                await UniqueCheckForUserAndRoleAsync(result);
+                var tempResult = await _uow.UserRoles.GetByUserIdAndRoleIdAsync(result.UserId, result.RoleId);
+                tempResult.CheckUniqueValue(GetType().Name);
 
-                UnitOfWork.GetRepository<UserRole, int>().Add(result);
-
-                await UnitOfWork.SaveChangesAsync();
+                _uow.UserRoles.Add(result);
+                await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
@@ -58,63 +55,25 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
-
-                UnitOfWork.GetRepository<UserRole, int>().Delete(result);
-
-                await UnitOfWork.SaveChangesAsync();
+                _uow.UserRoles.Delete(result);
+                await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
         public Task<UserRole> GetByIdAsync(int id)
         {
-            return CommonOperationAsync(async () =>
-            {
-                return await UnitOfWork.GetRepository<UserRole, int>().GetAll(predicate: p => p.Id == id).FirstOrDefaultAsync();
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
-            BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.UserRoles.GetByIdAsync(id), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+                BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
-        public Task<CustomEntityList<User>> GetUsersByRoleIdAsync(int roleId)
+        public Task<ICustomList<User>> GetUsersByRoleIdAsync(int roleId)
         {
-            return CommonOperationAsync(async () =>
-            {
-                return new CustomEntityList<User>
-                {
-                    EntityList = await UnitOfWork.GetRepository<UserRole, int>().GetAll(out var count, predicate: p => p.RoleId == roleId).Select(p => p.User).ToListAsync(),
-                    Count = count,
-                };
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.UserRoles.GetUsersByRoleIdAsync(roleId), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }
 
-        public Task<CustomEntityList<Role>> GetRolesByUserIdAsync(int userId)
+        public Task<ICustomList<Role>> GetRolesByUserIdAsync(int userId)
         {
-            return CommonOperationAsync(async () =>
-            {
-                return new CustomEntityList<Role>
-                {
-                    EntityList = await UnitOfWork.GetRepository<UserRole, int>().GetAll(out var count, predicate: p => p.UserId == userId).Select(p => p.Role).ToListAsync(),
-                    Count = count,
-                };
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.UserRoles.GetRolesByUserIdAsync(userId), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }
-
-        #region Validations
-        private async Task UniqueCheckForUserAndRoleAsync(UserRole entity, int? id = null)
-        {
-            var predicate = PredicateBuilder.New<UserRole>();
-            predicate = predicate.And(p => p.RoleId == entity.RoleId);
-            predicate = predicate.And(p => p.UserId == entity.UserId);
-
-            if (id != null)
-            {
-                predicate = predicate.And(p => p.Id != id);
-            }
-
-            var tempResult = await UnitOfWork.GetRepository<UserRole, int>().GetAll(predicate: predicate).ToListAsync();
-
-            BusinessUtil.CheckUniqueValue(tempResult, GetType().Name);
-        }
-
-        #endregion
     }
 }

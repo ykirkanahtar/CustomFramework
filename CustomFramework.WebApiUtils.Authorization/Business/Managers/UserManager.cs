@@ -6,10 +6,12 @@ using System.Security.Authentication;
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Data;
+using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Utils;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Constants;
 using CustomFramework.WebApiUtils.Authorization.Contracts;
+using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Utils;
@@ -25,10 +27,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
     public class UserManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IUserManager
     {
-        public UserManager(IUnitOfWork unitOfWork, ILogger<UserManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) 
-            : base(unitOfWork, logger, mapper, apiRequestAccessor)
+        private readonly IUnitOfWorkAuthorization _uow;
+        public UserManager(IUnitOfWorkAuthorization uow, ILogger<UserManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
+            : base(logger, mapper, apiRequestAccessor)
         {
-
+            _uow = uow;
         }
 
         public Task<User> CreateAsync(UserRequest request)
@@ -37,9 +40,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             {
                 var result = Mapper.Map<User>(request);
 
-                await UniqueCheckForUserNameAsync(result);
+                var tempResult = await _uow.Users.GetByUserNameAsync(result.UserName);
+                tempResult.CheckUniqueValue(AuthorizationConstants.UserName);
 
-                await UniqueCheckForEmailAsync(result);
+                tempResult = await _uow.Users.GetByEmailAsync(result.Email);
+                tempResult.CheckUniqueValue(AuthorizationConstants.Email);
 
                 var salt = HashString.GetSalt();
                 var hashPassword = HashString.Hash(result.Password, salt,
@@ -47,11 +52,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
                 result.Password = hashPassword;
 
-                UnitOfWork.GetRepository<User, int>().Add(result);
+                _uow.Users.Add(result);
 
                 CreateUserUtil(result.Id, salt);
 
-                await UnitOfWork.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
@@ -61,13 +66,13 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
-
                 result.UserName = userName;
 
-                await UniqueCheckForUserNameAsync(result, id);
+                var tempResult = await _uow.Users.GetByUserNameAsync(result.UserName);
+                tempResult.CheckUniqueValueForUpdate(id, AuthorizationConstants.UserName);
 
-                UnitOfWork.GetRepository<User, int>().Update(result);
-                await UnitOfWork.SaveChangesAsync();
+                _uow.Users.Update(result);
+                await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
@@ -84,11 +89,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
                 result.Password = hashPassword;
 
-                UnitOfWork.GetRepository<User, int>().Update(result);
+                _uow.Users.Update(result);
 
                 await UpdateUserUtilAsync(id, salt);
 
-                await UnitOfWork.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
@@ -98,13 +103,13 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
-
                 result.Email = email;
 
-                await UniqueCheckForEmailAsync(result, id);
+                var tempResult = await _uow.Users.GetByEmailAsync(result.Email);
+                tempResult.CheckUniqueValueForUpdate(id, AuthorizationConstants.Email);
 
-                UnitOfWork.GetRepository<User, int>().Update(result);
-                await UnitOfWork.SaveChangesAsync();
+                _uow.Users.Update(result);
+                await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
@@ -114,10 +119,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
-
-                UnitOfWork.GetRepository<User, int>().Delete(result);
-
-                await UnitOfWork.SaveChangesAsync();
+                _uow.Users.Delete(result);
+                await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
@@ -125,130 +128,63 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
         {
             return CommonOperationAsync(async () =>
             {
-                var user = await UnitOfWork.GetRepository<User, int>().GetAll(predicate: p => p.UserName == userName).FirstOrDefaultAsync();
-
+                var user = await _uow.Users.GetByUserNameAsync(userName);
                 if (user == null) throw new AuthenticationException();
 
                 /** Hash password **/
-                var clientApplicationUtil = await UnitOfWork.GetRepository<UserUtil, int>().GetAll(predicate: p => p.UserId == user.Id).FirstOrDefaultAsync();
-                var hashed = HashString.Hash(password, clientApplicationUtil.SpecialValue,
+                var userUtil = await _uow.UserUtils.GetByUserIdAsync(user.Id);
+                var hashed = HashString.Hash(password, userUtil.SpecialValue,
                     AuthorizationUtilConstants.IterationCountForHashing);
                 password = hashed;
                 /*******************/
 
-                var result = await UnitOfWork.GetRepository<User, int>().GetAll(predicate: p => p.UserName == userName && p.Password == password).Select(p => p).ToListAsync();
+                var result = await _uow.Users.GetByUserNameAndPasswordAsync(userName, password);
+                if (result == null) throw new AuthenticationException();
 
-                if (result.Count == 0) throw new AuthenticationException();
-                if (result.Count > 1) throw new DuplicateNameException(DefaultResponseMessages.DuplicateRecordForUniqueValueError);
-
-                return result[0];
+                return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
         public Task<User> GetByIdAsync(int id)
         {
-            return CommonOperationAsync(async () =>
-            {
-                var result = await UnitOfWork.GetRepository<User, int>().GetAll(predicate: p => p.Id == id).FirstOrDefaultAsync();
-                return result;
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
-            BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.Users.GetByIdAsync(id), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+                BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
         public Task<User> GetByUserNameAsync(string userName)
         {
-            return CommonOperationAsync(async () =>
-            {
-                var result = await UnitOfWork.GetRepository<User, int>().GetAll(predicate: p => p.UserName == userName).ToListAsync();
-
-                BusinessUtil.UniqueGenericListChecker(result, GetType().Name);
-                return result[0];
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.Users.GetByUserNameAsync(userName), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+                BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
         public Task<User> GetByEmailAsync(string email)
         {
-            return CommonOperationAsync(async () =>
-            {
-                var result = await UnitOfWork.GetRepository<User, int>().GetAll(predicate: p => p.Email == email).ToListAsync();
-
-                BusinessUtil.UniqueGenericListChecker(result, GetType().Name);
-                return result[0];
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.Users.GetByEmailAsync(email), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+                BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
-        public Task<CustomEntityList<User>> GetAllAsync()
+        public Task<ICustomList<User>> GetAllAsync()
         {
-            return CommonOperationAsync(async () => new CustomEntityList<User>
-            {
-                EntityList = await UnitOfWork.GetRepository<User, int>().GetAll(out var count).Select(p => p).ToListAsync(),
-                Count = count,
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.Users.GetAllAsync(), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }
-
-        #region Validations
-        private async Task UniqueCheckForUserNameAsync(User entity, int? id = null)
-        {
-            var predicate = PredicateBuilder.New<User>();
-            predicate = predicate.And(p => p.UserName == entity.UserName);
-
-            if (id != null)
-            {
-                predicate = predicate.And(p => p.Id != id);
-            }
-
-            var tempResult = await UnitOfWork.GetRepository<User, int>().GetAll(predicate: predicate).ToListAsync();
-
-            BusinessUtil.CheckUniqueValue(tempResult, AuthorizationConstants.UserName);
-        }
-
-        private async Task UniqueCheckForEmailAsync(User entity, int? id = null)
-        {
-            var predicate = PredicateBuilder.New<User>();
-            predicate = predicate.And(p => p.Email == entity.Email);
-
-            if (id != null)
-            {
-                predicate = predicate.And(p => p.Id != id);
-            }
-
-            var tempResult = await UnitOfWork.GetRepository<User, int>().GetAll(predicate: predicate).ToListAsync();
-
-            BusinessUtil.CheckUniqueValue(tempResult, AuthorizationConstants.Email);
-        }
-
-        #endregion
-
 
         #region UserUtil
-        private async Task<UserUtil> GetUserUtilByIdAsync(int id)
+        private async Task UpdateUserUtilAsync(int userId, string salt)
         {
-            return await UnitOfWork.GetRepository<UserUtil, int>().GetAll(predicate: p => p.Id == id).FirstOrDefaultAsync();
-        }
-
-        private async Task<UserUtil> GetUserUtilByUserIdAsync(int userId)
-        {
-            return await UnitOfWork.GetRepository<UserUtil, int>().GetAll(predicate: p => p.UserId == userId).FirstOrDefaultAsync();
-        }
-
-        private async Task UpdateUserUtilAsync(int id, string salt)
-        {
-            var clientApplicationUtil = await GetUserUtilByUserIdAsync(id);
-            clientApplicationUtil.SpecialValue = salt;
-            UnitOfWork.GetRepository<UserUtil, int>().Update(clientApplicationUtil);
+            var userUtil = await _uow.UserUtils.GetByUserIdAsync(userId);
+            userUtil.SpecialValue = salt;
+            _uow.UserUtils.Update(userUtil);
         }
 
         private void CreateUserUtil(int id, string salt)
         {
-            var clientApplicationUtil = new UserUtil
+            var userUtil = new UserUtil
             {
                 UserId = id,
                 SpecialValue = salt,
             };
-
-            UnitOfWork.GetRepository<UserUtil, int>().Add(clientApplicationUtil);
+            _uow.UserUtils.Add(userUtil);
         }
-
         #endregion
     }
 }

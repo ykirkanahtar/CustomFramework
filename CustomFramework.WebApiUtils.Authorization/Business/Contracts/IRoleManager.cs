@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
+using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Business;
-using CustomFramework.WebApiUtils.Utils;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
 {
@@ -10,6 +10,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
                                     , IBusinessManagerUpdate<Role, RoleRequest, int>
     {
         Task<Role> GetByNameAsync(string name);
-        Task<CustomEntityList<Role>> GetAllAsync();
+        Task<ICustomList<Role>> GetAllAsync();
     }
 }

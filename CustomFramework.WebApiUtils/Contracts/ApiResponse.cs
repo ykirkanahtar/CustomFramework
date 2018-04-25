@@ -45,7 +45,7 @@ namespace CustomFramework.WebApiUtils.Contracts
             return this;
         }
 
-        public ApiResponse Ok<T>(IList<T> list, int totalCount)
+        public ApiResponse Ok<T>(IEnumerable<T> list, int totalCount)
         {
             StatusCode = HttpStatusCode.OK;
             Result = list;

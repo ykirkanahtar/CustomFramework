@@ -9,6 +9,7 @@ using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Response;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -32,7 +33,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             return await BaseCreate(request);
         }
 
-        [Route("{id}/update")]
+        [Route("{id:int}/update")]
         [HttpPut]
         [Permission(nameof(Claim), Crud.Update)]
         public async Task<IActionResult> Update(int id, [FromBody] ClaimRequest request)
@@ -48,7 +49,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             return await BaseDelete(id);
         }
 
-        [Route("get/id/{id}")]
+        [Route("get/id/{id:int}")]
         [HttpGet]
         [Permission(nameof(Claim), Crud.Select)]
         public async Task<IActionResult> GetById(int id)
@@ -65,14 +66,14 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<Claim, ClaimResponse>(result)));
         }
 
-        [Route("getall")]
+        [Route("getall/pageindex/{pageIndex:int}/pagesize/{pageSize:int}")]
         [HttpGet]
         [Permission(nameof(Claim), Crud.Select)]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(int pageIndex, int pageSize)
         {
-            var result = await Manager.GetAllAsync();
+            var result = await Manager.GetAllAsync(pageIndex, pageSize);
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result.EntityList),
+                Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result.ResultList),
                 result.Count));
         }
     }

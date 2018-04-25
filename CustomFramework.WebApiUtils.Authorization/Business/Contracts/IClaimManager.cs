@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using CustomFramework.Authorization.Enums;
+using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Business;
-using CustomFramework.WebApiUtils.Utils;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
 {
@@ -11,6 +11,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
                                     , IBusinessManagerUpdate<Claim, ClaimRequest, int>
     {
         Task<Claim> GetByCustomClaimAsync(CustomClaim customClaim);
-        Task<CustomEntityList<Claim>> GetAllAsync();
+        Task<ICustomList<Claim>> GetAllAsync(int pageIndex, int pageSize);
     }
 }

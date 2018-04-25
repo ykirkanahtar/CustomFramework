@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using CustomFramework.Authorization;
 using CustomFramework.Authorization.Attributes;
 using CustomFramework.Authorization.Enums;
 using CustomFramework.Authorization.Handlers;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Constants;
-using CustomFramework.WebApiUtils.Contracts;
-using CustomFramework.WebApiUtils.Utils;
 using Microsoft.AspNetCore.Authorization;
 using ApiRequest = CustomFramework.WebApiUtils.Authorization.Contracts.ApiRequest;
 using IApiRequest = CustomFramework.WebApiUtils.Authorization.Contracts.IApiRequest;
@@ -53,7 +50,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
             try
             {
                 var userId = _apiRequest.User.Id;
-                var roles = (await _userRoleManager.GetRolesByUserIdAsync(userId)).EntityList;
+                var roles = (await _userRoleManager.GetRolesByUserIdAsync(userId)).ResultList;
 
                 foreach (var permissionAttribute in attributes)
                 {
@@ -83,7 +80,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
             context.Succeed(requirement);
         }
 
-        private void UserIsAuthenticated(ClaimsPrincipal claimsPrincipal)
+        private static void UserIsAuthenticated(ClaimsPrincipal claimsPrincipal)
         {
             if (claimsPrincipal == null || claimsPrincipal.Identity.IsAuthenticated == false)
             {
@@ -102,26 +99,26 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
             await AuthorizeWithEntityClaimAsync(userId, roles, entity, crud);
         }
 
-        private async Task<bool> AuthorizeWithCustomClaimAsync(int userId, IList<Role> roles, int claimId)
+        private async Task AuthorizeWithCustomClaimAsync(int userId, IList<Role> roles, int claimId)
         {
             var userIsAuthorized = await _userClaimManager.UserIsAuthorizedForClaimAsync(userId, claimId);
             var roleIsAuthorized = await _roleClaimManager.RolesAreAuthorizedForClaimAsync(roles, claimId);
             if (userIsAuthorized || roleIsAuthorized)
             {
-                return true;
+                return;
             }
 
             throw new KeyNotFoundException();
         }
 
-        private async Task<bool> AuthorizeWithEntityClaimAsync(int userId, IList<Role> roles, string entity, Crud crud)
+        private async Task AuthorizeWithEntityClaimAsync(int userId, IList<Role> roles, string entity, Crud crud)
         {
             var userIsAuthorized = await _userEntityClaimManager.UserIsAuthorizedForEntityClaimAsync(userId, entity, crud);
-            var roleIsAuthorized = await _roleEntityClaimManager.RolesAreAuthorizedForClaimAsync(roles, entity, crud);
+            var roleIsAuthorized = await _roleEntityClaimManager.RolesAreAuthorizedForEntityClaimAsync(roles, entity, crud);
 
             if (userIsAuthorized || roleIsAuthorized)
             {
-                return true;
+                return;
             }
 
             throw new KeyNotFoundException();

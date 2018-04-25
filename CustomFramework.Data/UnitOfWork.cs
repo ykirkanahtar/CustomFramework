@@ -20,7 +20,7 @@ namespace CustomFramework.Data
 
         public TContext DbContext { get; }
 
-        public IRepository<TEntity> GetRepository<TEntity, TKey>() where TEntity : BaseModel<TKey>
+        public IRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : BaseModel<TKey>
         {
             if (_repositories == null)
             {
@@ -33,7 +33,7 @@ namespace CustomFramework.Data
                 _repositories[type] = new BaseRepository<TEntity, TKey>(DbContext);
             }
 
-            return (IRepository<TEntity>)_repositories[type];
+            return (IRepository<TEntity, TKey>)_repositories[type];
         }
 
         public int ExecuteSqlCommand(string sql, params object[] parameters) => DbContext.Database.ExecuteSqlCommand(sql, parameters);

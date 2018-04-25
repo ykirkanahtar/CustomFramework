@@ -11,21 +11,21 @@ namespace CustomFramework.WebApiUtils.Utils
 {
     public static class BusinessUtil
     {
-        public static void Execute<T>(BusinessUtilMethod businessUtilMethod, T result, string additionnalInfo, bool critical = false)
+        public static void Execute<TEntity>(BusinessUtilMethod businessUtilMethod, TEntity result, string additionnalInfo)
         {
             switch (businessUtilMethod)
             {
                 case BusinessUtilMethod.UniqueGenericListChecker:
-                    UniqueGenericListChecker(result, additionnalInfo, critical);
+                    result.UniqueGenericListChecker(additionnalInfo);
                     break;
                 case BusinessUtilMethod.CheckDuplicatationForUniqueValue:
-                    CheckDuplicatationForUniqueValue(result, additionnalInfo);
+                    result.CheckDuplicatationForUniqueValue(additionnalInfo);
                     break;
                 case BusinessUtilMethod.CheckRecordIsExist:
-                    CheckRecordIsExist(result, additionnalInfo, critical);
+                    result.CheckRecordIsExist(additionnalInfo);
                     break;
                 case BusinessUtilMethod.CheckUniqueValue:
-                    CheckUniqueValue(result, additionnalInfo);
+                    result.CheckUniqueValue(additionnalInfo);
                     break;
                 case BusinessUtilMethod.CheckNothing:
                     break;
@@ -34,65 +34,49 @@ namespace CustomFramework.WebApiUtils.Utils
             }
         }
 
-        public static async Task GetByIntIdChecker<T, TRepository>(int id, TRepository repository) where T : BaseModel<int>, new()
-                                                                                    where TRepository : IRepository<T>
+        public static void UniqueGenericListChecker<T>(this T result, string additionalInfo)
         {
-            var result = await repository.GetAll(predicate: p => p.Id == id).FirstOrDefaultAsync();
-            CheckRecordIsExist(result, new T().GetType().Name);
+            result.CheckDuplicatationForUniqueValue(additionalInfo.RemoveManagerString());
+            result.CheckRecordIsExist(additionalInfo.RemoveManagerString());
         }
 
-        public static async Task GetByLongIdChecker<T, TRepository>(long id, TRepository repository) where T : BaseModel<long>, new()
-            where TRepository : IRepository<T>
+        public static void CheckDuplicatationForUniqueValue<T>(this T result, string additionalInfo)
         {
-            var result = await repository.GetAll(predicate: p => p.Id == id).FirstOrDefaultAsync();
-            CheckRecordIsExist(result, new T().GetType().Name);
-        }
-
-        public static void UniqueGenericListChecker<T>(T result, string additionalInfo, bool critical = false)
-        {
-            CheckDuplicatationForUniqueValue(result, additionalInfo.RemoveManagerString());
-            CheckRecordIsExist(result, additionalInfo.RemoveManagerString(), critical);
-        }
-
-        public static void CheckDuplicatationForUniqueValue<T>(T result, string additionalInfo)
-        {
-            if (GetGenericTypeCount(result) <= 1) return;
+            if (result.GetGenericTypeCount() <= 1) return;
             throw new DuplicateNameException(additionalInfo.RemoveManagerString());
         }
 
-        public static void CheckRecordIsExist<T>(T result, string additionalInfo, bool critical = false)
+        public static void CheckRecordIsExist<T>(this T result, string additionalInfo)
         {
-            if (!GenericTypeIsNullOrEmpty(result)) return;
-            if (critical)
-            {
-                //TODO send mail
-            }
+            if (!result.GenericTypeIsNullOrEmpty()) return;
             throw new KeyNotFoundException(additionalInfo.RemoveManagerString());
         }
 
-        public static void CheckUniqueValue<T>(T result, string additionalInfo)
+        public static void CheckUniqueValue<TEntity>(this TEntity result, string additionalInfo)
         {
-            if (!GenericTypeIsNullOrEmpty(result)) throw new DuplicateNameException(additionalInfo.RemoveManagerString());
+            if (!result.GenericTypeIsNullOrEmpty()) throw new DuplicateNameException(additionalInfo.RemoveManagerString());
         }
 
-        public static void FieldIsRequired(object value, string additionalInfo)
+        public static void CheckUniqueValueForUpdate<TEntity, TKey>(this TEntity result, TKey id, string additionalInfo) where TEntity : BaseModel<TKey>
         {
-            if (!(value is null)) return;
-            throw new ArgumentException(additionalInfo.RemoveManagerString());
+            if (result.GenericTypeIsNullOrEmpty()) return;
+            if (!result.Id.Equals(id))
+                throw new DuplicateNameException(additionalInfo.RemoveManagerString());
         }
 
-        public static void FieldIsRequired(DateTime value, string additionalInfo)
+        public static void CheckUniqueValueForUpdate<TEntity, TKey>(this IList<TEntity> result, TKey id, string additionalInfo) where TEntity : BaseModel<TKey>
         {
-            if (value >= DateTime.Now.AddYears(-100)) return;
-            throw new ArgumentException(additionalInfo.RemoveManagerString());
+            if (result.GenericTypeIsNullOrEmpty()) return;
+            if (!(result.Count(p => p.Id.Equals(id)) > 0))
+                throw new DuplicateNameException(additionalInfo.RemoveManagerString());
         }
 
-        private static bool GenericTypeIsNullOrEmpty<T>(T value)
+        private static bool GenericTypeIsNullOrEmpty<T>(this T value)
         {
-            return GetGenericTypeCount(value) <= 0;
+            return value.GetGenericTypeCount() <= 0;
         }
 
-        private static int GetGenericTypeCount<T>(T value)
+        private static int GetGenericTypeCount<T>(this T value)
         {
             if (value == null) return 0;
             var pi = value.GetType().GetProperty("Count");

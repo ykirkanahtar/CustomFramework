@@ -55,7 +55,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
         {
             var result = await Manager.GetUsersByClaimIdAsync(claimId);
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IList<User>, IList<UserResponse>>(result.EntityList),
+                Mapper.Map<IEnumerable<User>, IEnumerable<UserResponse>>(result.ResultList),
                 result.Count));
         }
 
@@ -66,7 +66,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
         {
             var result = await Manager.GetClaimsByUserIdAsync(userId);
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result.EntityList),
+                Mapper.Map<IEnumerable<Claim>, IEnumerable<ClaimResponse>>(result.ResultList),
                 result.Count));
         }
     }

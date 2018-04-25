@@ -2,8 +2,9 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Data;
-using CustomFramework.Data.Utils;
+using CustomFramework.Data.Contracts;
 using CustomFramework.SampleWebApi.Constants;
+using CustomFramework.SampleWebApi.Data;
 using CustomFramework.SampleWebApi.Models;
 using CustomFramework.SampleWebApi.Request;
 using CustomFramework.WebApiUtils.Authorization.Business;
@@ -12,18 +13,17 @@ using CustomFramework.WebApiUtils.Authorization.Utils;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Enums;
 using CustomFramework.WebApiUtils.Utils;
-using LinqKit;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.SampleWebApi.Business
 {
     public class CustomerManager : BaseBusinessManagerWithApiRequest<ApiRequest>, ICustomerManager
     {
-        public CustomerManager(IUnitOfWork unitOfWork, ILogger<CustomerManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
-            : base(unitOfWork, logger, mapper, apiRequestAccessor)
+        private readonly IUnitOfWorkSampleWebApi _uow;
+        public CustomerManager(IUnitOfWorkSampleWebApi uow, ILogger<BaseBusinessManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) 
+            : base(logger, mapper, apiRequestAccessor)
         {
-
+            _uow = uow;
         }
 
         public Task<Customer> CreateAsync(CustomerRequest request)
@@ -33,50 +33,34 @@ namespace CustomFramework.SampleWebApi.Business
                 var result = Mapper.Map<Customer>(request);
 
                 /*******************No is unique**********************/
+                var tempResult = await _uow.Customers.GetByCustomerNoAsync(result.CustomerNo);
+
+                tempResult.CheckUniqueValue(WebApiResourceConstants.CustomerNo);
                 /*****************************************************/
-                var predicate = PredicateBuilder.New<Customer>();
-                predicate = predicate.And(p => p.CustomerNo == request.CustomerNo);
 
-                var tempResult = await UnitOfWork.GetRepository<Customer, int>().GetAll(predicate: predicate).ToListAsync();
 
-                BusinessUtil.CheckUniqueValue(tempResult, WebApiResourceConstants.CustomerNo);
-                /*****************************************************/
-                /*******************No is unique**********************/
-
-                UnitOfWork.GetRepository<Customer, int>().Add(result);
+                _uow.Customers.Add(result);
 
                 //***************Current account code block*******************
-
-                var resultCa = Mapper.Map<CurrentAccount>(request.CurrentAccount);
-                resultCa.CustomerId = result.Id;
+                var currentAccount = Mapper.Map<CurrentAccount>(request.CurrentAccount);
+                currentAccount.CustomerId = result.Id;
 
                 /******************Code is unique*********************/
+                var tempResultCa = await _uow.CurrentAccounts.GetByCodeAsync(currentAccount.Code);
+
+                tempResultCa.CheckUniqueValue(WebApiResourceConstants.CurrentAccountCode);
                 /*****************************************************/
-                var predicateCa = PredicateBuilder.New<CurrentAccount>();
-                predicateCa = predicateCa.And(p => p.Code == request.CurrentAccount.Code);
-
-                var tempResultCa = await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(predicate: predicateCa).ToListAsync();
-
-                BusinessUtil.CheckUniqueValue(tempResultCa, WebApiResourceConstants.CurrentAccountCode);
-                /*****************************************************/
-                /******************Code is unique*********************/
-
 
                 /******************Name is unique*********************/
+                tempResultCa = await _uow.CurrentAccounts.GetByNameAsync(currentAccount.Name);
+
+                tempResultCa.CheckUniqueValue(WebApiResourceConstants.CurrentAccountName);
                 /*****************************************************/
-                predicateCa = PredicateBuilder.New<CurrentAccount>();
-                predicateCa = predicateCa.And(p => p.Name == request.Name);
 
-                tempResultCa = await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(predicate: predicateCa).ToListAsync();
-
-                BusinessUtil.CheckUniqueValue(tempResultCa, WebApiResourceConstants.CurrentAccountName);
-                /*****************************************************/
-                /******************Name is unique*********************/
-
-                UnitOfWork.GetRepository<CurrentAccount, int>().Add(resultCa);
+                _uow.CurrentAccounts.Add(currentAccount);
                 //***************Current account code block*******************
 
-                await UnitOfWork.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
 
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -90,19 +74,13 @@ namespace CustomFramework.SampleWebApi.Business
                 Mapper.Map(request, result);
 
                 /*******************No is unique**********************/
+                var tempResult = await _uow.Customers.GetByCustomerNoAsync(result.CustomerNo);
+
+                tempResult.CheckUniqueValueForUpdate(result.Id, WebApiResourceConstants.CustomerNo);
                 /*****************************************************/
-                var predicate = PredicateBuilder.New<Customer>();
-                predicate = predicate.And(p => p.CustomerNo == request.CustomerNo);
-                predicate = predicate.And(p => p.Id != id);
 
-                var tempResult = await UnitOfWork.GetRepository<Customer, int>().GetAll(predicate: predicate).ToListAsync();
-
-                BusinessUtil.CheckUniqueValue(tempResult, WebApiResourceConstants.CustomerNo);
-                /*****************************************************/
-                /*******************No is unique**********************/
-
-                UnitOfWork.GetRepository<Customer, int>().Update(result);
-                await UnitOfWork.SaveChangesAsync();
+                _uow.Customers.Update(result);
+                await _uow.SaveChangesAsync();
 
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -112,30 +90,23 @@ namespace CustomFramework.SampleWebApi.Business
         {
             return CommonOperationWithTransactionAsync(async () =>
             {
-                var result = await GetByIdAsync(id);
+                var result = await _uow.Customers.GetByIdAsync(id);
 
-                UnitOfWork.GetRepository<Customer, int>().Delete(result);
+                _uow.Customers.Delete(result);
 
-                await UnitOfWork.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
         public Task<Customer> GetByIdAsync(int id)
         {
-            return CommonOperationAsync(async () =>
-                {
-                    return await UnitOfWork.GetRepository<Customer, int>().GetAll(predicate: p => p.Id == id).IncludeMultiple(p => p.CurrentAccounts).FirstOrDefaultAsync();
-                }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+            return CommonOperationAsync(async () => await _uow.Customers.GetByIdAsync(id), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
                 BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
-        public Task<CustomEntityList<Customer>> GetAllAsync()
+        public Task<ICustomList<Customer>> GetAllAsync(int pageIndex, int pageSize)
         {
-            return CommonOperationAsync(async () => new CustomEntityList<Customer>
-            {
-                EntityList = await UnitOfWork.GetRepository<Customer, int>().GetAll(out var count).IncludeMultiple(p => p.CurrentAccounts).ToListAsync(),
-                Count = count,
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.Customers.GetAllAsync(pageIndex, pageSize), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }
     }
 }

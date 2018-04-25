@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
+using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Business;
-using CustomFramework.WebApiUtils.Utils;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
 {
@@ -14,6 +14,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
         Task<User> LoginAsync(string userName, string password);
         Task<User> GetByUserNameAsync(string userName);
         Task<User> GetByEmailAsync(string email);
-        Task<CustomEntityList<User>> GetAllAsync();
+        Task<ICustomList<User>> GetAllAsync();
     }
 }

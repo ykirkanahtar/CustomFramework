@@ -9,6 +9,7 @@ using CustomFramework.Data.Utils;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Constants;
 using CustomFramework.WebApiUtils.Authorization.Contracts;
+using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Utils;
@@ -24,10 +25,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
     public class ClientApplicationManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IClientApplicationManager
     {
-        public ClientApplicationManager(IUnitOfWork unitOfWork, ILogger<ClientApplicationManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) 
-            : base(unitOfWork, logger, mapper, apiRequestAccessor)
+        private readonly IUnitOfWorkAuthorization _uow;
+        public ClientApplicationManager(IUnitOfWorkAuthorization uow, ILogger<ClientApplicationManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
+            : base(logger, mapper, apiRequestAccessor)
         {
-
+            _uow = uow;
         }
 
         public Task<ClientApplication> CreateAsync(ClientApplicationRequest request)
@@ -36,8 +38,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             {
                 var result = Mapper.Map<ClientApplication>(request);
 
-                await UniqueCheckForClientApplicationNameAsync(result);
-                await UniqueCheckForClientApplicationCodeAsync(result);
+                var tempResult = await _uow.ClientApplications.GetByNameAsync(result.ClientApplicationName);
+                tempResult.CheckUniqueValue(AuthorizationConstants.ClientApplicationName);
+
+                tempResult = await _uow.ClientApplications.GetByCodeAsync(result.ClientApplicationCode);
+                tempResult.CheckUniqueValue(AuthorizationConstants.ClientApplicationCode);
 
                 var salt = HashString.GetSalt();
                 var hashPassword = HashString.Hash(result.ClientApplicationPassword, salt,
@@ -45,11 +50,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
                 result.ClientApplicationPassword = hashPassword;
 
-                UnitOfWork.GetRepository<ClientApplication, int>().Add(result);
+                _uow.ClientApplications.Add(result);
 
                 CreateClientApplicationUtil(result.Id, salt);
 
-                await UnitOfWork.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
@@ -61,11 +66,15 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 var result = await GetByIdAsync(id);
                 Mapper.Map(request, result);
 
-                await UniqueCheckForClientApplicationNameAsync(result, id);
-                await UniqueCheckForClientApplicationCodeAsync(result, id);
+                var tempResult = await _uow.ClientApplications.GetByNameAsync(result.ClientApplicationName);
+                tempResult.CheckUniqueValueForUpdate(id, AuthorizationConstants.ClientApplicationName);
 
-                UnitOfWork.GetRepository<ClientApplication, int>().Update(result);
-                await UnitOfWork.SaveChangesAsync();
+                tempResult = await _uow.ClientApplications.GetByCodeAsync(result.ClientApplicationCode);
+                tempResult.CheckUniqueValueForUpdate(id, AuthorizationConstants.ClientApplicationCode);
+
+                _uow.ClientApplications.Update(result);
+
+                await _uow.SaveChangesAsync();
                 return result;
 
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -83,11 +92,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
                 result.ClientApplicationPassword = hashPassword;
 
-                UnitOfWork.GetRepository<ClientApplication, int>().Update(result);
+                _uow.ClientApplications.Update(result);
 
                 await UpdateClientApplicationUtilAsync(id, salt);
 
-                await UnitOfWork.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
@@ -96,33 +105,24 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
         {
             return CommonOperationWithTransactionAsync(async () =>
             {
-
                 var result = await GetByIdAsync(id);
 
-                UnitOfWork.GetRepository<ClientApplication, int>().Delete(result);
+                _uow.ClientApplications.Delete(result);
 
-                await UnitOfWork.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
         public Task<ClientApplication> GetByIdAsync(int id)
         {
-            return CommonOperationAsync(async () =>
-            {
-                return await UnitOfWork.GetRepository<ClientApplication, int>().GetAll(predicate: p => p.Id == id)
-                    .FirstOrDefaultAsync();
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.ClientApplications.GetByIdAsync(id), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+                BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
         public Task<ClientApplication> GetByClientApplicationCodeAsync(string code)
         {
-            return CommonOperationAsync(async () =>
-            {
-                var result = await UnitOfWork.GetRepository<ClientApplication, int>().GetAll(predicate: p => p.ClientApplicationCode == code).ToListAsync();
-
-                BusinessUtil.UniqueGenericListChecker(result, GetType().Name);
-                return result[0];
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.ClientApplications.GetByCodeAsync(code), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+                BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
         public Task<ClientApplication> LoginAsync(string code, string password)
@@ -140,70 +140,25 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 }
 
                 var clientApplicationUtil =
-                    await GetClientApplicationUtilByClientApplicationIdAsync(clientApplication.Id);
+                    await _uow.ClientApplicationUtils.GetByClientApplicationIdAsync(clientApplication.Id);
 
                 password = HashString.Hash(password, clientApplicationUtil.SpecialValue,
                     AuthorizationUtilConstants.IterationCountForHashing);
 
-                var clientList = await UnitOfWork.GetRepository<ClientApplication, int>().GetAll(predicate: p => p.ClientApplicationCode == code && p.ClientApplicationPassword == password).ToListAsync();
-                if (clientList.Count == 0) throw new AuthenticationException();
-                if (clientList.Count > 1) throw new DuplicateNameException(DefaultResponseMessages.DuplicateRecordForUniqueValueError);
+                var client = await _uow.ClientApplications.GetByCodeAndPasswordAsync(code, password);
+                if (client == null) throw new AuthenticationException();
 
-                return clientList[0];
+                return client;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
-        #region Validations
-        private async Task UniqueCheckForClientApplicationNameAsync(ClientApplication entity, int? id = null)
-        {
-            var predicate = PredicateBuilder.New<ClientApplication>();
-            predicate = predicate.And(p => p.ClientApplicationName == entity.ClientApplicationName);
-
-            if (id != null)
-            {
-                predicate = predicate.And(p => p.Id != id);
-            }
-
-            var tempResult = await UnitOfWork.GetRepository<ClientApplication, int>().GetAll(predicate: predicate).ToListAsync();
-
-            BusinessUtil.CheckUniqueValue(tempResult, AuthorizationConstants.ClientApplicationName);
-        }
-
-        private async Task UniqueCheckForClientApplicationCodeAsync(ClientApplication entity, int? id = null)
-        {
-            var predicate = PredicateBuilder.New<ClientApplication>();
-            predicate = predicate.And(p => p.ClientApplicationCode == entity.ClientApplicationCode);
-
-            if (id != null)
-            {
-                predicate = predicate.And(p => p.Id != id);
-            }
-
-            var tempResult = await UnitOfWork.GetRepository<ClientApplication, int>().GetAll(predicate: predicate).ToListAsync();
-
-            BusinessUtil.CheckUniqueValue(tempResult, AuthorizationConstants.ClientApplicationCode);
-        }
-
-        #endregion
-
         #region ClientApplicationUtil
-        private async Task<ClientApplicationUtil> GetClientApplicationUtilByIdAsync(int id)
-        {
-            return await UnitOfWork.GetRepository<ClientApplicationUtil, int>().GetAll(predicate: p => p.Id == id)
-                .FirstOrDefaultAsync();
-        }
 
-        private async Task<ClientApplicationUtil> GetClientApplicationUtilByClientApplicationIdAsync(int clientApplicationId)
+        private async Task UpdateClientApplicationUtilAsync(int clientApplicationId, string salt)
         {
-            return await UnitOfWork.GetRepository<ClientApplicationUtil, int>()
-                .GetAll(predicate: p => p.ClientApplicationId == clientApplicationId).FirstOrDefaultAsync();
-        }
-
-        private async Task UpdateClientApplicationUtilAsync(int id, string salt)
-        {
-            var clientApplicationUtil = await GetClientApplicationUtilByIdAsync(id);
+            var clientApplicationUtil = await _uow.ClientApplicationUtils.GetByClientApplicationIdAsync(clientApplicationId);
             clientApplicationUtil.SpecialValue = salt;
-            UnitOfWork.GetRepository<ClientApplicationUtil, int>().Update(clientApplicationUtil);
+            _uow.ClientApplicationUtils.Update(clientApplicationUtil);
         }
 
         private void CreateClientApplicationUtil(int id, string salt)
@@ -214,7 +169,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 SpecialValue = salt,
             };
 
-            UnitOfWork.GetRepository<ClientApplicationUtil, int>().Add(clientApplicationUtil);
+            _uow.ClientApplicationUtils.Add(clientApplicationUtil);
         }
 
         #endregion

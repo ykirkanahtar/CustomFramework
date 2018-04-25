@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using CustomFramework.Authorization.Enums;
+using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Business;
-using CustomFramework.WebApiUtils.Utils;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
 {
@@ -11,7 +11,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
                                                 , IBusinessManagerUpdate<UserEntityClaim, EntityClaimRequest, int>
     {
         Task<bool> UserIsAuthorizedForEntityClaimAsync(int userId, string entity, Crud crud);
-        Task<CustomEntityList<UserEntityClaim>> GetAllByEntityAsync(string entity);
-        Task<CustomEntityList<UserEntityClaim>> GetAllByUserIdAsync(int userId);
+        Task<ICustomList<UserEntityClaim>> GetAllByEntityAsync(string entity);
+        Task<ICustomList<UserEntityClaim>> GetAllByUserIdAsync(int userId);
     }
 }

@@ -6,7 +6,7 @@ namespace CustomFramework.Data
 {
     public interface IUnitOfWork : IDisposable
     {
-        IRepository<TEntity> GetRepository<TEntity, TKey>() where TEntity : BaseModel<TKey>;
+        IRepository<TEntity,TKey> GetRepository<TEntity, TKey>() where TEntity : BaseModel<TKey>;
 
         int SaveChanges();
 

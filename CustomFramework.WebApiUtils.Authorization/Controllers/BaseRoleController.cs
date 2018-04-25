@@ -10,7 +10,6 @@ using CustomFramework.WebApiUtils.Authorization.Response;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
@@ -72,7 +71,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
         {
             var result = await Manager.GetAllAsync();
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IList<Role>, IList<RoleResponse>>(result.EntityList),
+                Mapper.Map<IEnumerable<Role>, IEnumerable<RoleResponse>>(result.ResultList),
                 result.Count));
         }
     }

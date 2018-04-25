@@ -1,30 +1,29 @@
 ﻿using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
-using CustomFramework.Data;
-using CustomFramework.Data.Utils;
+using CustomFramework.Data.Contracts;
 using CustomFramework.SampleWebApi.Constants;
+using CustomFramework.SampleWebApi.Data;
 using CustomFramework.SampleWebApi.Models;
 using CustomFramework.SampleWebApi.Request;
 using CustomFramework.WebApiUtils.Authorization.Business;
-using CustomFramework.WebApiUtils.Authorization.Constants;
 using CustomFramework.WebApiUtils.Authorization.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Utils;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Enums;
 using CustomFramework.WebApiUtils.Utils;
-using LinqKit;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.SampleWebApi.Business
 {
     public class CurrentAccountManager : BaseBusinessManagerWithApiRequest<ApiRequest>, ICurrentAccountManager
     {
-        public CurrentAccountManager(IUnitOfWork unitOfWork, ILogger<CurrentAccountManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
-            : base(unitOfWork, logger, mapper, apiRequestAccessor)
-        {
+        private readonly IUnitOfWorkSampleWebApi _uow;
 
+        public CurrentAccountManager(IUnitOfWorkSampleWebApi uow, ILogger<CurrentAccountManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
+            : base(logger, mapper, apiRequestAccessor)
+        {
+            _uow = uow;
         }
 
         public Task<CurrentAccount> CreateAsync(CurrentAccountRequest request)
@@ -35,29 +34,22 @@ namespace CustomFramework.SampleWebApi.Business
 
                 /******************Code is unique*********************/
                 /*****************************************************/
-                var predicate = PredicateBuilder.New<CurrentAccount>();
-                predicate = predicate.And(p => p.Code == request.Code);
+                var tempResult = await _uow.CurrentAccounts.GetByCodeAsync(request.Code);
 
-                var tempResult = await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(predicate: predicate).ToListAsync();
-
-                BusinessUtil.CheckUniqueValue(tempResult, WebApiResourceConstants.CurrentAccountCode);
+                tempResult.CheckUniqueValue(WebApiResourceConstants.CurrentAccountCode);
                 /*****************************************************/
                 /******************Code is unique*********************/
 
 
                 /******************Name is unique*********************/
                 /*****************************************************/
-                predicate = PredicateBuilder.New<CurrentAccount>();
-                predicate = predicate.And(p => p.Name == request.Name);
+                tempResult = await _uow.CurrentAccounts.GetByNameAsync(request.Name);
 
-                tempResult = await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(predicate: predicate).ToListAsync();
-
-                BusinessUtil.CheckUniqueValue(tempResult, WebApiResourceConstants.CurrentAccountName);
+                tempResult.CheckUniqueValue(WebApiResourceConstants.CurrentAccountName);
                 /*****************************************************/
                 /******************Name is unique*********************/
-
-                UnitOfWork.GetRepository<CurrentAccount, int>().Add(result);
-                await UnitOfWork.SaveChangesAsync();
+                _uow.CurrentAccounts.Add(result);
+                await _uow.SaveChangesAsync();
 
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -72,31 +64,24 @@ namespace CustomFramework.SampleWebApi.Business
 
                 /******************Code is unique*********************/
                 /*****************************************************/
-                var predicate = PredicateBuilder.New<CurrentAccount>();
-                predicate = predicate.And(p => p.Code == request.Code);
-                predicate = predicate.And(p => p.Id != id);
+                var tempResult = await _uow.CurrentAccounts.GetByCodeAsync(result.Code);
 
-                var tempResult = await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(predicate: predicate).ToListAsync();
-
-                BusinessUtil.CheckUniqueValue(tempResult, WebApiResourceConstants.CurrentAccountCode);
+                tempResult.CheckUniqueValueForUpdate(result.Id, WebApiResourceConstants.CurrentAccountCode);
                 /*****************************************************/
                 /******************Code is unique*********************/
 
 
                 /******************Name is unique*********************/
                 /*****************************************************/
-                predicate = PredicateBuilder.New<CurrentAccount>();
-                predicate = predicate.And(p => p.Name == request.Name);
-                predicate = predicate.And(p => p.Id != id);
+                tempResult = await _uow.CurrentAccounts.GetByNameAsync(request.Name);
 
-                tempResult = await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(predicate: predicate).ToListAsync();
-
-                BusinessUtil.CheckUniqueValue(tempResult, WebApiResourceConstants.CurrentAccountName);
+                tempResult.CheckUniqueValueForUpdate(result.Id, WebApiResourceConstants.CurrentAccountName);
                 /*****************************************************/
                 /******************Name is unique*********************/
 
-                UnitOfWork.GetRepository<CurrentAccount, int>().Update(result);
-                await UnitOfWork.SaveChangesAsync();
+                _uow.CurrentAccounts.Update(result);
+
+                await _uow.SaveChangesAsync();
 
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -108,28 +93,21 @@ namespace CustomFramework.SampleWebApi.Business
             {
                 var result = await GetByIdAsync(id);
 
-                UnitOfWork.GetRepository<CurrentAccount, int>().Delete(result);
+                _uow.CurrentAccounts.Delete(result);
 
-                await UnitOfWork.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
         public Task<CurrentAccount> GetByIdAsync(int id)
         {
-            return CommonOperationAsync(async () =>
-                {
-                    return await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(predicate: p => p.Id == id).IncludeMultiple(p => p.Customer).FirstOrDefaultAsync();
-                }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+            return CommonOperationAsync(async () => await _uow.CurrentAccounts.GetByIdAsync(id), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
                 BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
-        public Task<CustomEntityList<CurrentAccount>> GetAllAsync()
+        public Task<ICustomList<CurrentAccount>> GetAllByCustomerIdAsync(int customerId)
         {
-            return CommonOperationAsync(async () => new CustomEntityList<CurrentAccount>
-            {
-                EntityList = await UnitOfWork.GetRepository<CurrentAccount, int>().GetAll(out var count).IncludeMultiple(p => p.Customer).ToListAsync(),
-                Count = count,
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.CurrentAccounts.GetAllByCustomerIdAsync(customerId), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }
     }
 }

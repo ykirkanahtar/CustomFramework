@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Authorization.Attributes;
@@ -7,26 +8,24 @@ using CustomFramework.SampleWebApi.ApplicationSettings;
 using CustomFramework.SampleWebApi.Business;
 using CustomFramework.SampleWebApi.Models;
 using CustomFramework.SampleWebApi.Request;
-using CustomFramework.SampleWebApi.Resources;
 using CustomFramework.SampleWebApi.Response;
 using CustomFramework.WebApiUtils.Authorization.Controllers;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.SampleWebApi.Controllers
 {
     [Route(ApiConstants.DefaultRoute + nameof(Customer))]
-    public class CustomerController 
-        : BaseControllerWithAuthorizationAndUpdate<Customer, CustomerRequest, CustomerRequest, CustomerResponse, ICustomerManager2, int>
+    public class CustomerController
+        : BaseControllerWithAuthorizationAndUpdate<Customer, CustomerRequest, CustomerRequest, CustomerResponse, ICustomerManager, int>
     {
-        public CustomerController(ICustomerManager2 customerManager, ILocalizationService localizationService, ILogger<CustomerController> logger, IMapper mapper)
+        public CustomerController(ICustomerManager customerManager, ILocalizationService localizationService, ILogger<CustomerController> logger, IMapper mapper)
         : base(customerManager, localizationService, logger, mapper)
         {
-            
+
         }
 
         [Route("create")]
@@ -61,16 +60,16 @@ namespace CustomFramework.SampleWebApi.Controllers
             return await BaseGetById(id);
         }
 
-        [Route("getall")]
+        [Route("getall/pageindex/{pageIndex:int}/pagesize/{pageSize:int}")]
         [HttpGet]
-        [AllowAnonymous]
-        //[Permission(nameof(Customer), Crud.Select)]
-        public async Task<IActionResult> GetAll(int skip, int take)
+        [Permission(nameof(Customer), Crud.Select)]
+        public async Task<IActionResult> GetAll(int pageIndex, int pageSize)
         {
-            var result = await Manager.GetAllAsync();
+            var result = await Manager.GetAllAsync(pageIndex, pageSize);
 
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IList<Customer>, IList<CustomerResponse>>(result.EntityList), result.Count));
+                Mapper.Map<IList<Customer>, IList<CustomerResponse>>(result.ResultList.ToList()), result.Count));
         }
+
     }
 }

@@ -1,33 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
-using CustomFramework.Authorization;
 using CustomFramework.Authorization.Enums;
-using CustomFramework.Data;
+using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Constants;
 using CustomFramework.WebApiUtils.Authorization.Contracts;
+using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Utils;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Enums;
 using CustomFramework.WebApiUtils.Utils;
-using LinqKit;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
     public class RoleEntityClaimManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IRoleEntityClaimManager
     {
-        public RoleEntityClaimManager(IUnitOfWork unitOfWork, ILogger<RoleEntityClaimManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
-            : base(unitOfWork, logger, mapper, apiRequestAccessor)
+        private readonly IUnitOfWorkAuthorization _uow;
+        public RoleEntityClaimManager(IUnitOfWorkAuthorization uow, ILogger<RoleEntityClaimManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
+            : base(logger, mapper, apiRequestAccessor)
         {
-
+            _uow = uow;
         }
 
         public Task<RoleEntityClaim> CreateAsync(RoleEntityClaimRequest request)
@@ -36,11 +33,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             {
                 var result = Mapper.Map<RoleEntityClaim>(request);
 
-                await UniqueCheckForRoleNameAndEntityClaimAsync(result);
+                var tempResult = await _uow.RoleEntityClaims.GetByRoleIdAndEntityAsync(result.RoleId, result.Entity);
+                tempResult.CheckUniqueValue(AuthorizationConstants.Entity);
 
-                UnitOfWork.GetRepository<RoleEntityClaim, int>().Add(result);
-
-                await UnitOfWork.SaveChangesAsync();
+                _uow.RoleEntityClaims.Add(result);
+                await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
@@ -52,8 +49,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 var result = await GetByIdAsync(id);
                 Mapper.Map(request, result);
 
-                UnitOfWork.GetRepository<RoleEntityClaim, int>().Update(result);
-                await UnitOfWork.SaveChangesAsync();
+                _uow.RoleEntityClaims.Update(result);
+                await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
@@ -63,101 +60,34 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
-
-                UnitOfWork.GetRepository<RoleEntityClaim, int>().Delete(result);
-
-                await UnitOfWork.SaveChangesAsync();
+                _uow.RoleEntityClaims.Delete(result);
+                await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
         public Task<RoleEntityClaim> GetByIdAsync(int id)
         {
-            return CommonOperationAsync(async () =>
-            {
-                return await UnitOfWork.GetRepository<RoleEntityClaim, int>().GetAll(predicate: p => p.Id == id).FirstOrDefaultAsync();
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
-            BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.RoleEntityClaims.GetByIdAsync(id), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+                BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
-        public Task<bool> RolesAreAuthorizedForClaimAsync(IList<Role> roles, string entity, Crud crud)
+        public Task<bool> RolesAreAuthorizedForEntityClaimAsync(IEnumerable<Role> roles, string entity, Crud crud)
         {
             return CommonOperationAsync(async () =>
             {
-                var predicate = PredicateBuilder.New<RoleEntityClaim>();
-
-                predicate = roles.Aggregate(predicate, (current, role) => current.Or(p => p.RoleId == role.Id));
-
-                predicate = predicate.And(p => p.Entity == entity);
-                PredicateBuilderForCrud(ref predicate, crud);
-
-                return (await UnitOfWork.GetRepository<RoleEntityClaim, int>().GetAll(predicate: predicate).ToListAsync())
-                         .Count > 0;
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
-
-        }
-
-        public Task<CustomEntityList<RoleEntityClaim>> GetAllByEntityAsync(string entity)
-        {
-            return CommonOperationAsync(async () =>
-            {
-                return new CustomEntityList<RoleEntityClaim>
-                {
-                    EntityList = await UnitOfWork.GetRepository<RoleEntityClaim, int>().GetAll(out var count, predicate: p => p.Entity == entity).ToListAsync(),
-                    Count = count,
-                };
+                var result = await _uow.RoleEntityClaims.RolesAreAuthorizedForEntityClaimAsync(roles, entity, crud);
+                return result.Count > 0;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }
 
-        public Task<CustomEntityList<RoleEntityClaim>> GetAllByRoleIdAsync(int roleId)
+        public Task<ICustomList<RoleEntityClaim>> GetAllByEntityAsync(string entity)
         {
-            return CommonOperationAsync(async () =>
-            {
-                return new CustomEntityList<RoleEntityClaim>
-                {
-                    EntityList = await UnitOfWork.GetRepository<RoleEntityClaim, int>().GetAll(out var count, predicate: p => p.RoleId == roleId).ToListAsync(),
-                    Count = count,
-                };
-            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.RoleEntityClaims.GetAllByEntityAsync(entity), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }
 
-        #region Validations
-        private async Task UniqueCheckForRoleNameAndEntityClaimAsync(RoleEntityClaim entity, int? id = null)
+        public Task<ICustomList<RoleEntityClaim>> GetAllByRoleIdAsync(int roleId)
         {
-            var predicate = PredicateBuilder.New<RoleEntityClaim>();
-            predicate = predicate.And(p => p.RoleId == entity.RoleId);
-            predicate = predicate.And(p => p.Entity == entity.Entity);
-
-            if (id != null)
-            {
-                predicate = predicate.And(p => p.Id != id);
-            }
-
-            var tempResult = await UnitOfWork.GetRepository<RoleEntityClaim, int>().GetAll(predicate: predicate).ToListAsync();
-
-            BusinessUtil.CheckUniqueValue(tempResult, AuthorizationConstants.Entity);
-        }
-
-        #endregion
-
-        private static void PredicateBuilderForCrud(ref ExpressionStarter<RoleEntityClaim> predicate, Crud crud)
-        {
-            switch (crud)
-            {
-                case Crud.Create:
-                    predicate = predicate.And(p => p.CanCreate);
-                    break;
-                case Crud.Update:
-                    predicate = predicate.And(p => p.CanUpdate);
-                    break;
-                case Crud.Delete:
-                    predicate = predicate.And(p => p.CanDelete);
-                    break;
-                case Crud.Select:
-                    predicate = predicate.And(p => p.CanSelect);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(crud), crud, null);
-            }
+            return CommonOperationAsync(async () => await _uow.RoleEntityClaims.GetAllByRoleIdAsync(roleId), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Authorization.Attributes;
@@ -55,7 +56,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
         {
             var result = await Manager.GetRolesByClaimIdAsync(claimId);
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IList<Role>, IList<RoleResponse>>(result.EntityList),
+                Mapper.Map<IList<Role>, IList<RoleResponse>>(result.ResultList),
                 result.Count));
         }
 
@@ -66,7 +67,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
         {
             var result = await Manager.GetClaimsByRoleIdAsync(roleId);
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result.EntityList),
+                Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result.ResultList),
                 result.Count));
         }
     }

@@ -1,14 +1,14 @@
 ﻿namespace CustomFramework.Data
 {
-    public class SkipTake : ISkipTake
+    public class Paging : IPaging
     {
-        public SkipTake(int skip, int take)
+        public Paging(int pageIndex, int pageSize)
         {
-            Skip = skip;
-            Take = take;
+            PageIndex = pageIndex;
+            PageSize = pageSize;
         }
 
-        public int Skip { get; }
-        public int Take { get; }
+        public int PageIndex { get; }
+        public int PageSize { get; }
     }
 }
