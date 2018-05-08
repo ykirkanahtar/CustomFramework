@@ -10,7 +10,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
     public interface IClaimManager : IBusinessManager<Claim, ClaimRequest, int>
                                     , IBusinessManagerUpdate<Claim, ClaimRequest, int>
     {
-        Task<Claim> GetByCustomClaimAsync(CustomClaim customClaim);
+        Task<Claim> GetByCustomClaimAsync(string customClaim);
         Task<ICustomList<Claim>> GetAllAsync(int pageIndex, int pageSize);
     }
 }

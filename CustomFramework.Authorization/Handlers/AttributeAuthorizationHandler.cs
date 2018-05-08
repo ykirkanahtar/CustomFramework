@@ -17,14 +17,11 @@ namespace CustomFramework.Authorization.Handlers
         {
             var attributes = new List<TAttribute>();
 
-            var action =
-                (context.Resource as AuthorizationFilterContext)?.ActionDescriptor as ControllerActionDescriptor;
+            if (!((context.Resource as AuthorizationFilterContext)?.ActionDescriptor is ControllerActionDescriptor
+                action)) return HandleRequirementAsync(context, requirement, attributes);
 
-            if (action != null)
-            {
-                attributes.AddRange(GetAttributes(action.ControllerTypeInfo.UnderlyingSystemType));
-                attributes.AddRange(GetAttributes(action.MethodInfo));
-            }
+            attributes.AddRange(GetAttributes(action.ControllerTypeInfo.UnderlyingSystemType));
+            attributes.AddRange(GetAttributes(action.MethodInfo));
 
             return HandleRequirementAsync(context, requirement, attributes);
         }
@@ -32,7 +29,7 @@ namespace CustomFramework.Authorization.Handlers
         protected abstract Task HandleRequirementAsync(AuthorizationHandlerContext context, TRequirement requirement,
             IEnumerable<TAttribute> attributes);
 
-        private static IEnumerable<TAttribute> GetAttributes(MemberInfo memberInfo)
+        private static IEnumerable<TAttribute> GetAttributes(ICustomAttributeProvider memberInfo)
         {
             return memberInfo.GetCustomAttributes(typeof(TAttribute), false).Cast<TAttribute>();
         }

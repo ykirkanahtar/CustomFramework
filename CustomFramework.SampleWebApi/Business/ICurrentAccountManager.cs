@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using CustomFramework.Data.Contracts;
 using CustomFramework.SampleWebApi.Models;
-using CustomFramework.SampleWebApi.Request;
+using CustomFramework.SampleWebApi.Requests;
 using CustomFramework.WebApiUtils.Business;
 
 namespace CustomFramework.SampleWebApi.Business

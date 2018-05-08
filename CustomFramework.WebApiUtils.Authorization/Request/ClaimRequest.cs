@@ -4,6 +4,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Request
 {
     public class ClaimRequest
     {
-        public CustomClaim CustomClaim { get; set; }
+        public string CustomClaim { get; set; }
     }
 }

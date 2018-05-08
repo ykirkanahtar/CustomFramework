@@ -15,7 +15,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
 
         }
 
-        public async Task<Claim> GetByCustomClaimAsync(CustomClaim customClaim)
+        public async Task<Claim> GetByCustomClaimAsync(string customClaim)
         {
             return await Get(p => p.CustomClaim == customClaim).FirstOrDefaultAsync();
         }

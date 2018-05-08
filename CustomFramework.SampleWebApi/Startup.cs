@@ -11,7 +11,7 @@ using CustomFramework.SampleWebApi.Business;
 using CustomFramework.SampleWebApi.Data;
 using CustomFramework.SampleWebApi.Data.Repositories;
 using CustomFramework.SampleWebApi.Data.Seeding;
-using CustomFramework.SampleWebApi.Request;
+using CustomFramework.SampleWebApi.Requests;
 using CustomFramework.SampleWebApi.Resources;
 using CustomFramework.SampleWebApi.Validators;
 using CustomFramework.WebApiUtils.Authorization.Data;
@@ -139,7 +139,7 @@ namespace CustomFramework.SampleWebApi
             /************Fluent Validation************/
 
 
-            services.AddMvc(options =>
+            services.AddMvcCore(options =>
                 {
                     options.Filters.Add(typeof(ValidateModelAttribute));
                 })

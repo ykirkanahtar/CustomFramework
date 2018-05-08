@@ -1,4 +1,4 @@
-﻿namespace CustomFramework.SampleWebApi.Request
+﻿namespace CustomFramework.SampleWebApi.Requests
 {
     public class CustomerRequest
     {

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Authorization.Attributes;
@@ -7,8 +6,8 @@ using CustomFramework.Authorization.Enums;
 using CustomFramework.SampleWebApi.ApplicationSettings;
 using CustomFramework.SampleWebApi.Business;
 using CustomFramework.SampleWebApi.Models;
-using CustomFramework.SampleWebApi.Request;
-using CustomFramework.SampleWebApi.Response;
+using CustomFramework.SampleWebApi.Requests;
+using CustomFramework.SampleWebApi.Responses;
 using CustomFramework.WebApiUtils.Authorization.Controllers;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;

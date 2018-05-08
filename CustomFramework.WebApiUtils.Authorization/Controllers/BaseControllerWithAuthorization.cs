@@ -1,14 +1,10 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
-using CustomFramework.Authorization.Attributes;
-using CustomFramework.Authorization.Enums;
 using CustomFramework.Data;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers

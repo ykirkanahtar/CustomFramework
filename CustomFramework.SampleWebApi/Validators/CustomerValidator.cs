@@ -1,6 +1,5 @@
 ﻿using CustomFramework.SampleWebApi.Constants;
-using CustomFramework.SampleWebApi.Models;
-using CustomFramework.SampleWebApi.Request;
+using CustomFramework.SampleWebApi.Requests;
 using CustomFramework.WebApiUtils.Constants;
 using FluentValidation;
 

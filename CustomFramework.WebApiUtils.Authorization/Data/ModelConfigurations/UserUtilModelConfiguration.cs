@@ -20,8 +20,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
             builder
                 .HasOne(r => r.User)
                 .WithOne(c => (T)c.UserUtil)
-                .HasForeignKey<UserUtil>(r => r.UserId);
-
+                .HasForeignKey<UserUtil>(r => r.UserId)
+                .HasPrincipalKey<User>(c=>c.Id);
         }
     }
 }

@@ -5,7 +5,7 @@ using CustomFramework.Data.Contracts;
 using CustomFramework.SampleWebApi.Constants;
 using CustomFramework.SampleWebApi.Data;
 using CustomFramework.SampleWebApi.Models;
-using CustomFramework.SampleWebApi.Request;
+using CustomFramework.SampleWebApi.Requests;
 using CustomFramework.WebApiUtils.Authorization.Business;
 using CustomFramework.WebApiUtils.Authorization.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Utils;

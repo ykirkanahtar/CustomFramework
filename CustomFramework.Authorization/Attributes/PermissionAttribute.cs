@@ -9,11 +9,11 @@ namespace CustomFramework.Authorization.Attributes
     {
         public string Entity { get; set; }
 
-        public CustomClaim? CustomClaim { get; set; }
+        public string CustomClaim { get; set; }
 
         public Crud? Crud { get; set; }
 
-        public PermissionAttribute(CustomClaim customClaim) : base("Permission")
+        public PermissionAttribute(string customClaim) : base("Permission")
         {
             CustomClaim = customClaim;
         }

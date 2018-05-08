@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CustomFramework.SampleWebApi.Response
+namespace CustomFramework.SampleWebApi.Responses
 {
     public class CustomerResponse
     {

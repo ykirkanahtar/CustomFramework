@@ -56,7 +56,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
                 {
                     if (permissionAttribute.CustomClaim != null)
                     {
-                        await CheckCustomClaimAsync(userId, roles, (CustomClaim)permissionAttribute.CustomClaim);
+                        await CheckCustomClaimAsync(userId, roles, permissionAttribute.CustomClaim);
                     }
                     else if (permissionAttribute.Entity != null && permissionAttribute.Crud != null)
                     {
@@ -88,7 +88,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
             }
         }
 
-        private async Task CheckCustomClaimAsync(int userId, IList<Role> roles, CustomClaim customClaim)
+        private async Task CheckCustomClaimAsync(int userId, IList<Role> roles, string customClaim)
         {
             var claim = await _claimManager.GetByCustomClaimAsync(customClaim);
             await AuthorizeWithCustomClaimAsync(userId, roles, claim.Id);

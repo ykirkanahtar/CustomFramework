@@ -60,7 +60,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
         [Route("get/customclaim/{customclaim}")]
         [HttpGet]
         [Permission(nameof(Claim), Crud.Select)]
-        public async Task<IActionResult> GetByCustomClaim(CustomClaim customClaim)
+        public async Task<IActionResult> GetByCustomClaim(string customClaim)
         {
             var result = await Manager.GetByCustomClaimAsync(customClaim);
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<Claim, ClaimResponse>(result)));

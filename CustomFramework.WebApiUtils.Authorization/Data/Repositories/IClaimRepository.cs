@@ -8,7 +8,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
 {
     public interface IClaimRepository : IRepository<Claim, int>
     {
-        Task<Claim> GetByCustomClaimAsync(CustomClaim customClaim);
+        Task<Claim> GetByCustomClaimAsync(string customClaim);
         Task<ICustomList<Claim>> GetAllAsync(int pageIndex, int pageSize);
     }
 }

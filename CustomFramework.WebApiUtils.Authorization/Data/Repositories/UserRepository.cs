@@ -30,7 +30,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
 
         public async Task<ICustomList<User>> GetAllAsync()
         {
-            return await base.GetAll().ToCustomList();
+            return await GetAll().ToCustomList();
         }
     }
 }

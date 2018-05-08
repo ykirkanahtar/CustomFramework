@@ -1,6 +1,6 @@
 ﻿using CustomFramework.SampleWebApi.Models;
-using CustomFramework.SampleWebApi.Request;
-using CustomFramework.SampleWebApi.Response;
+using CustomFramework.SampleWebApi.Requests;
+using CustomFramework.SampleWebApi.Responses;
 using CustomFramework.WebApiUtils.Authorization.AutoMapper;
 
 namespace CustomFramework.SampleWebApi.AutoMapper

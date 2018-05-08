@@ -1,4 +1,4 @@
-﻿namespace CustomFramework.SampleWebApi.Response
+﻿namespace CustomFramework.SampleWebApi.Responses
 {
     public class CurrentAccountResponse
     {

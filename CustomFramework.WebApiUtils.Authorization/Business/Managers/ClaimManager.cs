@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
-using CustomFramework.Authorization.Enums;
-using CustomFramework.Data;
 using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Constants;
@@ -76,7 +74,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
-        public Task<Claim> GetByCustomClaimAsync(CustomClaim customClaim)
+        public Task<Claim> GetByCustomClaimAsync(string customClaim)
         {
             return CommonOperationAsync(async () => await _uow.Claims.GetByCustomClaimAsync(customClaim), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }

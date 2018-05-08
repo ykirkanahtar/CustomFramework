@@ -7,7 +7,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Models
 {
     public class Claim : BaseModel<int>
     {
-        public CustomClaim CustomClaim { get; set; }
+        public string CustomClaim { get; set; }
 
         [JsonIgnore]
         public IList<RoleClaim> RoleClaims { get; set; }

@@ -1,12 +1,11 @@
 ﻿using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
-using CustomFramework.Data;
 using CustomFramework.Data.Contracts;
 using CustomFramework.SampleWebApi.Constants;
 using CustomFramework.SampleWebApi.Data;
 using CustomFramework.SampleWebApi.Models;
-using CustomFramework.SampleWebApi.Request;
+using CustomFramework.SampleWebApi.Requests;
 using CustomFramework.WebApiUtils.Authorization.Business;
 using CustomFramework.WebApiUtils.Authorization.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Utils;
@@ -20,7 +19,7 @@ namespace CustomFramework.SampleWebApi.Business
     public class CustomerManager : BaseBusinessManagerWithApiRequest<ApiRequest>, ICustomerManager
     {
         private readonly IUnitOfWorkSampleWebApi _uow;
-        public CustomerManager(IUnitOfWorkSampleWebApi uow, ILogger<BaseBusinessManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) 
+        public CustomerManager(IUnitOfWorkSampleWebApi uow, ILogger<BaseBusinessManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
             : base(logger, mapper, apiRequestAccessor)
         {
             _uow = uow;

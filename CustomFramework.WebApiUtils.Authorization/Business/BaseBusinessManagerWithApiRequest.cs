@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CustomFramework.Data;
 using CustomFramework.WebApiUtils.Authorization.Contracts;
 using CustomFramework.WebApiUtils.Business;
 using Microsoft.Extensions.Logging;
