@@ -8,7 +8,7 @@ namespace CustomFramework.Data.ModelConfiguration
     {
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
-            builder.Property(p => p.Id).ValueGeneratedOnAdd();
+            builder.Property(p => p.Id).UseSqlServerIdentityColumn();
 
             builder.Property(p => p.CreateDateTime)
                 .IsRequired();

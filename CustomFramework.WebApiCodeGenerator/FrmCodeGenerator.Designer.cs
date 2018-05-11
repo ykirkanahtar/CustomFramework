@@ -58,6 +58,12 @@
             this.BtnCreateFiles = new System.Windows.Forms.Button();
             this.LblStatus = new System.Windows.Forms.Label();
             this.GrpVirtualList = new System.Windows.Forms.GroupBox();
+            this.TxtRefClassName = new System.Windows.Forms.TextBox();
+            this.LblRefClassName = new System.Windows.Forms.Label();
+            this.GrpRefDataType = new System.Windows.Forms.GroupBox();
+            this.RdRefInt64 = new System.Windows.Forms.RadioButton();
+            this.RdRefInt32 = new System.Windows.Forms.RadioButton();
+            this.LstViewReferences = new System.Windows.Forms.ListView();
             this.ChkRefIsUnique = new System.Windows.Forms.CheckBox();
             this.ChkRefHasGet = new System.Windows.Forms.CheckBox();
             this.ChkRefAddToResponse = new System.Windows.Forms.CheckBox();
@@ -71,18 +77,14 @@
             this.TxtRefName = new System.Windows.Forms.TextBox();
             this.LblRefName = new System.Windows.Forms.Label();
             this.BtnAddOneToManyRef = new System.Windows.Forms.Button();
-            this.LstViewReferences = new System.Windows.Forms.ListView();
-            this.GrpRefDataType = new System.Windows.Forms.GroupBox();
-            this.RdRefInt64 = new System.Windows.Forms.RadioButton();
-            this.RdRefInt32 = new System.Windows.Forms.RadioButton();
-            this.LblRefClassName = new System.Windows.Forms.Label();
-            this.TxtRefClassName = new System.Windows.Forms.TextBox();
+            this.TxtProjectFolder = new System.Windows.Forms.TextBox();
+            this.LblProjectFolder = new System.Windows.Forms.Label();
             this.GrpKeys.SuspendLayout();
             this.GrpClass.SuspendLayout();
             this.GrpField.SuspendLayout();
             this.GrpVirtualList.SuspendLayout();
-            this.GrpReferences.SuspendLayout();
             this.GrpRefDataType.SuspendLayout();
+            this.GrpReferences.SuspendLayout();
             this.SuspendLayout();
             // 
             // LblNameSpace
@@ -134,7 +136,7 @@
             this.RdInt32.Location = new System.Drawing.Point(6, 19);
             this.RdInt32.Name = "RdInt32";
             this.RdInt32.Size = new System.Drawing.Size(58, 17);
-            this.RdInt32.TabIndex = 6;
+            this.RdInt32.TabIndex = 5;
             this.RdInt32.TabStop = true;
             this.RdInt32.Text = "Integer";
             this.RdInt32.UseVisualStyleBackColor = true;
@@ -145,7 +147,7 @@
             this.RdLong.Location = new System.Drawing.Point(70, 19);
             this.RdLong.Name = "RdLong";
             this.RdLong.Size = new System.Drawing.Size(49, 17);
-            this.RdLong.TabIndex = 7;
+            this.RdLong.TabIndex = 6;
             this.RdLong.Text = "Long";
             this.RdLong.UseVisualStyleBackColor = true;
             // 
@@ -156,7 +158,7 @@
             this.GrpKeys.Location = new System.Drawing.Point(75, 50);
             this.GrpKeys.Name = "GrpKeys";
             this.GrpKeys.Size = new System.Drawing.Size(123, 52);
-            this.GrpKeys.TabIndex = 8;
+            this.GrpKeys.TabIndex = 4;
             this.GrpKeys.TabStop = false;
             // 
             // BtnClass
@@ -164,7 +166,7 @@
             this.BtnClass.Location = new System.Drawing.Point(236, 131);
             this.BtnClass.Name = "BtnClass";
             this.BtnClass.Size = new System.Drawing.Size(75, 23);
-            this.BtnClass.TabIndex = 9;
+            this.BtnClass.TabIndex = 10;
             this.BtnClass.Text = "CreateClass";
             this.BtnClass.UseVisualStyleBackColor = true;
             this.BtnClass.Click += new System.EventHandler(this.BtnClass_Click);
@@ -192,7 +194,7 @@
             this.ChkHasUpdateMethod.Location = new System.Drawing.Point(75, 131);
             this.ChkHasUpdateMethod.Name = "ChkHasUpdateMethod";
             this.ChkHasUpdateMethod.Size = new System.Drawing.Size(83, 17);
-            this.ChkHasUpdateMethod.TabIndex = 12;
+            this.ChkHasUpdateMethod.TabIndex = 9;
             this.ChkHasUpdateMethod.Text = "Has Update";
             this.ChkHasUpdateMethod.UseVisualStyleBackColor = true;
             // 
@@ -202,7 +204,7 @@
             this.ChkGetAllWithPaging.Location = new System.Drawing.Point(199, 108);
             this.ChkGetAllWithPaging.Name = "ChkGetAllWithPaging";
             this.ChkGetAllWithPaging.Size = new System.Drawing.Size(118, 17);
-            this.ChkGetAllWithPaging.TabIndex = 11;
+            this.ChkGetAllWithPaging.TabIndex = 8;
             this.ChkGetAllWithPaging.Text = "Get All With Paging";
             this.ChkGetAllWithPaging.UseVisualStyleBackColor = true;
             this.ChkGetAllWithPaging.Visible = false;
@@ -214,7 +216,7 @@
             this.ChkHasGetAllMethod.Location = new System.Drawing.Point(75, 108);
             this.ChkHasGetAllMethod.Name = "ChkHasGetAllMethod";
             this.ChkHasGetAllMethod.Size = new System.Drawing.Size(118, 17);
-            this.ChkHasGetAllMethod.TabIndex = 10;
+            this.ChkHasGetAllMethod.TabIndex = 7;
             this.ChkHasGetAllMethod.Text = "Has Get All Method";
             this.ChkHasGetAllMethod.UseVisualStyleBackColor = true;
             this.ChkHasGetAllMethod.CheckedChanged += new System.EventHandler(this.ChkHasGetAllMethod_CheckedChanged);
@@ -403,6 +405,64 @@
             this.GrpVirtualList.TabIndex = 15;
             this.GrpVirtualList.TabStop = false;
             // 
+            // TxtRefClassName
+            // 
+            this.TxtRefClassName.Location = new System.Drawing.Point(70, 13);
+            this.TxtRefClassName.Name = "TxtRefClassName";
+            this.TxtRefClassName.Size = new System.Drawing.Size(155, 20);
+            this.TxtRefClassName.TabIndex = 31;
+            // 
+            // LblRefClassName
+            // 
+            this.LblRefClassName.AutoSize = true;
+            this.LblRefClassName.Location = new System.Drawing.Point(12, 16);
+            this.LblRefClassName.Name = "LblRefClassName";
+            this.LblRefClassName.Size = new System.Drawing.Size(52, 13);
+            this.LblRefClassName.TabIndex = 30;
+            this.LblRefClassName.Text = "Ref Class";
+            // 
+            // GrpRefDataType
+            // 
+            this.GrpRefDataType.Controls.Add(this.RdRefInt64);
+            this.GrpRefDataType.Controls.Add(this.RdRefInt32);
+            this.GrpRefDataType.Location = new System.Drawing.Point(9, 48);
+            this.GrpRefDataType.Name = "GrpRefDataType";
+            this.GrpRefDataType.Size = new System.Drawing.Size(123, 40);
+            this.GrpRefDataType.TabIndex = 29;
+            this.GrpRefDataType.TabStop = false;
+            this.GrpRefDataType.Text = "Data Type";
+            // 
+            // RdRefInt64
+            // 
+            this.RdRefInt64.AutoSize = true;
+            this.RdRefInt64.Location = new System.Drawing.Point(70, 18);
+            this.RdRefInt64.Name = "RdRefInt64";
+            this.RdRefInt64.Size = new System.Drawing.Size(49, 17);
+            this.RdRefInt64.TabIndex = 7;
+            this.RdRefInt64.Text = "Long";
+            this.RdRefInt64.UseVisualStyleBackColor = true;
+            // 
+            // RdRefInt32
+            // 
+            this.RdRefInt32.AutoSize = true;
+            this.RdRefInt32.Checked = true;
+            this.RdRefInt32.Location = new System.Drawing.Point(6, 18);
+            this.RdRefInt32.Name = "RdRefInt32";
+            this.RdRefInt32.Size = new System.Drawing.Size(58, 17);
+            this.RdRefInt32.TabIndex = 6;
+            this.RdRefInt32.TabStop = true;
+            this.RdRefInt32.Text = "Integer";
+            this.RdRefInt32.UseVisualStyleBackColor = true;
+            // 
+            // LstViewReferences
+            // 
+            this.LstViewReferences.Location = new System.Drawing.Point(6, 181);
+            this.LstViewReferences.Name = "LstViewReferences";
+            this.LstViewReferences.Size = new System.Drawing.Size(385, 298);
+            this.LstViewReferences.TabIndex = 28;
+            this.LstViewReferences.UseCompatibleStateImageBehavior = false;
+            this.LstViewReferences.DoubleClick += new System.EventHandler(this.LstViewReferences_DoubleClick);
+            // 
             // ChkRefIsUnique
             // 
             this.ChkRefIsUnique.AutoSize = true;
@@ -476,6 +536,7 @@
             this.RdOneToOne.TabStop = true;
             this.RdOneToOne.Text = "1-1";
             this.RdOneToOne.UseVisualStyleBackColor = true;
+            this.RdOneToOne.CheckedChanged += new System.EventHandler(this.RdOneToOne_CheckedChanged);
             // 
             // RdManyToOne
             // 
@@ -487,6 +548,7 @@
             this.RdManyToOne.TabStop = true;
             this.RdManyToOne.Text = "n-1";
             this.RdManyToOne.UseVisualStyleBackColor = true;
+            this.RdManyToOne.CheckedChanged += new System.EventHandler(this.RdManyToOne_CheckedChanged);
             // 
             // RdManyToMany
             // 
@@ -498,6 +560,7 @@
             this.RdManyToMany.TabStop = true;
             this.RdManyToMany.Text = "n-n";
             this.RdManyToMany.UseVisualStyleBackColor = true;
+            this.RdManyToMany.CheckedChanged += new System.EventHandler(this.RdManyToMany_CheckedChanged);
             // 
             // RdOneToMany
             // 
@@ -509,10 +572,11 @@
             this.RdOneToMany.TabStop = true;
             this.RdOneToMany.Text = "1-n";
             this.RdOneToMany.UseVisualStyleBackColor = true;
+            this.RdOneToMany.CheckedChanged += new System.EventHandler(this.RdOneToMany_CheckedChanged);
             // 
             // TxtRefName
             // 
-            this.TxtRefName.Location = new System.Drawing.Point(75, 13);
+            this.TxtRefName.Location = new System.Drawing.Point(79, 154);
             this.TxtRefName.Name = "TxtRefName";
             this.TxtRefName.Size = new System.Drawing.Size(155, 20);
             this.TxtRefName.TabIndex = 15;
@@ -520,7 +584,7 @@
             // LblRefName
             // 
             this.LblRefName.AutoSize = true;
-            this.LblRefName.Location = new System.Drawing.Point(6, 16);
+            this.LblRefName.Location = new System.Drawing.Point(17, 157);
             this.LblRefName.Name = "LblRefName";
             this.LblRefName.Size = new System.Drawing.Size(63, 13);
             this.LblRefName.TabIndex = 14;
@@ -536,69 +600,30 @@
             this.BtnAddOneToManyRef.UseVisualStyleBackColor = true;
             this.BtnAddOneToManyRef.Click += new System.EventHandler(this.BtnAddOneToManyRef_Click);
             // 
-            // LstViewReferences
+            // TxtProjectFolder
             // 
-            this.LstViewReferences.Location = new System.Drawing.Point(6, 181);
-            this.LstViewReferences.Name = "LstViewReferences";
-            this.LstViewReferences.Size = new System.Drawing.Size(385, 298);
-            this.LstViewReferences.TabIndex = 28;
-            this.LstViewReferences.UseCompatibleStateImageBehavior = false;
-            this.LstViewReferences.DoubleClick += new System.EventHandler(this.LstViewReferences_DoubleClick);
+            this.TxtProjectFolder.Location = new System.Drawing.Point(427, 6);
+            this.TxtProjectFolder.Name = "TxtProjectFolder";
+            this.TxtProjectFolder.ReadOnly = true;
+            this.TxtProjectFolder.Size = new System.Drawing.Size(239, 20);
+            this.TxtProjectFolder.TabIndex = 17;
             // 
-            // GrpRefDataType
+            // LblProjectFolder
             // 
-            this.GrpRefDataType.Controls.Add(this.RdRefInt64);
-            this.GrpRefDataType.Controls.Add(this.RdRefInt32);
-            this.GrpRefDataType.Location = new System.Drawing.Point(9, 48);
-            this.GrpRefDataType.Name = "GrpRefDataType";
-            this.GrpRefDataType.Size = new System.Drawing.Size(123, 40);
-            this.GrpRefDataType.TabIndex = 29;
-            this.GrpRefDataType.TabStop = false;
-            this.GrpRefDataType.Text = "Data Type";
-            // 
-            // RdRefInt64
-            // 
-            this.RdRefInt64.AutoSize = true;
-            this.RdRefInt64.Location = new System.Drawing.Point(70, 18);
-            this.RdRefInt64.Name = "RdRefInt64";
-            this.RdRefInt64.Size = new System.Drawing.Size(49, 17);
-            this.RdRefInt64.TabIndex = 7;
-            this.RdRefInt64.Text = "Long";
-            this.RdRefInt64.UseVisualStyleBackColor = true;
-            // 
-            // RdRefInt32
-            // 
-            this.RdRefInt32.AutoSize = true;
-            this.RdRefInt32.Checked = true;
-            this.RdRefInt32.Location = new System.Drawing.Point(6, 18);
-            this.RdRefInt32.Name = "RdRefInt32";
-            this.RdRefInt32.Size = new System.Drawing.Size(58, 17);
-            this.RdRefInt32.TabIndex = 6;
-            this.RdRefInt32.TabStop = true;
-            this.RdRefInt32.Text = "Integer";
-            this.RdRefInt32.UseVisualStyleBackColor = true;
-            // 
-            // LblRefClassName
-            // 
-            this.LblRefClassName.AutoSize = true;
-            this.LblRefClassName.Location = new System.Drawing.Point(12, 157);
-            this.LblRefClassName.Name = "LblRefClassName";
-            this.LblRefClassName.Size = new System.Drawing.Size(52, 13);
-            this.LblRefClassName.TabIndex = 30;
-            this.LblRefClassName.Text = "Ref Class";
-            // 
-            // TxtRefClassName
-            // 
-            this.TxtRefClassName.Location = new System.Drawing.Point(75, 154);
-            this.TxtRefClassName.Name = "TxtRefClassName";
-            this.TxtRefClassName.Size = new System.Drawing.Size(155, 20);
-            this.TxtRefClassName.TabIndex = 31;
+            this.LblProjectFolder.AutoSize = true;
+            this.LblProjectFolder.Location = new System.Drawing.Point(349, 9);
+            this.LblProjectFolder.Name = "LblProjectFolder";
+            this.LblProjectFolder.Size = new System.Drawing.Size(72, 13);
+            this.LblProjectFolder.TabIndex = 16;
+            this.LblProjectFolder.Text = "Project Folder";
             // 
             // FrmCodeGenerator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1247, 577);
+            this.Controls.Add(this.TxtProjectFolder);
+            this.Controls.Add(this.LblProjectFolder);
             this.Controls.Add(this.GrpVirtualList);
             this.Controls.Add(this.LblStatus);
             this.Controls.Add(this.BtnCreateFiles);
@@ -619,10 +644,10 @@
             this.GrpField.PerformLayout();
             this.GrpVirtualList.ResumeLayout(false);
             this.GrpVirtualList.PerformLayout();
-            this.GrpReferences.ResumeLayout(false);
-            this.GrpReferences.PerformLayout();
             this.GrpRefDataType.ResumeLayout(false);
             this.GrpRefDataType.PerformLayout();
+            this.GrpReferences.ResumeLayout(false);
+            this.GrpReferences.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -679,6 +704,8 @@
         private System.Windows.Forms.RadioButton RdRefInt32;
         private System.Windows.Forms.TextBox TxtRefClassName;
         private System.Windows.Forms.Label LblRefClassName;
+        private System.Windows.Forms.TextBox TxtProjectFolder;
+        private System.Windows.Forms.Label LblProjectFolder;
     }
 }
 

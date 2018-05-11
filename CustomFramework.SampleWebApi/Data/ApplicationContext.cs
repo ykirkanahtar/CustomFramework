@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using CustomFramework.Data.Enums;
 using CustomFramework.Data.Utils;
@@ -18,15 +18,25 @@ namespace CustomFramework.SampleWebApi.Data
 
         }
 
-        public virtual DbSet<Customer> Customers { get; set; }
-        public virtual DbSet<CurrentAccount> CurrentAccounts { get; set; }
+        /*************DbSets*************/
+
+        public virtual DbSet<Student> Students { get; set; }
+        public virtual DbSet<Course> Courses { get; set; }
+        public virtual DbSet<Teacher> Teachers { get; set; }
+        public virtual DbSet<StudentCourse> StudentCourses { get; set; }
+        /*********End of DbSets**********/
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfiguration(new CustomerModelConfiguration<Customer>());
-            modelBuilder.ApplyConfiguration(new CurrentAccountModelConfiguration<CurrentAccount>());
+            /****************ModelConfigurations**************/
+            modelBuilder.ApplyConfiguration(new StudentModelConfiguration<Student>());
+            modelBuilder.ApplyConfiguration(new CourseModelConfiguration<Course>());
+            modelBuilder.ApplyConfiguration(new TeacherModelConfiguration<Teacher>());
+            modelBuilder.ApplyConfiguration(new StudentCourseModelConfiguration<StudentCourse>());
+            /*************End of ModelConfigurations**********/
+
 
             Startup.SeedAuthorizationData.SeedClientApplicationData(modelBuilder);
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using AutoMapper;
@@ -76,8 +76,8 @@ namespace CustomFramework.SampleWebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddSqlServer<ApplicationContext>(ConnectionString);
-            services.AddPostgreSqlServer<ApplicationContext>(ConnectionString);
+            services.AddSqlServer<ApplicationContext>(ConnectionString);
+            //services.AddPostgreSqlServer<ApplicationContext>(ConnectionString);
 
             services.AddJwtAuthentication(AppSettings.Token.Audience, AppSettings.Token.Issuer, AppSettings.Token.Key);
 
@@ -119,27 +119,32 @@ namespace CustomFramework.SampleWebApi
             });
 
 
-            services.AddTransient<IUnitOfWorkSampleWebApi, UnitOfWorkSampleWebApi>();
+            services.AddTransient<IUnitOfWorkWebApi, UnitOfWorkWebApi>();
             services.AddScoped<DbContext, ApplicationContext>();
             services.AddScoped<AuthorizationContext, ApplicationContext>();
 
-            /*********Repositories*********/
-            services.AddTransient<ICustomerRepository, CustomerRepository>();
-            services.AddTransient<ICurrentAccountRepository, CurrentAccountRepository>();
-            /*********Repositories*********/
+            /*************Repositories************/
+            services.AddTransient<IStudentRepository, StudentRepository>();
+            services.AddTransient<ICourseRepository, CourseRepository>();
+            services.AddTransient<ITeacherRepository, TeacherRepository>();
+            services.AddTransient<IStudentCourseRepository, StudentCourseRepository>();
+            /*********End of Repositories*********/
 
-            /*********Managers*********/
-            services.AddTransient<ICustomerManager, CustomerManager>();
-            services.AddTransient<ICurrentAccountManager, CurrentAccountManager>();
-            /*********Managers*********/
+            /*************Managers************/
+            services.AddTransient<IStudentManager, StudentManager>();
+            services.AddTransient<ICourseManager, CourseManager>();
+            services.AddTransient<ITeacherManager, TeacherManager>();
+            services.AddTransient<IStudentCourseManager, StudentCourseManager>();
+            /*********End of Managers*********/
 
-            /************Fluent Validation************/
-            services.AddTransient<IValidator<CustomerRequest>, CustomerValidator>();
-            services.AddTransient<IValidator<CurrentAccountRequest>, CurrentAccountValidator>();
-            /************Fluent Validation************/
+            /****************Fluent Validation***************/
+            services.AddTransient<IValidator<StudentRequest>, StudentValidator>();
+            services.AddTransient<IValidator<CourseRequest>, CourseValidator>();
+            services.AddTransient<IValidator<TeacherRequest>, TeacherValidator>();
+            services.AddTransient<IValidator<StudentCourseRequest>, StudentCourseValidator>();
+            /************End of Fluent Validation************/
 
-
-            services.AddMvcCore(options =>
+            services.AddMvc(options =>
                 {
                     options.Filters.Add(typeof(ValidateModelAttribute));
                 })

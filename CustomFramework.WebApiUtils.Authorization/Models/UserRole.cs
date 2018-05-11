@@ -9,9 +9,9 @@ namespace CustomFramework.WebApiUtils.Authorization.Models
         public int RoleId { get; set; }
 
         [JsonIgnore]
-        public User User { get; set; }
+        public virtual User User { get; set; }
 
         [JsonIgnore]
-        public Role Role { get; set; }
+        public virtual Role Role { get; set; }
     }
 }

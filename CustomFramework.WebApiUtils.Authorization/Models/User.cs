@@ -20,13 +20,13 @@ namespace CustomFramework.WebApiUtils.Authorization.Models
         public UserUtil UserUtil { get; set; }
 
         [JsonIgnore]
-        public IList<UserClaim> UserClaims { get; set; }
+        public virtual ICollection<UserClaim> UserClaims { get; set; }
 
         [JsonIgnore]
-        public IList<UserEntityClaim> UserEntityClaims { get; set; }
+        public virtual ICollection<UserEntityClaim> UserEntityClaims { get; set; }
 
         [JsonIgnore]
-        public IList<UserRole> UserRoles { get; set; }
+        public virtual ICollection<UserRole> UserRoles { get; set; }
 
     }
 }
