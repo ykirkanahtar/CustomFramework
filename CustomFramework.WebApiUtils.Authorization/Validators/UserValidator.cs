@@ -16,7 +16,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Validators
                 .WithMessage($"{ValidatorConstants.MaxLengthError} : {AuthorizationConstants.UserName}, 25");
 
             RuleFor(x => x.Password).NotEmpty()
-                .WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.Password}");
+                .WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.Pass}");
 
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.Email}")

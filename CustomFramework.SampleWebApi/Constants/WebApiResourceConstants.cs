@@ -1,6 +1,6 @@
 namespace CustomFramework.SampleWebApi.Constants
 {
-    public class WebApiResourceConstants
+    public static class WebApiResourceConstants
     {
         /*************Constants************/
         public const string StudentNo = "StudentNo";

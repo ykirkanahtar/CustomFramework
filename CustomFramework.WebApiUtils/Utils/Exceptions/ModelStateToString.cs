@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using CustomFramework.WebApiUtils.Constants;
 using CustomFramework.WebApiUtils.Resources;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -23,14 +24,14 @@ namespace CustomFramework.WebApiUtils.Utils.Exceptions
 
             foreach (var modelStateString in modelStateStrings)
             {
-                var localisedModelState = string.Empty;
+                var localisedModelState = new StringBuilder();
                 var localisedModelStateArray = modelStateString.Split(':');
                 foreach (var item in localisedModelStateArray)
                 {
-                    localisedModelState += $"{localizationService.GetValue(item.Trim())} : ";
+                    localisedModelState.Append($"{localizationService.GetValue(item.Trim())} : ");
                 }
 
-                newModelStateStrings.Add(localisedModelState.Remove(localisedModelState.Length - 1, 1));
+                newModelStateStrings.Add(localisedModelState.ToString().Remove(localisedModelState.Length - 1, 1));
             }
 
             return string.Join(";", newModelStateStrings.ToArray());

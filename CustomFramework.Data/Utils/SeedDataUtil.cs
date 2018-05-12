@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CustomFramework.Data.Utils
 {
-    public class SeedDataUtil
+    public static class SeedDataUtil
     {
         public static void SeedTData<T, TKey>(ModelBuilder modelBuilder, IEnumerable<T> list) where T : BaseModel<TKey>
         {

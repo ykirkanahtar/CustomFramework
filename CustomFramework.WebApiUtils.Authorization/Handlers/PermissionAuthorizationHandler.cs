@@ -9,6 +9,7 @@ using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Constants;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using ApiRequest = CustomFramework.WebApiUtils.Authorization.Contracts.ApiRequest;
 using IApiRequest = CustomFramework.WebApiUtils.Authorization.Contracts.IApiRequest;
 using IApiRequestAccessor = CustomFramework.WebApiUtils.Authorization.Utils.IApiRequestAccessor;
@@ -17,6 +18,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
 {
     public class PermissionAuthorizationHandler : AttributeAuthorizationHandler<PermissionAuthorizationRequirement, PermissionAttribute>
     {
+        private readonly ILogger _logger;
         private readonly IApiRequest _apiRequest;
         private readonly IUserRoleManager _userRoleManager;
         private readonly IClaimManager _claimManager;
@@ -27,8 +29,9 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
         private readonly IRoleEntityClaimManager _roleEntityClaimManager;
         private readonly IUserEntityClaimManager _userEntityClaimManager;
 
-        public PermissionAuthorizationHandler(IApiRequestAccessor apiRequestAccessor, IUserRoleManager userRoleManager, IClaimManager claimManager, IRoleClaimManager roleClaimManager, IUserClaimManager userClaimManager, IRoleEntityClaimManager roleEntityClaimManager, IUserEntityClaimManager userEntityClaimManager)
+        public PermissionAuthorizationHandler(ILogger logger, IApiRequestAccessor apiRequestAccessor, IUserRoleManager userRoleManager, IClaimManager claimManager, IRoleClaimManager roleClaimManager, IUserClaimManager userClaimManager, IRoleEntityClaimManager roleEntityClaimManager, IUserEntityClaimManager userEntityClaimManager)
         {
+            _logger = logger;
             _apiRequest = apiRequestAccessor.GetApiRequest<ApiRequest>();
             _userRoleManager = userRoleManager;
             _claimManager = claimManager;
@@ -74,7 +77,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                _logger.LogCritical(ex.Message);
+                throw new Exception(DefaultResponseMessages.AnErrorHasOccured);
             }
 
             context.Succeed(requirement);
@@ -82,7 +86,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
 
         private static void UserIsAuthenticated(ClaimsPrincipal claimsPrincipal)
         {
-            if (claimsPrincipal == null || claimsPrincipal.Identity.IsAuthenticated == false)
+            if (claimsPrincipal == null || !claimsPrincipal.Identity.IsAuthenticated)
             {
                 throw new UnauthorizedAccessException(DefaultResponseMessages.UnauthorizedAccessError);
             }

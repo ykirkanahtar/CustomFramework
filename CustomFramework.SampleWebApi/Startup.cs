@@ -67,8 +67,7 @@ namespace CustomFramework.SampleWebApi
             SeedAuthorizationData = new SeedAuthorizationData();
             Configuration.GetSection("SeedingAuthorizationData").Bind(SeedAuthorizationData);
 
-            SeedWebApiData = new SeedWebApiData();
-            //Configuration.GetSection("SeedingWebApiData").Bind(SeedWebApiData);
+            SeedWebApiData = new SeedWebApiData(); 
         }
 
         public IConfiguration Configuration { get; }
@@ -77,7 +76,6 @@ namespace CustomFramework.SampleWebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSqlServer<ApplicationContext>(ConnectionString);
-            //services.AddPostgreSqlServer<ApplicationContext>(ConnectionString);
 
             services.AddJwtAuthentication(AppSettings.Token.Audience, AppSettings.Token.Issuer, AppSettings.Token.Key);
 

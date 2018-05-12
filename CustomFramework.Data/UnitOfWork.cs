@@ -90,16 +90,13 @@ namespace CustomFramework.Data
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (!_disposed && disposing)
             {
-                if (disposing)
-                {
-                    // clear repositories
-                    _repositories?.Clear();
+                // clear repositories
+                _repositories?.Clear();
 
-                    // dispose the db context.
-                    DbContext.Dispose();
-                }
+                // dispose the db context.
+                DbContext.Dispose();
             }
 
             _disposed = true;

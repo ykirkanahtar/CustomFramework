@@ -1,6 +1,6 @@
 ﻿namespace CustomFramework.WebApiUtils.Constants
 {
-    public class DefaultResponseMessages
+    public static class DefaultResponseMessages
     {
         public const string SuccessMessage = "Success";
         public const string AnErrorHasOccured = "AnErrorHasOccured";

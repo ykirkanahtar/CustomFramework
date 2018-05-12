@@ -6,7 +6,7 @@ using CustomFramework.Data.Contracts;
 
 namespace CustomFramework.Data
 {
-    public interface IRepository<TEntity, in TKey>
+    public interface IRepository<TEntity, in TKey> : IDisposable
         where TEntity : BaseModel<TKey>
     {
         Task<TEntity> GetByIdAsync(TKey id);

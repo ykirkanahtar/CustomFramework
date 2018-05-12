@@ -30,7 +30,7 @@ namespace CustomFramework.WebApiUtils.Utils
                 case BusinessUtilMethod.CheckNothing:
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException("Undefined BusinessUtilMethod", businessUtilMethod.ToString());
             }
         }
 
@@ -67,7 +67,7 @@ namespace CustomFramework.WebApiUtils.Utils
         public static void CheckUniqueValueForUpdate<TEntity, TKey>(this IList<TEntity> result, TKey id, string additionalInfo) where TEntity : BaseModel<TKey>
         {
             if (result.GenericTypeIsNullOrEmpty()) return;
-            if (!(result.Count(p => p.Id.Equals(id)) > 0))
+            if (!result.Any(p => p.Id.Equals(id))) //eğer güncellenecek id'ye ait kayıt dışında da kayıt varsa 
                 throw new DuplicateNameException(additionalInfo.RemoveManagerString());
         }
 

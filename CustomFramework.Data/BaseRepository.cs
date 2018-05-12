@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace CustomFramework.Data
 {
-    public class BaseRepository<TEntity, TKey> : IRepository<TEntity, TKey>, IDisposable
+    public class BaseRepository<TEntity, TKey> : IRepository<TEntity, TKey>
            where TEntity : BaseModel<TKey>
     {
         private readonly DbContext _dbContext;
@@ -149,7 +149,7 @@ namespace CustomFramework.Data
             GC.SuppressFinalize(this);
         }
 
-        protected void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing && !_disposed)
             {

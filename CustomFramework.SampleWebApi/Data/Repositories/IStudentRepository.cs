@@ -9,6 +9,6 @@ namespace CustomFramework.SampleWebApi.Data.Repositories
     {
         Task<Student> GetByStudentNoAsync(int studentNo);
         Task<ICustomList<Student>> GetAllAsync();
-        Task<ICustomList<Student>> GetAllAsync(int pageIndex, int pageCount);
+        Task<ICustomList<Student>> GetAllAsync(int pageIndex, int pageSize);
     }
 }

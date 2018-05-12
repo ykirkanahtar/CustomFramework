@@ -1,0 +1,9 @@
+x
+oC:\Users\YEK\Documents\Projects\CustomFramework\CustomFramework.Authorization\Attributes\PermissionAttribute.csutf-8‡
+~C:\Users\YEK\Documents\Projects\CustomFramework\CustomFramework.Authorization\Attributes\PermissionAuthorizationRequirement.csutf-8s
+jC:\Users\YEK\Documents\Projects\CustomFramework\CustomFramework.Authorization\CustomAuthorizationPolicy.csutf-8d
+[C:\Users\YEK\Documents\Projects\CustomFramework\CustomFramework.Authorization\Enums\Crud.csutf-8ƒ
+zC:\Users\YEK\Documents\Projects\CustomFramework\CustomFramework.Authorization\Extensions\AuthorizationServiceExtensions.csutf-8†
+}C:\Users\YEK\Documents\Projects\CustomFramework\CustomFramework.Authorization\Extensions\JwtAuthenticationServiceExtension.csutf-8€
+wC:\Users\YEK\Documents\Projects\CustomFramework\CustomFramework.Authorization\Handlers\AttributeAuthorizationHandler.csutf-8d
+[C:\Users\YEK\Documents\Projects\CustomFramework\CustomFramework.Authorization\JwtManager.csutf-8

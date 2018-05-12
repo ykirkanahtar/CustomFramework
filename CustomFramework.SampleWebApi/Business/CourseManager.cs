@@ -32,7 +32,7 @@ namespace CustomFramework.SampleWebApi.Business
             {
                 var result = Mapper.Map<Course>(request);
 
-                	/******************CourseNo is unique*********************/
+                /******************CourseNo is unique*********************/
                 /*****************************************************/
                 var courseNoUniqueResult = await _uow.Courses.GetByCourseNoAsync(request.CourseNo);
 
@@ -48,14 +48,14 @@ namespace CustomFramework.SampleWebApi.Business
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
-	  public Task<Course> UpdateAsync(int id, CourseRequest request)
+        public Task<Course> UpdateAsync(int id, CourseRequest request)
         {
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 Mapper.Map(request, result);
 
-                	/******************CourseNo is unique*********************/
+                /******************CourseNo is unique*********************/
                 /*****************************************************/
                 var courseNoUniqueResult = await _uow.Courses.GetByCourseNoAsync(request.CourseNo);
 
@@ -91,19 +91,19 @@ namespace CustomFramework.SampleWebApi.Business
                 BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
-	public Task<Course> GetByCourseNoAsync(int courseNo)
-                        {
+        public Task<Course> GetByCourseNoAsync(int courseNo)
+        {
             return CommonOperationAsync(async () => await _uow.Courses.GetByCourseNoAsync(courseNo), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
-                BusinessUtilMethod.CheckRecordIsExist, GetType().Name);                        
-                        }
-	public Task<ICustomList<Course>> GetAllByTeacherIdAsync(int teacherId)
-                        {
+                BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
+        }
+        public Task<ICustomList<Course>> GetAllByTeacherIdAsync(int teacherId)
+        {
             return CommonOperationAsync(async () => await _uow.Courses.GetAllByTeacherIdAsync(teacherId), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
-                        }
-	public Task<ICustomList<Course>> GetAllAsync()
-                        {
-                            return CommonOperationAsync(async () => await _uow.Courses.GetAllAsync(), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
-                        }
+        }
+        public Task<ICustomList<Course>> GetAllAsync()
+        {
+            return CommonOperationAsync(async () => await _uow.Courses.GetAllAsync(), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+        }
 
     }
 }

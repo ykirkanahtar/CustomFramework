@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CustomFramework.Data.Utils
 {
-    public class HashString
+    public static class HashString
     {
         public static string GetSalt()
         {

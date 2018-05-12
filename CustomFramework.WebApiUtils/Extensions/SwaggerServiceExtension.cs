@@ -31,8 +31,8 @@ namespace CustomFramework.WebApiUtils.Extensions
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Versioned API v1.0");
-
+                const string url = "/swagger/v1.0/swagger.json";
+                c.SwaggerEndpoint(url, "Versioned API v1.0");
                 c.DocExpansion(DocExpansion.None);
             });
 

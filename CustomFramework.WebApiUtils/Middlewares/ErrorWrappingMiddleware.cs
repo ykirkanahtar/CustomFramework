@@ -48,9 +48,7 @@ namespace CustomFramework.WebApiUtils.Middlewares
                 {
                     ContractResolver = new CamelCasePropertyNamesContractResolver()
                 });
-
                 await context.Response.WriteAsync(json);
-
             }
         }
     }

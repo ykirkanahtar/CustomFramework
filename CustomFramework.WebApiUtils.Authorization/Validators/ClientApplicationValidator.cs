@@ -25,7 +25,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Validators
                     $"{ValidatorConstants.MaxLengthError} : {AuthorizationConstants.ClientApplicationName}, 20");
 
             RuleFor(x => x.ClientApplicationPassword).NotEmpty()
-                .WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.ClientApplicationPassword}");
+                .WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.ClientApplicationPass}");
         }
     }
 }
