@@ -9,6 +9,7 @@ using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Response;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -66,7 +67,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
 
         [Route("getall")]
         [HttpGet]
-        [Permission(nameof(Role), Crud.Select)]
+        [AllowAnonymous]
+        //[Permission(nameof(Role), Crud.Select)]
         public async Task<IActionResult> GetAll()
         {
             var result = await Manager.GetAllAsync();
