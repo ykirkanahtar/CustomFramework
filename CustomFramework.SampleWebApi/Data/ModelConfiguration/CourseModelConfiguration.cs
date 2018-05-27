@@ -20,7 +20,7 @@ namespace CustomFramework.SampleWebApi.Data.ModelConfiguration
 
 
             builder.HasIndex(p => p.CourseNo).IsUnique();
-
+            builder.HasIndex(p => p.TeacherId);
         }
     }
 }

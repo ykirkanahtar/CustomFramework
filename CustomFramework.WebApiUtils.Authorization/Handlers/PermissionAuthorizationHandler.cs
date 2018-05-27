@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CustomFramework.Authorization.Attributes;
 using CustomFramework.Authorization.Enums;
 using CustomFramework.Authorization.Handlers;
+using CustomFramework.Data.Enums;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Constants;
@@ -18,7 +19,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
 {
     public class PermissionAuthorizationHandler : AttributeAuthorizationHandler<PermissionAuthorizationRequirement, PermissionAttribute>
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<PermissionAuthorizationHandler> _logger;
         private readonly IApiRequest _apiRequest;
         private readonly IUserRoleManager _userRoleManager;
         private readonly IClaimManager _claimManager;
@@ -29,7 +30,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
         private readonly IRoleEntityClaimManager _roleEntityClaimManager;
         private readonly IUserEntityClaimManager _userEntityClaimManager;
 
-        public PermissionAuthorizationHandler(ILogger logger, IApiRequestAccessor apiRequestAccessor, IUserRoleManager userRoleManager, IClaimManager claimManager, IRoleClaimManager roleClaimManager, IUserClaimManager userClaimManager, IRoleEntityClaimManager roleEntityClaimManager, IUserEntityClaimManager userEntityClaimManager)
+        public PermissionAuthorizationHandler(ILogger<PermissionAuthorizationHandler> logger, IApiRequestAccessor apiRequestAccessor, IUserRoleManager userRoleManager, IClaimManager claimManager, IRoleClaimManager roleClaimManager, IUserClaimManager userClaimManager, IRoleEntityClaimManager roleEntityClaimManager, IUserEntityClaimManager userEntityClaimManager)
         {
             _logger = logger;
             _apiRequest = apiRequestAccessor.GetApiRequest<ApiRequest>();
@@ -100,7 +101,15 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
 
         private async Task CheckEntityClaimAsync(int userId, IList<Role> roles, string entity, Crud crud)
         {
-            await AuthorizeWithEntityClaimAsync(userId, roles, entity, crud);
+            var userIsAuthorized = await _userEntityClaimManager.UserIsAuthorizedForEntityClaimAsync(userId, entity, crud);
+            var roleIsAuthorized = await _roleEntityClaimManager.RolesAreAuthorizedForEntityClaimAsync(roles, entity, crud);
+
+            if (userIsAuthorized || roleIsAuthorized)
+            {
+                return;
+            }
+
+            throw new KeyNotFoundException();
         }
 
         private async Task AuthorizeWithCustomClaimAsync(int userId, IList<Role> roles, int claimId)
@@ -114,19 +123,5 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
 
             throw new KeyNotFoundException();
         }
-
-        private async Task AuthorizeWithEntityClaimAsync(int userId, IList<Role> roles, string entity, Crud crud)
-        {
-            var userIsAuthorized = await _userEntityClaimManager.UserIsAuthorizedForEntityClaimAsync(userId, entity, crud);
-            var roleIsAuthorized = await _roleEntityClaimManager.RolesAreAuthorizedForEntityClaimAsync(roles, entity, crud);
-
-            if (userIsAuthorized || roleIsAuthorized)
-            {
-                return;
-            }
-
-            throw new KeyNotFoundException();
-        }
-
     }
 }

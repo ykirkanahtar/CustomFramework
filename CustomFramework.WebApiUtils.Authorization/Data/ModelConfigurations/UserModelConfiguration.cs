@@ -42,6 +42,10 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
             builder.Property(p => p.LockoutEndDateTime)
                 .IsRequired(false)
                 .HasMaxLength(256);
+
+            builder.HasIndex(p => p.UserName);
+            builder.HasIndex(p => p.Email);
+            builder.HasIndex(p => new { p.UserName, p.Password });
         }
     }
 }

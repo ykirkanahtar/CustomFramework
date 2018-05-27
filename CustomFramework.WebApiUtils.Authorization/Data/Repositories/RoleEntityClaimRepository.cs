@@ -26,7 +26,12 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
         public async Task<ICustomList<RoleEntityClaim>> RolesAreAuthorizedForEntityClaimAsync(IEnumerable<Role> roles, string entity, Crud crud)
         {
             var predicate = PredicateBuilder.New<RoleEntityClaim>();
-            predicate = roles.Aggregate(predicate, (current, role) => current.Or(p => p.RoleId == role.Id));
+
+            foreach (var role in roles)
+            {
+                predicate = predicate.Or(p => p.RoleId == role.Id);
+            }
+
             predicate = predicate.And(p => p.Entity == entity);
             PredicateBuilderForCrud(ref predicate, crud);
 

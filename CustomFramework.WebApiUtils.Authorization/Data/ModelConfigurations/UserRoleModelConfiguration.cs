@@ -27,6 +27,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
                 .WithMany(c => (IEnumerable<T>)c.UserRoles)
                 .HasForeignKey(r => r.RoleId);
 
+            builder.HasIndex(p => new { p.UserId, p.Status });
         }
     }
 }

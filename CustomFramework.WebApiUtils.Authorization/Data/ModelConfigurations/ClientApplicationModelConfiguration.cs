@@ -17,10 +17,15 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
             builder.Property(u => u.ClientApplicationCode)
                 .IsRequired()
                 .HasMaxLength(6);
-            
+
             builder.Property(u => u.ClientApplicationPassword)
                 .IsRequired()
                 .HasMaxLength(50);
+
+            builder.HasIndex(p => p.ClientApplicationCode);
+            builder.HasIndex(p => p.ClientApplicationName);
+            builder.HasIndex(p => new { p.ClientApplicationCode, p.ClientApplicationPassword });
+
         }
     }
 }

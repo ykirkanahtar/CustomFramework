@@ -35,6 +35,10 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
                 .WithMany(c => (IEnumerable<T>)c.UserEntityClaims)
                 .HasForeignKey(r => r.UserId);
 
+            builder.HasIndex(p => new { p.UserId, p.Entity, p.CanSelect });
+            builder.HasIndex(p => new { p.UserId, p.Entity, p.CanCreate });
+            builder.HasIndex(p => new { p.UserId, p.Entity, p.CanUpdate });
+            builder.HasIndex(p => new { p.UserId, p.Entity, p.CanDelete });
         }
     }
 }

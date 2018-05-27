@@ -35,6 +35,10 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
                 .WithMany(c => (IEnumerable<T>)c.RoleEntityClaims)
                 .HasForeignKey(r => r.RoleId);
 
+            builder.HasIndex(p => new { p.RoleId, p.Entity, p.CanSelect });
+            builder.HasIndex(p => new { p.RoleId, p.Entity, p.CanCreate });
+            builder.HasIndex(p => new { p.RoleId, p.Entity, p.CanUpdate });
+            builder.HasIndex(p => new { p.RoleId, p.Entity, p.CanDelete });
         }
     }
 }

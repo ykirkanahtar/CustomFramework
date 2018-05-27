@@ -8,10 +8,10 @@ namespace CustomFramework.EmailProvider
 {
     public class EmailManager : IEmailManager
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<EmailManager> _logger;
         private readonly EmailConfig _emailConfig;
 
-        public EmailManager(ILogger logger, EmailConfig emailConfig)
+        public EmailManager(ILogger<EmailManager> logger, EmailConfig emailConfig)
         {
             _logger = logger;
             _emailConfig = emailConfig;

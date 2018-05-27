@@ -67,9 +67,19 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
 
         [Route("getall")]
         [HttpGet]
-        [AllowAnonymous]
-        //[Permission(nameof(Role), Crud.Select)]
+        [Permission(nameof(Role), Crud.Select)]
         public async Task<IActionResult> GetAll()
+        {
+            var result = await Manager.GetAllAsync();
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                Mapper.Map<IEnumerable<Role>, IEnumerable<RoleResponse>>(result.ResultList),
+                result.Count));
+        }
+
+        [Route("getallanonymous")]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllAnonymous()
         {
             var result = await Manager.GetAllAsync();
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(

@@ -15,7 +15,7 @@ namespace CustomFramework.FtpClient
         private Stream _ftpStream = null;
         private const int BufferSize = 2048;
 
-        public FtpClient(ILogger logger, string hostIp, string defaultFolder, string userName, string password) : base(logger, hostIp, defaultFolder, userName, password)
+        public FtpClient(ILogger<FtpClient> logger, string hostIp, string defaultFolder, string userName, string password) : base(logger, hostIp, defaultFolder, userName, password)
         {
 
         }

@@ -19,6 +19,8 @@ namespace CustomFramework.Data.ModelConfiguration
 
             builder.Property(p => p.Status)
                 .IsRequired();
+
+            builder.HasIndex(p => p.Status);
         }
     }
 }

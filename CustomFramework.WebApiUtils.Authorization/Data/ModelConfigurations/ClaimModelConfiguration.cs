@@ -11,7 +11,10 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
             base.Configure(builder);
 
             builder.Property(p => p.CustomClaim)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.HasIndex(p => p.CustomClaim);
         }
     }
 }

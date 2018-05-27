@@ -4,14 +4,16 @@ using CustomFramework.SampleWebApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CustomFramework.SampleWebApi.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20180527145819_EntityIndexUpdate3")]
+    partial class EntityIndexUpdate3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -274,16 +276,16 @@ namespace CustomFramework.SampleWebApi.Migrations
                     b.HasIndex("ClientApplicationName")
                         .HasName("ix_client_applications_client_application_name");
 
+                    b.HasIndex("ClientApplicationPassword")
+                        .HasName("ix_client_applications_client_application_password");
+
                     b.HasIndex("Status")
                         .HasName("ix_client_applications_status");
-
-                    b.HasIndex("ClientApplicationCode", "ClientApplicationPassword")
-                        .HasName("ix_client_applications_client_application_code_client_application_password");
 
                     b.ToTable("client_applications");
 
                     b.HasData(
-                        new { Id = 1, ClientApplicationCode = "web", ClientApplicationName = "web", ClientApplicationPassword = "FvyWafMbkpDAZC/1NVTxlJyBNuAYrGC4aLZZu/Fil2E=", CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 156, DateTimeKind.Local), Status = 1 }
+                        new { Id = 1, ClientApplicationCode = "web", ClientApplicationName = "web", ClientApplicationPassword = "Ar4h35ECAYeAxOQ2bvoH+njbX7jOpuhVNnkqJ0Yno/c=", CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 36, DateTimeKind.Local), Status = 1 }
                     );
                 });
 
@@ -327,7 +329,7 @@ namespace CustomFramework.SampleWebApi.Migrations
                     b.ToTable("client_application_utils");
 
                     b.HasData(
-                        new { Id = 1, ClientApplicationId = 1, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 156, DateTimeKind.Local), SpecialValue = "qtp26Bws6AUcZ3468xpKvA==", Status = 1 }
+                        new { Id = 1, ClientApplicationId = 1, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 37, DateTimeKind.Local), SpecialValue = "1e8d8Gi2kzWhRxUoxKIk8w==", Status = 1 }
                     );
                 });
 
@@ -371,9 +373,9 @@ namespace CustomFramework.SampleWebApi.Migrations
                     b.ToTable("roles");
 
                     b.HasData(
-                        new { Id = 1, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 160, DateTimeKind.Local), Description = "Administration Role", RoleName = "Administrator", Status = 1 },
-                        new { Id = 2, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 160, DateTimeKind.Local), Description = "Default User Role", RoleName = "NormalUser", Status = 1 },
-                        new { Id = 3, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 160, DateTimeKind.Local), Description = "User for data writer like stats", RoleName = "DataWriter", Status = 1 }
+                        new { Id = 1, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Description = "Administration Role", RoleName = "Administrator", Status = 1 },
+                        new { Id = 2, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Description = "Default User Role", RoleName = "NormalUser", Status = 1 },
+                        new { Id = 3, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Description = "User for data writer like stats", RoleName = "DataWriter", Status = 1 }
                     );
                 });
 
@@ -477,21 +479,21 @@ namespace CustomFramework.SampleWebApi.Migrations
                     b.ToTable("role_entity_claims");
 
                     b.HasData(
-                        new { Id = 1, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 161, DateTimeKind.Local), Entity = "Claim", RoleId = 1, Status = 1 },
-                        new { Id = 2, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 161, DateTimeKind.Local), Entity = "ClientApplicationUtil", RoleId = 1, Status = 1 },
-                        new { Id = 3, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 161, DateTimeKind.Local), Entity = "ClientApplication", RoleId = 1, Status = 1 },
-                        new { Id = 4, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 161, DateTimeKind.Local), Entity = "UserClaim", RoleId = 1, Status = 1 },
-                        new { Id = 5, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 161, DateTimeKind.Local), Entity = "UserEntityClaim", RoleId = 1, Status = 1 },
-                        new { Id = 6, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 161, DateTimeKind.Local), Entity = "UserRole", RoleId = 1, Status = 1 },
-                        new { Id = 7, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 161, DateTimeKind.Local), Entity = "UserUtil", RoleId = 1, Status = 1 },
-                        new { Id = 8, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 161, DateTimeKind.Local), Entity = "User", RoleId = 1, Status = 1 },
-                        new { Id = 9, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 161, DateTimeKind.Local), Entity = "RoleClaim", RoleId = 1, Status = 1 },
-                        new { Id = 10, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 161, DateTimeKind.Local), Entity = "RoleEntityClaim", RoleId = 1, Status = 1 },
-                        new { Id = 11, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 161, DateTimeKind.Local), Entity = "Role", RoleId = 1, Status = 1 },
-                        new { Id = 12, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 161, DateTimeKind.Local), Entity = "Student", RoleId = 1, Status = 1 },
-                        new { Id = 13, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 161, DateTimeKind.Local), Entity = "Course", RoleId = 1, Status = 1 },
-                        new { Id = 14, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 161, DateTimeKind.Local), Entity = "Teacher", RoleId = 1, Status = 1 },
-                        new { Id = 15, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 161, DateTimeKind.Local), Entity = "StudentCourse", RoleId = 1, Status = 1 }
+                        new { Id = 1, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Entity = "Claim", RoleId = 1, Status = 1 },
+                        new { Id = 2, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Entity = "ClientApplicationUtil", RoleId = 1, Status = 1 },
+                        new { Id = 3, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Entity = "ClientApplication", RoleId = 1, Status = 1 },
+                        new { Id = 4, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Entity = "UserClaim", RoleId = 1, Status = 1 },
+                        new { Id = 5, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Entity = "UserEntityClaim", RoleId = 1, Status = 1 },
+                        new { Id = 6, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Entity = "UserRole", RoleId = 1, Status = 1 },
+                        new { Id = 7, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Entity = "UserUtil", RoleId = 1, Status = 1 },
+                        new { Id = 8, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Entity = "User", RoleId = 1, Status = 1 },
+                        new { Id = 9, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Entity = "RoleClaim", RoleId = 1, Status = 1 },
+                        new { Id = 10, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Entity = "RoleEntityClaim", RoleId = 1, Status = 1 },
+                        new { Id = 11, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Entity = "Role", RoleId = 1, Status = 1 },
+                        new { Id = 12, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Entity = "Student", RoleId = 1, Status = 1 },
+                        new { Id = 13, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Entity = "Course", RoleId = 1, Status = 1 },
+                        new { Id = 14, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Entity = "Teacher", RoleId = 1, Status = 1 },
+                        new { Id = 15, CanCreate = true, CanDelete = true, CanSelect = true, CanUpdate = true, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 43, DateTimeKind.Local), Entity = "StudentCourse", RoleId = 1, Status = 1 }
                     );
                 });
 
@@ -523,7 +525,7 @@ namespace CustomFramework.SampleWebApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("email_confirm_code")
                         .HasMaxLength(6)
-                        .HasDefaultValue("646734");
+                        .HasDefaultValue("612938");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnName("email_confirmed");
@@ -557,19 +559,19 @@ namespace CustomFramework.SampleWebApi.Migrations
                     b.HasIndex("Email")
                         .HasName("ix_users_email");
 
+                    b.HasIndex("Password")
+                        .HasName("ix_users_password");
+
                     b.HasIndex("Status")
                         .HasName("ix_users_status");
 
                     b.HasIndex("UserName")
                         .HasName("ix_users_user_name");
 
-                    b.HasIndex("UserName", "Password")
-                        .HasName("ix_users_user_name_password");
-
                     b.ToTable("users");
 
                     b.HasData(
-                        new { Id = 1, AccessFailedCount = 0, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 159, DateTimeKind.Local), Email = "admin@admin.org", EmailConfirmCode = "9988", EmailConfirmed = false, Lockout = false, Password = "SVEgyHVBANuYjn9jl2FEIhfjl+BNRa9P2zwIyoW+AoQ=", Status = 1, UserName = "admin" }
+                        new { Id = 1, AccessFailedCount = 0, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 40, DateTimeKind.Local), Email = "admin@admin.org", EmailConfirmCode = "9988", EmailConfirmed = false, Lockout = false, Password = "F1idmnDn3K5TRQtR83axZDB0v3YA0M0epRbELdkuD3Q=", Status = 1, UserName = "admin" }
                     );
                 });
 
@@ -753,7 +755,7 @@ namespace CustomFramework.SampleWebApi.Migrations
                     b.ToTable("user_utils");
 
                     b.HasData(
-                        new { Id = 1, CreateDateTime = new DateTime(2018, 5, 27, 18, 7, 59, 159, DateTimeKind.Local), SpecialValue = "ffuCrap3TgFsZbBeo7AQUw==", Status = 1, UserId = 1 }
+                        new { Id = 1, CreateDateTime = new DateTime(2018, 5, 27, 17, 58, 19, 40, DateTimeKind.Local), SpecialValue = "wvKPeXhGa1tdcXR8POgFcA==", Status = 1, UserId = 1 }
                     );
                 });
 

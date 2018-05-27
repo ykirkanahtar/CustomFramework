@@ -67,7 +67,7 @@ namespace CustomFramework.SampleWebApi
             SeedAuthorizationData = new SeedAuthorizationData();
             Configuration.GetSection("SeedingAuthorizationData").Bind(SeedAuthorizationData);
 
-            SeedWebApiData = new SeedWebApiData(); 
+            SeedWebApiData = new SeedWebApiData();
         }
 
         public IConfiguration Configuration { get; }

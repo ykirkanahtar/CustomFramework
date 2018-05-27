@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using CustomFramework.Authorization.Enums;
 using CustomFramework.Data;
 using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Utils;

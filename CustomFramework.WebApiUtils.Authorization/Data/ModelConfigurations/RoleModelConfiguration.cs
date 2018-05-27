@@ -16,6 +16,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
 
             builder.Property(p => p.Description)
                 .HasMaxLength(255);
+
+            builder.HasIndex(p => p.RoleName);
         }
     }
 }
