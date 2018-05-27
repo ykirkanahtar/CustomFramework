@@ -79,7 +79,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
             catch (Exception ex)
             {
                 _logger.LogCritical(ex.Message);
-                throw new Exception(DefaultResponseMessages.AnErrorHasOccured);
+                throw ex;
             }
 
             context.Succeed(requirement);

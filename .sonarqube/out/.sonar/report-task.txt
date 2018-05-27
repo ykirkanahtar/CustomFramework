@@ -1,6 +1,0 @@
-projectKey=Custom.1234
-serverUrl=http://localhost:9000
-serverVersion=6.7.3.38370
-dashboardUrl=http://localhost:9000/dashboard/index/Custom.1234
-ceTaskId=AWNWKrbgTzUIfS1CtXiy
-ceTaskUrl=http://localhost:9000/api/ce/task?id=AWNWKrbgTzUIfS1CtXiy

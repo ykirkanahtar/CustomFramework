@@ -30,7 +30,7 @@ namespace CustomFramework.WebApiUtils.Utils
                 case BusinessUtilMethod.CheckNothing:
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("Undefined BusinessUtilMethod", businessUtilMethod.ToString());
+                    throw new ArgumentOutOfRangeException(businessUtilMethod.ToString());
             }
         }
 

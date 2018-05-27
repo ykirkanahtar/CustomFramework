@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
@@ -11,8 +12,6 @@ namespace CustomFramework.FtpClient
     public class FtpClient : FtpClientBase, IFtpClient
     {
         private FtpWebRequest _ftpWebRequest = null;
-        private FtpWebResponse _ftpWebResponse = null;
-        private Stream _ftpStream = null;
         private const int BufferSize = 2048;
 
         public FtpClient(ILogger<FtpClient> logger, string hostIp, string defaultFolder, string userName, string password) : base(logger, hostIp, defaultFolder, userName, password)
@@ -26,21 +25,21 @@ namespace CustomFramework.FtpClient
             {
                 GeneralSettings(remoteFileName, WebRequestMethods.Ftp.DownloadFile);
 
-                _ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
-                _ftpStream = _ftpWebResponse.GetResponseStream();
+                var ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
+                var ftpStream = ftpWebResponse.GetResponseStream();
 
                 var localFileStrem = new FileStream(localFileName, FileMode.Create);
                 var byteBuffer = new byte[BufferSize];
-                if (_ftpStream == null) throw new ArgumentNullException();
+                if (ftpStream == null) throw new ArgumentNullException(localFileName);
 
-                var bytesRead = await _ftpStream.ReadAsync(byteBuffer, 0, BufferSize);
+                var bytesRead = await ftpStream.ReadAsync(byteBuffer, 0, BufferSize);
 
                 try
                 {
                     while (bytesRead > 0)
                     {
                         await localFileStrem.WriteAsync(byteBuffer, 0, bytesRead);
-                        bytesRead = await _ftpStream.ReadAsync(byteBuffer, 0, BufferSize);
+                        bytesRead = await ftpStream.ReadAsync(byteBuffer, 0, BufferSize);
                     }
                 }
                 catch (Exception e)
@@ -50,8 +49,8 @@ namespace CustomFramework.FtpClient
                 }
 
                 localFileStrem.Close();
-                _ftpStream.Close();
-                _ftpWebResponse.Close();
+                ftpStream.Close();
+                ftpWebResponse.Close();
                 _ftpWebRequest = null;
             }
             catch (Exception e)
@@ -92,9 +91,9 @@ namespace CustomFramework.FtpClient
             {
                 GeneralSettings(fileName, WebRequestMethods.Ftp.DeleteFile);
 
-                _ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
+                var ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
 
-                _ftpWebResponse.Close();
+                ftpWebResponse.Close();
                 _ftpWebRequest = null;
             }
             catch (Exception e)
@@ -111,9 +110,9 @@ namespace CustomFramework.FtpClient
                 GeneralSettings(currentFileName, WebRequestMethods.Ftp.Rename);
 
                 _ftpWebRequest.RenameTo = newFileName;
-                _ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
+                var ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
 
-                _ftpWebResponse.Close();
+                ftpWebResponse.Close();
                 _ftpWebRequest = null;
             }
             catch (Exception e)
@@ -129,9 +128,9 @@ namespace CustomFramework.FtpClient
             {
                 GeneralSettings(directoryName, WebRequestMethods.Ftp.MakeDirectory);
 
-                _ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
+                var ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
 
-                _ftpWebResponse.Close();
+                ftpWebResponse.Close();
                 _ftpWebRequest = null;
             }
             catch (Exception e)
@@ -147,13 +146,13 @@ namespace CustomFramework.FtpClient
             {
                 GeneralSettings(fileName, WebRequestMethods.Ftp.GetDateTimestamp);
 
-                _ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
+                var ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
 
-                _ftpStream = _ftpWebResponse.GetResponseStream();
+                var ftpStream = ftpWebResponse.GetResponseStream();
 
-                if (_ftpStream == null) throw new ArgumentNullException();
+                if (ftpStream == null) throw new ArgumentNullException(fileName);
 
-                var ftpReader = new StreamReader(_ftpStream);
+                var ftpReader = new StreamReader(ftpStream);
 
                 string fileInfo;
 
@@ -168,8 +167,8 @@ namespace CustomFramework.FtpClient
                 }
 
                 ftpReader.Close();
-                _ftpStream.Close();
-                _ftpWebResponse.Close();
+                ftpStream.Close();
+                ftpWebResponse.Close();
                 _ftpWebRequest = null;
 
                 return fileInfo;
@@ -188,13 +187,13 @@ namespace CustomFramework.FtpClient
                 GeneralSettings(fileName, WebRequestMethods.Ftp.GetFileSize);
 
 
-                _ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
+                var ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
 
-                _ftpStream = _ftpWebResponse.GetResponseStream();
+                var ftpStream = ftpWebResponse.GetResponseStream();
 
-                if (_ftpStream != null)
+                if (ftpStream != null)
                 {
-                    var ftpReader = new StreamReader(_ftpStream);
+                    var ftpReader = new StreamReader(ftpStream);
 
                     string fileInfo = null;
 
@@ -212,13 +211,13 @@ namespace CustomFramework.FtpClient
                     }
 
                     ftpReader.Close();
-                    _ftpStream.Close();
-                    _ftpWebResponse.Close();
+                    ftpStream.Close();
+                    ftpWebResponse.Close();
                     _ftpWebRequest = null;
 
                     return fileInfo;
                 }
-                throw new ArgumentNullException(); //else
+                throw new ArgumentNullException(fileName); //else
             }
             catch (Exception e)
             {
@@ -231,23 +230,22 @@ namespace CustomFramework.FtpClient
         {
             try
             {
-                var request = new WebClient();
                 var url = $"{HostIp}//{DefaultFolder}/{fileName}";
-                string fileString;
-
-                request.Credentials = new NetworkCredential(UserName, Password);
 
                 try
                 {
-                    var newFileData = await request.DownloadDataTaskAsync(new Uri(url));
-                    fileString = System.Text.Encoding.UTF8.GetString(newFileData);
+                    using (var request = new WebClient())
+                    {
+                        request.Credentials = new NetworkCredential(UserName, Password);
+                        var newFileData = await request.DownloadDataTaskAsync(new Uri(url));
+                        return System.Text.Encoding.UTF8.GetString(newFileData);
+                    }
                 }
                 catch (WebException e)
                 {
                     Logger.LogCritical(0, e, e.Message);
                     throw;
                 }
-                return fileString;
             }
             catch (Exception e)
             {
@@ -262,19 +260,11 @@ namespace CustomFramework.FtpClient
             {
                 GeneralSettings(directoryName, WebRequestMethods.Ftp.ListDirectory);
 
-                using (var response = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync())
-                {
-
-                }
+                await _ftpWebRequest.GetResponseAsync();
                 return true;
             }
-            catch (WebException e)
+            catch (WebException)
             {
-                var response = (FtpWebResponse)e.Response;
-                if (response?.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
-                {
-                    //return false;  
-                }
                 return false;
             }
             catch (Exception e)
@@ -295,12 +285,12 @@ namespace CustomFramework.FtpClient
             {
                 GeneralSettings(directory, WebRequestMethods.Ftp.ListDirectory);
 
-                _ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
+                var ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
 
-                _ftpStream = _ftpWebResponse.GetResponseStream();
+                var ftpStream = ftpWebResponse.GetResponseStream();
 
-                if (_ftpStream == null) throw new ArgumentNullException();
-                var ftpReader = new StreamReader(_ftpStream);
+                if (ftpStream == null) throw new ArgumentNullException(directory);
+                var ftpReader = new StreamReader(ftpStream);
 
                 var results = new List<string>();
 
@@ -343,8 +333,8 @@ namespace CustomFramework.FtpClient
                 }
 
                 ftpReader.Close();
-                _ftpStream.Close();
-                _ftpWebResponse.Close();
+                ftpStream.Close();
+                ftpWebResponse.Close();
                 _ftpWebRequest = null;
                 return results;
             }
@@ -361,21 +351,20 @@ namespace CustomFramework.FtpClient
             {
                 GeneralSettings(directory, WebRequestMethods.Ftp.ListDirectoryDetails);
 
+                var ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
 
-                _ftpWebResponse = (FtpWebResponse)await _ftpWebRequest.GetResponseAsync();
+                var ftpStream = ftpWebResponse.GetResponseStream();
 
-                _ftpStream = _ftpWebResponse.GetResponseStream();
+                if (ftpStream == null) throw new ArgumentNullException(directory);
+                var ftpReader = new StreamReader(ftpStream);
 
-                if (_ftpStream == null) throw new ArgumentNullException();
-                var ftpReader = new StreamReader(_ftpStream);
-
-                string directoryRaw = null;
-
+                var directoryRaw = new StringBuilder();
                 try
                 {
                     while (ftpReader.Peek() != -1)
                     {
-                        directoryRaw += await ftpReader.ReadLineAsync() + "|";
+                        var readText = await ftpReader.ReadLineAsync();
+                        directoryRaw.Append($"{readText}|");
                     }
                 }
                 catch (Exception e)
@@ -385,15 +374,15 @@ namespace CustomFramework.FtpClient
                 }
 
                 ftpReader.Close();
-                _ftpStream.Close();
-                _ftpWebResponse.Close();
+                ftpStream.Close();
+                ftpWebResponse.Close();
                 _ftpWebRequest = null;
 
                 try
                 {
-                    if (directoryRaw == null) throw new ArgumentNullException();
+                    if (directoryRaw.Length == 0) throw new ArgumentNullException(directory);
 
-                    var directoryList = directoryRaw.Split("|".ToCharArray());
+                    var directoryList = directoryRaw.ToString().Split("|".ToCharArray());
                     return new List<string>(directoryList);
                 }
                 catch (Exception e)
