@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Threading.Tasks;
 using CustomFramework.Data;
 using CustomFramework.WebApiUtils.Enums;
-using Microsoft.EntityFrameworkCore;
 
 namespace CustomFramework.WebApiUtils.Utils
 {

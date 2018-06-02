@@ -5,7 +5,6 @@ using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;
 using CustomFramework.WebApiUtils.Utils.Exceptions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -21,8 +20,8 @@ namespace CustomFramework.WebApiUtils.Middlewares
         public ErrorWrappingMiddleware(RequestDelegate next, ILogger<ErrorWrappingMiddleware> logger, ILocalizationService localizationService)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
-            _localizationService = localizationService;
             _logger = logger;
+            _localizationService = localizationService;
         }
 
         public async Task Invoke(HttpContext context)

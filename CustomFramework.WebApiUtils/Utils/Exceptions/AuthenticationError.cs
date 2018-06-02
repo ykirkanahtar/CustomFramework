@@ -7,7 +7,6 @@ namespace CustomFramework.WebApiUtils.Utils.Exceptions
     {
         public string GetReturnMessage(ref string message)
         {
-            message = string.Empty;
             return DefaultResponseMessages.LoginError;
         }
 

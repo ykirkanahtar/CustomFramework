@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using CustomFramework.Authorization.Enums;
 using CustomFramework.Data;
@@ -16,6 +15,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
     {
         public RoleEntityClaimRepository(DbContext dbContext) : base(dbContext)
         {
+
         }
 
         public async Task<RoleEntityClaim> GetByRoleIdAndEntityAsync(int roleId, string entity)

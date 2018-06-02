@@ -1,11 +1,8 @@
-using System;
 using System.Linq;
-using CustomFramework.Data.Enums;
 using CustomFramework.Data.Utils;
 using CustomFramework.SampleWebApi.Data.ModelConfiguration;
 using CustomFramework.SampleWebApi.Models;
 using CustomFramework.WebApiUtils.Authorization.Data;
-using CustomFramework.WebApiUtils.Authorization.Data.Seeding;
 using Microsoft.EntityFrameworkCore;
 
 namespace CustomFramework.SampleWebApi.Data

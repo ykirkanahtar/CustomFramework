@@ -19,7 +19,6 @@ using CustomFramework.WebApiUtils.Authorization.Data.Seeding;
 using CustomFramework.WebApiUtils.Authorization.Extensions;
 using CustomFramework.WebApiUtils.Authorization.Filters;
 using CustomFramework.WebApiUtils.Extensions;
-using CustomFramework.WebApiUtils.Middlewares;
 using CustomFramework.WebApiUtils.Resources;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -180,7 +179,7 @@ namespace CustomFramework.SampleWebApi
 
             app.UseSwaggerDocumentation();
 
-            app.UseMiddleware<ErrorWrappingMiddleware>();
+            app.UseErrorWrappingMiddleware();
 
             app.UseMvc();
         }

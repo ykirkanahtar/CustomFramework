@@ -6,7 +6,6 @@ using CustomFramework.WebApiUtils.Constants;
 using CustomFramework.WebApiUtils.Resources;
 using CustomFramework.WebApiUtils.Utils.Exceptions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -98,20 +97,25 @@ namespace CustomFramework.WebApiUtils.Contracts
 
         private string GetDefaultMessageForException(Exception exception)
         {
-            var returnMessage = string.Empty;
-
             var message = exception.Message;
 
             if (message.Contains("See the inner exception for details"))
-                message = exception.InnerException.Message;
+                if (exception.InnerException != null)
+                    message = exception.InnerException.Message;
 
             if (message.Contains("See the inner exception for details"))
-                message = exception.InnerException.InnerException.Message;
+            {
+                if (exception.InnerException?.InnerException != null)
+                    message = exception.InnerException.InnerException.Message;
+            }
 
             if (message.Contains("See the inner exception for details"))
-                message = exception.InnerException.InnerException.InnerException.Message;
+            {
+                if (exception.InnerException?.InnerException?.InnerException != null)
+                    message = exception.InnerException.InnerException.InnerException.Message;
+            }
 
-            returnMessage = new ExceptionOperation(exception).GetReturnMessage(ref message);
+            var returnMessage = new ExceptionOperation(exception).GetReturnMessage(ref message);
 
             var localizatedReturnMessage = _localizationService.GetValue(returnMessage);
             return string.IsNullOrEmpty(message) ? $"{localizatedReturnMessage}" : $"{localizatedReturnMessage} : {_localizationService.GetValue(message)}";

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Transactions;
 using AutoMapper;
-using CustomFramework.Data;
 using CustomFramework.WebApiUtils.Constants;
 using CustomFramework.WebApiUtils.Enums;
 using CustomFramework.WebApiUtils.Utils;

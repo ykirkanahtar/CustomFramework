@@ -2,9 +2,9 @@
 {
     public static class ValidatorConstants
     {
-        public const string CannotBeNullError = "CannotBeNullError";
-        public const string MaxLengthError = "MaxLengthError";
-        public const string EmailFormatError = "EmailFormatError";
+        public static readonly string CannotBeNullError = "CannotBeNullError";
+        public static readonly string MaxLengthError = "MaxLengthError";
+        public static readonly string EmailFormatError = "EmailFormatError";
     }
 
 }

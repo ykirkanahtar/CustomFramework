@@ -1,5 +1,4 @@
 ﻿using CustomFramework.WebApiUtils.Authorization.Models;
-using CustomFramework.WebApiUtils.Contracts;
 
 namespace CustomFramework.WebApiUtils.Authorization.Contracts
 {

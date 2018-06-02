@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using CustomFramework.Authorization.Enums;
 using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;

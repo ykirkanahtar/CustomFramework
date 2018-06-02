@@ -1,7 +1,4 @@
-﻿using CustomFramework.Authorization;
-using CustomFramework.Authorization.Enums;
-
-namespace CustomFramework.WebApiUtils.Authorization.Request
+﻿namespace CustomFramework.WebApiUtils.Authorization.Request
 {
     public class UserEntityClaimRequest
     {

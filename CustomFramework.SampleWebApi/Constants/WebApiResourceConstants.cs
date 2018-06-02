@@ -3,17 +3,17 @@ namespace CustomFramework.SampleWebApi.Constants
     public static class WebApiResourceConstants
     {
         /*************Constants************/
-        public const string StudentNo = "StudentNo";
-        public const string Name = "Name";
-        public const string Surname = "Surname";
+        public static readonly string StudentNo = "StudentNo";
+        public static readonly string Name = "Name";
+        public static readonly string Surname = "Surname";
 
-        public const string CourseNo = "CourseNo";
-        public const string TeacherId = "TeacherId";
+        public static readonly string CourseNo = "CourseNo";
+        public static readonly string TeacherId = "TeacherId";
 
-        public const string TeacherNo = "TeacherNo";
+        public static readonly string TeacherNo = "TeacherNo";
 
-        public const string StudentId = "StudentId";
-        public const string CourseId = "CourseId";
+        public static readonly string StudentId = "StudentId";
+        public static readonly string CourseId = "CourseId";
 
         /*********End of Constants*********/
     }

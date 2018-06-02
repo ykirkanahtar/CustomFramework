@@ -1,7 +1,5 @@
-﻿using System.Text.RegularExpressions;
-using CustomFramework.Utils;
+﻿using CustomFramework.Utils;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CustomFramework.Data.Utils
 {

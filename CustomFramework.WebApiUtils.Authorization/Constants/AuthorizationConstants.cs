@@ -2,21 +2,21 @@
 {
     public static class AuthorizationConstants
     {
-        public const string Name = "Name";
-        public const string CustomClaim = "CustomClaim";
-        public const string ClientApplicationCode = "ClientApplicationCode";
-        public const string ClientApplicationName = "ClientApplicationName";
-        public const string ClientApplicationPass = "ClientApplicationPassword";
-        public const string RoleId = "RoleId";
-        public const string UserId = "UserId";
-        public const string ClaimId = "ClaimId";
-        public const string Entity = "Entity";
-        public const string RoleName = "RoleName";
-        public const string Description = "Description";
-        public const string UserName = "UserName";
-        public const string Pass = "Password";
-        public const string Email = "Email";
-        public const string EmailConfirmCode = "EmailConfirmCode";
+        public static readonly string Name = "Name";
+        public static readonly string CustomClaim = "CustomClaim";
+        public static readonly string ClientApplicationCode = "ClientApplicationCode";
+        public static readonly string ClientApplicationName = "ClientApplicationName";
+        public static readonly string ClientApplicationPass = "ClientApplicationPassword";
+        public static readonly string RoleId = "RoleId";
+        public static readonly string UserId = "UserId";
+        public static readonly string ClaimId = "ClaimId";
+        public static readonly string Entity = "Entity";
+        public static readonly string RoleName = "RoleName";
+        public static readonly string Description = "Description";
+        public static readonly string UserName = "UserName";
+        public static readonly string Pass = "Password";
+        public static readonly string Email = "Email";
+        public static readonly string EmailConfirmCode = "EmailConfirmCode";
 
     }
 }

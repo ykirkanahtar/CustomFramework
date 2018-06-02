@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using CustomFramework.Authorization.Attributes;
 using CustomFramework.Authorization.Enums;
 using CustomFramework.Authorization.Handlers;
-using CustomFramework.Data.Enums;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Constants;
@@ -79,7 +78,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
             catch (Exception ex)
             {
                 _logger.LogCritical(ex.Message);
-                throw ex;
+                throw;
             }
 
             context.Succeed(requirement);
@@ -87,6 +86,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
 
         private static void UserIsAuthenticated(ClaimsPrincipal claimsPrincipal)
         {
+            if (claimsPrincipal == null) throw new ArgumentNullException(nameof(claimsPrincipal));
             if (claimsPrincipal == null || !claimsPrincipal.Identity.IsAuthenticated)
             {
                 throw new UnauthorizedAccessException(DefaultResponseMessages.UnauthorizedAccessError);

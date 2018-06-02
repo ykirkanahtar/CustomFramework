@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Net;
 using System.Security.Authentication;
-using CustomFramework.WebApiUtils.Constants;
 
 namespace CustomFramework.WebApiUtils.Utils.Exceptions
 {

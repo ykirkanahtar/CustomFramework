@@ -1,7 +1,4 @@
-﻿using CustomFramework.Authorization;
-using CustomFramework.Authorization.Enums;
-
-namespace CustomFramework.WebApiUtils.Authorization.Response
+﻿namespace CustomFramework.WebApiUtils.Authorization.Response
 {
     public class RoleEntityClaimResponse
     {

@@ -1,5 +1,4 @@
-﻿using CustomFramework.Data;
-using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
+﻿using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Business.Managers;
 using CustomFramework.WebApiUtils.Authorization.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Data;

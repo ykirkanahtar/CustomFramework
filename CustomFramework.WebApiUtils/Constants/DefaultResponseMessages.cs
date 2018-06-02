@@ -2,15 +2,15 @@
 {
     public static class DefaultResponseMessages
     {
-        public const string SuccessMessage = "Success";
-        public const string AnErrorHasOccured = "AnErrorHasOccured";
-        public const string DuplicateRecordForUniqueValueError = "DuplicateRecordForUniqueValueError";
-        public const string UnauthorizedAccessError = "UnauthorizedAccessError";
-        public const string NotFoundError = "NotFoundError";
-        public const string LoginError = "LoginError";
-        public const string ModelStateValidError = "ModelStateValidError";
-        public const string ModelStateErrors = "ModelStateErrors";
-        public const string RecordExistsError = "RecordExistsError";
-        public const string ArgumentExceptionError = "ArgumentExceptionError";
+        public static readonly string SuccessMessage = "Success";
+        public static readonly string AnErrorHasOccured = "AnErrorHasOccured";
+        public static readonly string DuplicateRecordForUniqueValueError = "DuplicateRecordForUniqueValueError";
+        public static readonly string UnauthorizedAccessError = "UnauthorizedAccessError";
+        public static readonly string NotFoundError = "NotFoundError";
+        public static readonly string LoginError = "LoginError";
+        public static readonly string ModelStateValidError = "ModelStateValidError";
+        public static readonly string ModelStateErrors = "ModelStateErrors";
+        public static readonly string RecordExistsError = "RecordExistsError";
+        public static readonly string ArgumentExceptionError = "ArgumentExceptionError";
     }
 }

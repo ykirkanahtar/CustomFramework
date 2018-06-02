@@ -1,6 +1,5 @@
 ﻿using CustomFramework.Data;
 using CustomFramework.WebApiUtils.Authorization.Data.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace CustomFramework.WebApiUtils.Authorization.Data
 {

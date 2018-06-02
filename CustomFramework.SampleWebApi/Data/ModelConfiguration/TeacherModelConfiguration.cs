@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using CustomFramework.Data.ModelConfiguration;
 using CustomFramework.SampleWebApi.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

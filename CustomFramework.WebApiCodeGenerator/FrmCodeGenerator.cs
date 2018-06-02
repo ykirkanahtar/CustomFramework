@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using Microsoft.VisualBasic;
 
 namespace CustomFramework.WebApiCodeGenerator
@@ -24,7 +18,7 @@ namespace CustomFramework.WebApiCodeGenerator
 
         private string _projectPath;
 
-        private readonly string _applicationPath = Path.GetDirectoryName(Path.GetDirectoryName(Directory.GetCurrentDirectory())) + "\\output";
+        //private readonly string _applicationPath = Path.GetDirectoryName(Path.GetDirectoryName(Directory.GetCurrentDirectory())) + "\\output";
 
         public FrmCodeGenerator()
         {
@@ -45,72 +39,72 @@ namespace CustomFramework.WebApiCodeGenerator
             LoadStudentCourseData();
         }
 
-        private void LoadStudentData()
-        {
-            TxtClassName.Text = @"Student";
-            RdInt32.Checked = true;
-            ChkHasGetAllMethod.Checked = true;
-            ChkGetAllWithPaging.Checked = true;
-            ChkHasUpdateMethod.Checked = true;
+    //    private void LoadStudentData()
+    //    {
+    //        TxtClassName.Text = @"Student";
+    //        RdInt32.Checked = true;
+    //        ChkHasGetAllMethod.Checked = true;
+    //        ChkGetAllWithPaging.Checked = true;
+    //        ChkHasUpdateMethod.Checked = true;
 
-            var fieldNo = new Field("StudentNo", "int", string.Empty, true, true, true, true, true);
-            var fieldName = new Field("Name", "string", "25", true, true, true, false, false);
-            var fieldSurname = new Field("Surname", "string", "25", true, true, true, false, false);
+    //        var fieldNo = new Field("StudentNo", "int", string.Empty, true, true, true, true, true);
+    //        var fieldName = new Field("Name", "string", "25", true, true, true, false, false);
+    //        var fieldSurname = new Field("Surname", "string", "25", true, true, true, false, false);
 
-            LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldNo)));
-            LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldName)));
-            LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldSurname)));
+    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldNo)));
+    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldName)));
+    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldSurname)));
 
-            var referenceCourse = new Reference("StudentCourses", "int", Relations.OneToMany, false, false,
-                false, false, false, "StudentCourse");
+    //        var referenceCourse = new Reference("StudentCourses", "int", Relations.OneToMany, false, false,
+    //            false, false, false, "StudentCourse");
 
-            LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceCourse)));
-        }
+    //        LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceCourse)));
+    //    }
 
-        private void LoadCourseData()
-        {
-            TxtClassName.Text = @"Course";
-            RdInt32.Checked = true;
-            ChkHasGetAllMethod.Checked = true;
-            ChkGetAllWithPaging.Checked = false;
-            ChkHasUpdateMethod.Checked = true;
+    //    private void LoadCourseData()
+    //    {
+    //        TxtClassName.Text = @"Course";
+    //        RdInt32.Checked = true;
+    //        ChkHasGetAllMethod.Checked = true;
+    //        ChkGetAllWithPaging.Checked = false;
+    //        ChkHasUpdateMethod.Checked = true;
 
-            var fieldNo = new Field("CourseNo", "int", string.Empty, true, true, true, true, true);
-            var fieldName = new Field("Name", "string", "25", true, true, true, false, false);
+    //        var fieldNo = new Field("CourseNo", "int", string.Empty, true, true, true, true, true);
+    //        var fieldName = new Field("Name", "string", "25", true, true, true, false, false);
 
-            LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldNo)));
-            LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldName)));
+    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldNo)));
+    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldName)));
 
-            var referenceTeacher = new Reference("TeacherId", "int", Relations.ManyToOne, true, true,
-    true, true, false, "Teacher");
-            var referenceStudent = new Reference("StudentCourses", "int", Relations.OneToMany, false, false,
-                false, false, false, "StudentCourse");
+    //        var referenceTeacher = new Reference("TeacherId", "int", Relations.ManyToOne, true, true,
+    //true, true, false, "Teacher");
+    //        var referenceStudent = new Reference("StudentCourses", "int", Relations.OneToMany, false, false,
+    //            false, false, false, "StudentCourse");
 
-            LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceTeacher)));
-            LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceStudent)));
-        }
+    //        LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceTeacher)));
+    //        LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceStudent)));
+    //    }
 
-        private void LoadTeacherData()
-        {
-            TxtClassName.Text = @"Teacher";
-            RdInt32.Checked = true;
-            ChkHasGetAllMethod.Checked = true;
-            ChkGetAllWithPaging.Checked = false;
-            ChkHasUpdateMethod.Checked = true;
+    //    private void LoadTeacherData()
+    //    {
+    //        TxtClassName.Text = @"Teacher";
+    //        RdInt32.Checked = true;
+    //        ChkHasGetAllMethod.Checked = true;
+    //        ChkGetAllWithPaging.Checked = false;
+    //        ChkHasUpdateMethod.Checked = true;
 
-            var fieldNo = new Field("TeacherNo", "int", string.Empty, true, true, true, true, true);
-            var fieldName = new Field("Name", "string", "25", true, true, true, false, false);
-            var fieldSurname = new Field("Surname", "string", "25", true, true, true, false, false);
+    //        var fieldNo = new Field("TeacherNo", "int", string.Empty, true, true, true, true, true);
+    //        var fieldName = new Field("Name", "string", "25", true, true, true, false, false);
+    //        var fieldSurname = new Field("Surname", "string", "25", true, true, true, false, false);
 
-            LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldNo)));
-            LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldName)));
-            LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldSurname)));
+    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldNo)));
+    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldName)));
+    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldSurname)));
 
-            var referenceCourse = new Reference("Courses", "int", Relations.ManyToMany, false, false,
-                false, false, false, "Course");
+    //        var referenceCourse = new Reference("Courses", "int", Relations.ManyToMany, false, false,
+    //            false, false, false, "Course");
 
-            LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceCourse)));
-        }
+    //        LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceCourse)));
+    //    }
 
         private void LoadStudentCourseData()
         {

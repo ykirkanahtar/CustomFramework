@@ -11,7 +11,7 @@ namespace CustomFramework.FtpClient
 {
     public class FtpClient : FtpClientBase, IFtpClient
     {
-        private FtpWebRequest _ftpWebRequest = null;
+        private FtpWebRequest _ftpWebRequest;
         private const int BufferSize = 2048;
 
         public FtpClient(ILogger<FtpClient> logger, string hostIp, string defaultFolder, string userName, string password) : base(logger, hostIp, defaultFolder, userName, password)
@@ -238,7 +238,7 @@ namespace CustomFramework.FtpClient
                     {
                         request.Credentials = new NetworkCredential(UserName, Password);
                         var newFileData = await request.DownloadDataTaskAsync(new Uri(url));
-                        return System.Text.Encoding.UTF8.GetString(newFileData);
+                        return Encoding.UTF8.GetString(newFileData);
                     }
                 }
                 catch (WebException e)
