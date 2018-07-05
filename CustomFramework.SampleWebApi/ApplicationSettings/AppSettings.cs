@@ -1,4 +1,5 @@
-﻿using CustomFramework.WebApiUtils.Authorization.Utils;
+﻿using CustomFramework.Authorization.Utils;
+using CustomFramework.WebApiUtils.Authorization.Utils;
 
 namespace CustomFramework.SampleWebApi.ApplicationSettings
 {

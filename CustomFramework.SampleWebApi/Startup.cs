@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using AutoMapper;
 using CustomFramework.Authorization;
 using CustomFramework.Authorization.Attributes;
@@ -17,7 +14,6 @@ using CustomFramework.SampleWebApi.Validators;
 using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Data.Seeding;
 using CustomFramework.WebApiUtils.Authorization.Extensions;
-using CustomFramework.WebApiUtils.Authorization.Filters;
 using CustomFramework.WebApiUtils.Extensions;
 using CustomFramework.WebApiUtils.Resources;
 using FluentValidation;
@@ -33,6 +29,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using CustomFramework.WebApiUtils.Filters;
 
 namespace CustomFramework.SampleWebApi
 {
