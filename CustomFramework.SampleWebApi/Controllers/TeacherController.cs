@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging;
 namespace CustomFramework.SampleWebApi.Controllers
 {
     [Route(ApiConstants.DefaultRoute + nameof(Teacher))]
-    public class TeacherController : BaseControllerWithAuthorizationAndUpdate<Teacher, TeacherRequest, TeacherRequest, TeacherResponse, ITeacherManager, int>
+    public class TeacherController : BaseControllerWithCrudAuthorization<Teacher, TeacherRequest, TeacherRequest, TeacherResponse, ITeacherManager, int>
     {
 
         public TeacherController(ITeacherManager teacherManager, ILocalizationService localizationService, ILogger<TeacherController> logger, IMapper mapper)

@@ -9,12 +9,14 @@ namespace CustomFramework.WebApiUtils.Authorization.Validators
     {
         public UserClaimValidator()
         {
+            RuleFor(x => x.ApplicationId).NotEmpty()
+                .WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.ApplicationId}");
+
             RuleFor(x => x.UserId).NotEmpty()
                 .WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.UserId}");
 
             RuleFor(x => x.ClaimId).NotEmpty()
                 .WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.ClaimId}");
-
         }
     }
 }

@@ -9,6 +9,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Models
         public int ClientApplicationId { get; set; }
 
         [JsonIgnore]
-        public ClientApplication ClientApplication { get; set; }
+        public virtual ClientApplication ClientApplication { get; set; }
     }
 }

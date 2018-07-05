@@ -27,16 +27,16 @@ namespace CustomFramework.WebApiCodeGenerator
 
         private void Load_Datas()
         {
-            TxtNameSpace.Text = @"CustomFramework.SampleWebApi";
+            TxtNameSpace.Text = @"Cs.Crm.WebApi";
             _nameSpace = TxtNameSpace.Text;
 
-            TxtProjectFolder.Text = @"C:\Users\YEK\Documents\Projects\CustomFramework\CustomFramework.SampleWebApi";
+            TxtProjectFolder.Text = @"C:\Users\ykirk\Documents\Projects\Crm\CS.Crm\Cs.Crm.WebApi";
             _projectPath = TxtProjectFolder.Text;
 
             //LoadStudentData();
             //LoadCourseData();
             //LoadTeacherData();
-            LoadStudentCourseData();
+            //LoadStudentCourseData();
         }
 
     //    private void LoadStudentData()
@@ -555,7 +555,8 @@ namespace {nameSpace}.Models
 
                 fields = fields + "\t" + GetFieldString() + Environment.NewLine;
 
-                fields = fields.Replace("{fieldDataType}", field.FieldDataType);
+                fields = fields.Replace("{fieldDataType}", field.FieldDataType == "enum" ? field.FieldDataType : field.FieldName);
+
                 fields = fields.Replace("{fieldName}", field.FieldName);
             }
 
@@ -1186,11 +1187,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Authorization.Attributes;
 using CustomFramework.Authorization.Enums;
-using CustomFramework.SampleWebApi.ApplicationSettings;
-using CustomFramework.SampleWebApi.Business;
-using CustomFramework.SampleWebApi.Models;
-using CustomFramework.SampleWebApi.Requests;
-using CustomFramework.SampleWebApi.Responses;
 using CustomFramework.WebApiUtils.Authorization.Controllers;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;
@@ -1259,7 +1255,7 @@ namespace {nameSpace}.Controllers
             }
             else
             {
-                value = value.Replace("{baseController}", "BaseControllerWithAuthorization<{className}, {className}Request, {className}Response, I{className}Manager, {idFieldDataType}>");
+                value = value.Replace("{baseController}", "BaseControllerWithCrdAuthorization<{className}, {className}Request, {className}Response, I{className}Manager, {idFieldDataType}>");
             }
 
             foreach (ListViewItem item in LstViewFields.Items)
@@ -1323,7 +1319,6 @@ namespace {nameSpace}.Controllers
             var value =
 @"using System.Collections.Generic;
 using CustomFramework.Data.ModelConfiguration;
-using CustomFramework.SampleWebApi.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace {nameSpace}.Data.ModelConfiguration
@@ -1604,6 +1599,9 @@ namespace {nameSpace}.Data.ModelConfiguration
                 methods = methods.Replace("{fieldDataTypeController}", ":{fieldDataType}");
             else
                 methods = methods.Replace("{fieldDataTypeController}", string.Empty);
+
+            if (fieldDataType == "enum")
+                methods = methods.Replace("{fieldDataType}", "{fieldName}");
 
             methods = methods.Replace("{fieldName}", fieldName);
             methods = methods.Replace("{fieldNameToLower}", fieldName.ToLowerFirstLetter());

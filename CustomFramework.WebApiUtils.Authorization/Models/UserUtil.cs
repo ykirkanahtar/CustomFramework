@@ -9,6 +9,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Models
         public int UserId { get; set; }
 
         [JsonIgnore]
-        public User User { get; set; }
+        public virtual User User { get; set; }
     }
 }

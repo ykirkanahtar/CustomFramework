@@ -14,9 +14,9 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
         {
         }
 
-        public async Task<UserClaim> GetByUserIdAndClaimIdAsync(int userId, int claimId)
+        public async Task<UserClaim> GetByApplicationIdAndUserIdAndClaimIdAsync(int applicationId, int userId, int claimId)
         {
-            return await Get(p => p.UserId == userId && p.ClaimId == claimId).FirstOrDefaultAsync();
+            return await Get(p => p.ApplicationId == applicationId && p.UserId == userId && p.ClaimId == claimId).FirstOrDefaultAsync();
         }
 
         public async Task<ICustomList<Claim>> GetClaimsByUserIdAsync(int userId)
@@ -31,9 +31,9 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
                 .ToCustomList();
         }
 
-        public async Task<ICustomList<UserClaim>> UserIsAuthorizedForClaimAsync(int userId, int claimId)
+        public async Task<ICustomList<UserClaim>> UserIsAuthorizedForClaimAsync(int applicationId, int userId, int claimId)
         {
-            return await GetAll(p => p.UserId == userId && p.ClaimId == claimId).ToCustomList();
+            return await GetAll(p => p.ApplicationId == applicationId && p.UserId == userId && p.ClaimId == claimId).ToCustomList();
         }
     }
 }

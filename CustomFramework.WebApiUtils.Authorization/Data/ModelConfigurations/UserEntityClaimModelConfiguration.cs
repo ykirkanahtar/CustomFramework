@@ -11,6 +11,9 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
         {
             base.Configure(builder);
 
+            builder.Property(p => p.ApplicationId)
+                .IsRequired();
+
             builder.Property(p => p.UserId)
                 .IsRequired();
 
@@ -31,14 +34,20 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
                 .IsRequired();
 
             builder
+                .HasOne(r => r.Application)
+                .WithMany(c => (IEnumerable<T>)c.UserEntityClaims)
+                .HasForeignKey(r => r.ApplicationId)
+                .HasPrincipalKey(c => c.Id);
+
+            builder
                 .HasOne(r => r.User)
                 .WithMany(c => (IEnumerable<T>)c.UserEntityClaims)
                 .HasForeignKey(r => r.UserId);
 
-            builder.HasIndex(p => new { p.UserId, p.Entity, p.CanSelect });
-            builder.HasIndex(p => new { p.UserId, p.Entity, p.CanCreate });
-            builder.HasIndex(p => new { p.UserId, p.Entity, p.CanUpdate });
-            builder.HasIndex(p => new { p.UserId, p.Entity, p.CanDelete });
+            builder.HasIndex(p => new { p.ApplicationId, p.UserId, p.Entity, p.CanSelect });
+            builder.HasIndex(p => new { p.ApplicationId, p.UserId, p.Entity, p.CanCreate });
+            builder.HasIndex(p => new { p.ApplicationId, p.UserId, p.Entity, p.CanUpdate });
+            builder.HasIndex(p => new { p.ApplicationId, p.UserId, p.Entity, p.CanDelete });
         }
     }
 }

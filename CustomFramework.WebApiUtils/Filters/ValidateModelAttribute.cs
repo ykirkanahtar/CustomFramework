@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 
-namespace CustomFramework.WebApiUtils.Authorization.Filters
+namespace CustomFramework.WebApiUtils.Filters
 {
     public class ValidateModelAttribute : ActionFilterAttribute
     {

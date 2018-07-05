@@ -11,11 +11,20 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
         {
             base.Configure(builder);
 
+            builder.Property(p => p.ApplicationId)
+                .IsRequired();
+
             builder.Property(p => p.RoleId)
                 .IsRequired();
 
             builder.Property(p => p.ClaimId)
                 .IsRequired();
+
+            builder
+                .HasOne(r => r.Application)
+                .WithMany(c => (IEnumerable<T>)c.RoleClaims)
+                .HasForeignKey(r => r.ApplicationId)
+                .HasPrincipalKey(c=>c.Id);
 
             builder
                 .HasOne(r => r.Role)
@@ -27,6 +36,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
                 .WithMany(c => (IEnumerable<T>)c.RoleClaims)
                 .HasForeignKey(r => r.ClaimId);
 
+            builder.HasIndex(p => new { p.ApplicationId, p.RoleId, p.ClaimId });
         }
     }
 }

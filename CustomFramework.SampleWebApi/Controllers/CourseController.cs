@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging;
 namespace CustomFramework.SampleWebApi.Controllers
 {
     [Route(ApiConstants.DefaultRoute + nameof(Course))]
-    public class CourseController : BaseControllerWithAuthorizationAndUpdate<Course, CourseRequest, CourseRequest, CourseResponse, ICourseManager, int>
+    public class CourseController : BaseControllerWithCrudAuthorization<Course, CourseRequest, CourseRequest, CourseResponse, ICourseManager, int>
     {
 
         public CourseController(ICourseManager courseManager, ILocalizationService localizationService, ILogger<CourseController> logger, IMapper mapper)

@@ -9,6 +9,9 @@ namespace CustomFramework.WebApiUtils.Authorization.Validators
     {
         public RoleClaimValidator()
         {
+            RuleFor(x => x.ApplicationId).NotEmpty()
+                .WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.ApplicationId}");
+
             RuleFor(x => x.RoleId).NotEmpty()
                 .WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.RoleId}");
 

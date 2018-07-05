@@ -16,9 +16,9 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
         {
         }
 
-        public async Task<RoleClaim> GetByRoleIdAndClaimIdAsync(int roleId, int claimId)
+        public async Task<RoleClaim> GetByApplicationIdAndRoleIdAndClaimIdAsync(int applicationId, int roleId, int claimId)
         {
-            return await Get(p => p.RoleId == roleId && p.ClaimId == claimId).FirstOrDefaultAsync();
+            return await Get(p => p.ApplicationId == applicationId && p.RoleId == roleId && p.ClaimId == claimId).FirstOrDefaultAsync();
         }
 
         public async Task<ICustomList<Claim>> GetClaimsByRoleIdAsync(int roleId)
@@ -33,11 +33,12 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
                 .ToCustomList();
         }
 
-        public async Task<ICustomList<RoleClaim>> RolesAreAuthorizedForClaimAsync(IEnumerable<Role> roles, int claimId)
+        public async Task<ICustomList<RoleClaim>> RolesAreAuthorizedForClaimAsync(int applicationId, IEnumerable<Role> roles, int claimId)
         {
             var predicate = PredicateBuilder.New<RoleClaim>();
             predicate = roles.Aggregate(predicate, (current, role) => current.Or(p => p.RoleId == role.Id));
             predicate = predicate.And(p => p.ClaimId == claimId);
+            predicate = predicate.And(p => p.ApplicationId == applicationId);
 
             return await GetAll(predicate: predicate).ToCustomList();
         }

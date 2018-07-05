@@ -9,7 +9,8 @@ namespace CustomFramework.WebApiUtils.Utils
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json");
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables();
             return builder.Build();
         }
 

@@ -125,6 +125,7 @@ namespace CustomFramework.SampleWebApi
             services.AddTransient<ICourseRepository, CourseRepository>();
             services.AddTransient<ITeacherRepository, TeacherRepository>();
             services.AddTransient<IStudentCourseRepository, StudentCourseRepository>();
+            services.AddTransient<ISchoolRepository, SchoolRepository>();
             /*********End of Repositories*********/
 
             /*************Managers************/
@@ -132,6 +133,7 @@ namespace CustomFramework.SampleWebApi
             services.AddTransient<ICourseManager, CourseManager>();
             services.AddTransient<ITeacherManager, TeacherManager>();
             services.AddTransient<IStudentCourseManager, StudentCourseManager>();
+            services.AddTransient<ISchoolManager, SchoolManager>();
             /*********End of Managers*********/
 
             /****************Fluent Validation***************/
@@ -139,6 +141,8 @@ namespace CustomFramework.SampleWebApi
             services.AddTransient<IValidator<CourseRequest>, CourseValidator>();
             services.AddTransient<IValidator<TeacherRequest>, TeacherValidator>();
             services.AddTransient<IValidator<StudentCourseRequest>, StudentCourseValidator>();
+            services.AddTransient<IValidator<SchoolRequest>, SchoolValidator>();
+
             /************End of Fluent Validation************/
 
             services.AddMvc(options =>

@@ -1,4 +1,5 @@
-﻿using CustomFramework.SampleWebApi.ApplicationSettings;
+﻿using AutoMapper;
+using CustomFramework.SampleWebApi.ApplicationSettings;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Controllers;
 using CustomFramework.WebApiUtils.Resources;
@@ -11,8 +12,9 @@ namespace CustomFramework.SampleWebApi.Controllers.Authorization
     [Route(ApiConstants.DefaultRoute + "token")]
     public class TokenController : BaseTokenController
     {
-        public TokenController(IClientApplicationManager clientApplicationManager, IUserManager userManager, ILocalizationService localizationService, ILogger<TokenController> logger)
-            : base(clientApplicationManager, userManager, localizationService, logger, Startup.AppSettings.Token)
+        public TokenController(IApplicationManager applicationManager, IApplicationUserManager applicationUserManager, IClientApplicationManager clientApplicationManager
+            , IUserManager userManager, ILocalizationService localizationService, ILogger<TokenController> logger, IMapper mapper)
+            : base(applicationManager, applicationUserManager, clientApplicationManager, userManager, localizationService, logger, mapper, Startup.AppSettings.Token)
         {
 
         }

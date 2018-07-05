@@ -14,6 +14,9 @@ namespace CustomFramework.WebApiUtils.Authorization.Data
 
         }
 
+        public virtual DbSet<Application> Applications { get; set; }
+
+        public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public virtual DbSet<ClientApplication> ClientApplications { get; set; }
         public virtual DbSet<ClientApplicationUtil> ClientApplicationUtils { get; set; }
         public virtual DbSet<User> Users { get; set; }
@@ -30,6 +33,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.ApplyConfiguration(new ApplicationModelConfiguration<Application>());
+            modelBuilder.ApplyConfiguration(new ApplicationUserModelConfiguration<ApplicationUser>());
             modelBuilder.ApplyConfiguration(new ClientApplicationModelConfiguration<ClientApplication>());
             modelBuilder.ApplyConfiguration(new ClientApplicationUtilModelConfiguration<ClientApplicationUtil>());
             modelBuilder.ApplyConfiguration(new UserModelConfiguration<User>());

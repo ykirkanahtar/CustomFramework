@@ -21,6 +21,8 @@ namespace CustomFramework.SampleWebApi.Data
         public virtual DbSet<Course> Courses { get; set; }
         public virtual DbSet<Teacher> Teachers { get; set; }
         public virtual DbSet<StudentCourse> StudentCourses { get; set; }
+
+        public virtual DbSet<School> Schools { get; set; }
         /*********End of DbSets**********/
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,6 +34,7 @@ namespace CustomFramework.SampleWebApi.Data
             modelBuilder.ApplyConfiguration(new CourseModelConfiguration<Course>());
             modelBuilder.ApplyConfiguration(new TeacherModelConfiguration<Teacher>());
             modelBuilder.ApplyConfiguration(new StudentCourseModelConfiguration<StudentCourse>());
+            modelBuilder.ApplyConfiguration(new SchoolModelConfiguration<School>());
             /*************End of ModelConfigurations**********/
 
 

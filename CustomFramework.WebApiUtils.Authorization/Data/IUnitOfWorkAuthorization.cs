@@ -5,6 +5,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Data
 {
     public interface IUnitOfWorkAuthorization : IUnitOfWork
     {
+        IApplicationRepository Applications { get; }
+        IApplicationUserRepository ApplicationUsers { get; }
         IClaimRepository Claims { get; }
         IClientApplicationRepository ClientApplications { get; }
         IClientApplicationUtilRepository ClientApplicationUtils { get; }

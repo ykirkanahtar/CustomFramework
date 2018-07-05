@@ -10,7 +10,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
     public interface IUserEntityClaimManager : IBusinessManager<UserEntityClaim, UserEntityClaimRequest, int>
                                                 , IBusinessManagerUpdate<UserEntityClaim, EntityClaimRequest, int>
     {
-        Task<bool> UserIsAuthorizedForEntityClaimAsync(int userId, string entity, Crud crud);
+        Task<bool> UserIsAuthorizedForEntityClaimAsync(int applicationId, int userId, string entity, Crud crud);
         Task<ICustomList<UserEntityClaim>> GetAllByEntityAsync(string entity);
         Task<ICustomList<UserEntityClaim>> GetAllByUserIdAsync(int userId);
     }

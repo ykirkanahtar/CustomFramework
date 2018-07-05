@@ -32,7 +32,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             {
                 var result = Mapper.Map<UserEntityClaim>(request);
 
-                var tempResult = await _uow.UserEntityClaims.GetByUserIdAndEntityAsync(result.UserId, result.Entity);
+                var tempResult = await _uow.UserEntityClaims.GetByApplicationIdAndUserIdAndEntityAsync(result.ApplicationId, result.UserId, result.Entity);
                 tempResult.CheckUniqueValue(AuthorizationConstants.Entity);
 
                 _uow.UserEntityClaims.Add(result);
@@ -71,11 +71,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         }
 
-        public Task<bool> UserIsAuthorizedForEntityClaimAsync(int userId, string entity, Crud crud)
+        public Task<bool> UserIsAuthorizedForEntityClaimAsync(int applicationId, int userId, string entity, Crud crud)
         {
             return CommonOperationAsync(async () =>
             {
-                var result = await _uow.UserEntityClaims.UserIsAuthorizedForEntityClaimAsync(userId, entity, crud);
+                var result = await _uow.UserEntityClaims.UserIsAuthorizedForEntityClaimAsync(applicationId, userId, entity, crud);
                 return result.Count > 0;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }

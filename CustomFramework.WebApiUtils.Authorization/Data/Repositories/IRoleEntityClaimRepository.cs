@@ -9,8 +9,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
 {
     public interface IRoleEntityClaimRepository : IRepository<RoleEntityClaim, int>
     {
-        Task<RoleEntityClaim> GetByRoleIdAndEntityAsync(int roleId, string entity);
-        Task<ICustomList<RoleEntityClaim>> RolesAreAuthorizedForEntityClaimAsync(IEnumerable<Role> roles, string entity, Crud crud);
+        Task<RoleEntityClaim> GetByApplicationIdAndRoleIdAndEntityAsync(int applicationId, int roleId, string entity);
+        Task<ICustomList<RoleEntityClaim>> RolesAreAuthorizedForEntityClaimAsync(int applicationId, IEnumerable<Role> roles, string entity, Crud crud);
         Task<ICustomList<RoleEntityClaim>> GetAllByEntityAsync(string entity);
         Task<ICustomList<RoleEntityClaim>> GetAllByRoleIdAsync(int roleId);
 

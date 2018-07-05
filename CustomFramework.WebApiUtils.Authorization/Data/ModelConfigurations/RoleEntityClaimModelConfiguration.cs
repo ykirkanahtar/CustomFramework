@@ -11,6 +11,9 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
         {
             base.Configure(builder);
 
+            builder.Property(p => p.ApplicationId)
+                .IsRequired();
+
             builder.Property(p => p.RoleId)
                 .IsRequired();
 
@@ -31,14 +34,21 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
                 .IsRequired();
 
             builder
-                .HasOne(r => r.Role)
+                .HasOne(r => r.Application)
                 .WithMany(c => (IEnumerable<T>)c.RoleEntityClaims)
-                .HasForeignKey(r => r.RoleId);
+                .HasForeignKey(r => r.ApplicationId)
+                .HasPrincipalKey(c => c.Id);
 
-            builder.HasIndex(p => new { p.RoleId, p.Entity, p.CanSelect });
-            builder.HasIndex(p => new { p.RoleId, p.Entity, p.CanCreate });
-            builder.HasIndex(p => new { p.RoleId, p.Entity, p.CanUpdate });
-            builder.HasIndex(p => new { p.RoleId, p.Entity, p.CanDelete });
+            builder
+                .HasOne(r => r.Role)
+                .WithMany(c => (IEnumerable<T>) c.RoleEntityClaims)
+                .HasForeignKey(r => r.RoleId)
+                .HasPrincipalKey(c => c.Id);
+
+            builder.HasIndex(p => new { p.ApplicationId, p.RoleId, p.Entity, p.CanSelect });
+            builder.HasIndex(p => new { p.ApplicationId, p.RoleId, p.Entity, p.CanCreate });
+            builder.HasIndex(p => new { p.ApplicationId, p.RoleId, p.Entity, p.CanUpdate });
+            builder.HasIndex(p => new { p.ApplicationId, p.RoleId, p.Entity, p.CanDelete });
         }
     }
 }

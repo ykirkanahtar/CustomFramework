@@ -9,4 +9,10 @@ namespace CustomFramework.WebApiUtils.Business
         Task DeleteAsync(TKey id);
         Task<TEntity> GetByIdAsync(TKey id);
     }
+
+    public interface IBusinessManager<TEntity, in TKey> where TEntity : BaseModel<TKey>
+    {
+        Task DeleteAsync(TKey id);
+        Task<TEntity> GetByIdAsync(TKey id);
+    }
 }

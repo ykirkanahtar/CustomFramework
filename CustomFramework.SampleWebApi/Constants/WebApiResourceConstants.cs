@@ -15,6 +15,8 @@ namespace CustomFramework.SampleWebApi.Constants
         public static readonly string StudentId = "StudentId";
         public static readonly string CourseId = "CourseId";
 
+        public static readonly string Address = "Address";
+
         /*********End of Constants*********/
     }
 }

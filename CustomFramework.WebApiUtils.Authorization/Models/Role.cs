@@ -9,13 +9,10 @@ namespace CustomFramework.WebApiUtils.Authorization.Models
         public string RoleName { get; set; }
         public string Description { get; set; }
 
-        [JsonIgnore]
-        public IList<RoleClaim> RoleClaims { get; set; }
+        public virtual ICollection<RoleClaim> RoleClaims { get; set; }
 
-        [JsonIgnore]
-        public IList<RoleEntityClaim> RoleEntityClaims { get; set; }
+        public virtual ICollection<RoleEntityClaim> RoleEntityClaims { get; set; }
 
-        [JsonIgnore]
-        public IList<UserRole> UserRoles { get; set; }
+        public virtual ICollection<UserRole> UserRoles { get; set; }
     }
 }

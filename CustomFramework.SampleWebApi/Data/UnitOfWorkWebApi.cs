@@ -1,5 +1,6 @@
 using CustomFramework.Data;
 using CustomFramework.SampleWebApi.Data.Repositories;
+using CustomFramework.WebApiUtils.Authorization.Data.Repositories;
 
 namespace CustomFramework.SampleWebApi.Data
 {
@@ -12,6 +13,8 @@ namespace CustomFramework.SampleWebApi.Data
             Courses = new CourseRepository(context);
             Teachers = new TeacherRepository(context);
             StudentCourses = new StudentCourseRepository(context);
+            Schools = new SchoolRepository(context);
+            Applications = new ApplicationRepository(context);
             /*********End of Instances*********/
         }
 
@@ -20,6 +23,8 @@ namespace CustomFramework.SampleWebApi.Data
         public ICourseRepository Courses { get; }
         public ITeacherRepository Teachers { get; }
         public IStudentCourseRepository StudentCourses { get; }
+        public ISchoolRepository Schools { get; }
+        public IApplicationRepository Applications { get; }
         /*********End of Repositories*********/
     }
 }

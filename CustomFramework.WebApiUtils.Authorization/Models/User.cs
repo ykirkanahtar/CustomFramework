@@ -17,16 +17,15 @@ namespace CustomFramework.WebApiUtils.Authorization.Models
         public DateTime? LockoutEndDateTime { get; set; }
 
         [JsonIgnore]
-        public UserUtil UserUtil { get; set; }
+        public virtual UserUtil UserUtil { get; set; }
 
-        [JsonIgnore]
         public virtual ICollection<UserClaim> UserClaims { get; set; }
 
-        [JsonIgnore]
         public virtual ICollection<UserEntityClaim> UserEntityClaims { get; set; }
 
-        [JsonIgnore]
         public virtual ICollection<UserRole> UserRoles { get; set; }
+
+        public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; }
 
     }
 }

@@ -7,20 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Business\" />
-    <Folder Include="Data\ModelConfiguration\" />
-    <Folder Include="Data\Repositories\" />
-    <Folder Include="Migrations\" />
-    <Folder Include="Models\" />
-    <Folder Include="Requests\" />
-    <Folder Include="Responses\" />
-    <Folder Include="Validators\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>

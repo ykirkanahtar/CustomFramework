@@ -3,6 +3,7 @@
     public class RoleEntityClaimResponse
     {
         public int Id { get; set; }
+        public int ApplicationId { get; set; }
         public int RoleId { get; set; }
         public string Entity { get; set; }
         public bool CanSelect { get; set; }

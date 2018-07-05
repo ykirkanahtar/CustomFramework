@@ -11,7 +11,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
     public interface IRoleEntityClaimManager : IBusinessManager<RoleEntityClaim, RoleEntityClaimRequest, int>
                                              , IBusinessManagerUpdate<RoleEntityClaim, EntityClaimRequest, int>
     {
-        Task<bool> RolesAreAuthorizedForEntityClaimAsync(IEnumerable<Role> roles, string entity, Crud crud);
+        Task<bool> RolesAreAuthorizedForEntityClaimAsync(int applicationId, IEnumerable<Role> roles, string entity, Crud crud);
         Task<ICustomList<RoleEntityClaim>> GetAllByEntityAsync(string entity);
         Task<ICustomList<RoleEntityClaim>> GetAllByRoleIdAsync(int roleId);
     }

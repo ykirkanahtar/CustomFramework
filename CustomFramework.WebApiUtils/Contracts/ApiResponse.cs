@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
@@ -40,7 +41,7 @@ namespace CustomFramework.WebApiUtils.Contracts
             TotalCount = 1;
             Message = _localizationService.GetValue(DefaultResponseMessages.SuccessMessage);
 
-            _logger.LogInformation(Message, Result);
+            //_logger.LogInformation(Message, Result);
             return this;
         }
 
@@ -51,7 +52,7 @@ namespace CustomFramework.WebApiUtils.Contracts
             TotalCount = totalCount;
             Message = _localizationService.GetValue(DefaultResponseMessages.SuccessMessage);
 
-            _logger.LogInformation(Message, Result);
+            //_logger.LogInformation(Message, Result);
             return this;
         }
 
@@ -61,7 +62,7 @@ namespace CustomFramework.WebApiUtils.Contracts
             StatusCode = statusCode;
             Message = $"{_localizationService.GetValue(DefaultResponseMessages.AnErrorHasOccured)} : {GetDefaultMessageForException(exception)}";
 
-            _logger.LogError(0, exception, Message);
+            //_logger.LogError(0, exception, Message);
             return this;
         }
 
@@ -74,7 +75,7 @@ namespace CustomFramework.WebApiUtils.Contracts
             StatusCode = statusCode;
             Message = $"{_localizationService.GetValue(DefaultResponseMessages.AnErrorHasOccured)} : {GetDefaultMessageForException(exception)} {_localizationService.GetValue(message)}";
 
-            _logger.LogError(0, exception, Message);
+            //_logger.LogError(0, exception, Message);
             return this;
         }
 
@@ -91,13 +92,15 @@ namespace CustomFramework.WebApiUtils.Contracts
             StatusCode = HttpStatusCode.BadRequest;
             Message = _localizationService.GetValue(DefaultResponseMessages.ModelStateErrors);
 
-            _logger.LogError(0, Message);
+            //_logger.LogError(0, Message);
             return this;
         }
 
         private string GetDefaultMessageForException(Exception exception)
         {
+
             var message = exception.Message;
+            if (exception.InnerException != null) message += $"-- {exception.InnerException.Message}";
 
             if (message.Contains("See the inner exception for details"))
                 if (exception.InnerException != null)

@@ -18,12 +18,12 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
 
         }
 
-        public async Task<RoleEntityClaim> GetByRoleIdAndEntityAsync(int roleId, string entity)
+        public async Task<RoleEntityClaim> GetByApplicationIdAndRoleIdAndEntityAsync(int applicationId, int roleId, string entity)
         {
-            return await Get(p => p.RoleId == roleId && p.Entity == entity).FirstOrDefaultAsync();
+            return await Get(p => p.ApplicationId == applicationId && p.RoleId == roleId && p.Entity == entity).FirstOrDefaultAsync();
         }
 
-        public async Task<ICustomList<RoleEntityClaim>> RolesAreAuthorizedForEntityClaimAsync(IEnumerable<Role> roles, string entity, Crud crud)
+        public async Task<ICustomList<RoleEntityClaim>> RolesAreAuthorizedForEntityClaimAsync(int applicationId, IEnumerable<Role> roles, string entity, Crud crud)
         {
             var predicate = PredicateBuilder.New<RoleEntityClaim>();
 
@@ -32,6 +32,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
                 predicate = predicate.Or(p => p.RoleId == role.Id);
             }
 
+            predicate = predicate.And(p => p.ApplicationId == applicationId);
             predicate = predicate.And(p => p.Entity == entity);
             PredicateBuilderForCrud(ref predicate, crud);
 

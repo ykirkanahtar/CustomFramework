@@ -1,4 +1,4 @@
-﻿namespace CustomFramework.WebApiUtils.Authorization.Utils
+﻿namespace CustomFramework.Authorization.Utils
 {
     public interface IToken
     {

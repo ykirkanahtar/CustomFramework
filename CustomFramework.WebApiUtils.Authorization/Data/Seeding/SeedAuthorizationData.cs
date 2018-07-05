@@ -17,14 +17,18 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Seeding
             RoleEntityClaims = new List<RoleEntityClaim>();
             Roles = new List<Role>();
             Users = new List<User>();
+            ApplicationUsers = new List<ApplicationUser>();
+            Applications = new List<Application>();
             ClientApplicationUtilId = 1;
             UserUtilId = 1;
         }
 
+        public IList<Application> Applications { get; set; }
         public IList<ClientApplication> ClientApplications { get; set; }
         public IList<Role> Roles { get; set; }
         public IList<User> Users { get; set; }
         public IList<UserRole> UserRoles { get; set; }
+        public IList<ApplicationUser> ApplicationUsers { get; set; }
         public IList<RoleEntityClaim> RoleEntityClaims { get; set; }
 
         public void SeedUserData(ModelBuilder modelBuilder)
@@ -101,6 +105,16 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Seeding
             SeedDataUtil.SeedTData<RoleEntityClaim, int>(modelBuilder, RoleEntityClaims);
         }
 
+        public void SeedApplicationData(ModelBuilder modelBuilder)
+        {
+            SeedDataUtil.SeedTData<Application, int>(modelBuilder, Applications);
+        }
+
+        public void SeedApplicationUsersData(ModelBuilder modelBuilder)
+        {
+            SeedDataUtil.SeedTData<ApplicationUser, int>(modelBuilder, ApplicationUsers);
+        }
+
         public void SeedAll(ModelBuilder modelBuilder)
         {
             SeedUserData(modelBuilder);
@@ -108,6 +122,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Seeding
             SeedRoleData(modelBuilder);
             SeedUserRoleData(modelBuilder);
             SeedRoleEntityData(modelBuilder);
+            SeedApplicationData(modelBuilder);
+            SeedApplicationUsersData(modelBuilder);
         }
     }
 }

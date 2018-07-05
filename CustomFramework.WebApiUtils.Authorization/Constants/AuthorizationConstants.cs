@@ -7,6 +7,7 @@
         public static readonly string ClientApplicationCode = "ClientApplicationCode";
         public static readonly string ClientApplicationName = "ClientApplicationName";
         public static readonly string ClientApplicationPass = "ClientApplicationPassword";
+        public static readonly string ApplicationId = "ApplicationId";
         public static readonly string RoleId = "RoleId";
         public static readonly string UserId = "UserId";
         public static readonly string ClaimId = "ClaimId";

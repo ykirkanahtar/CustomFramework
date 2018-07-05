@@ -29,7 +29,7 @@ namespace CustomFramework.WebApiUtils.Business
             }
             catch (Exception ex)
             {
-                Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
+                //Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
                 throw;
             }
         }
@@ -48,7 +48,8 @@ namespace CustomFramework.WebApiUtils.Business
             }
             catch (Exception ex)
             {
-                Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
+                //TODO : ex.Message string değilse hataya yol açıyor daha genel bir çözüm bul
+                //Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
                 throw;
             }
         }
@@ -67,7 +68,7 @@ namespace CustomFramework.WebApiUtils.Business
             }
             catch (Exception ex)
             {
-                Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
+                //Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
                 throw;
             }
         }
@@ -85,7 +86,7 @@ namespace CustomFramework.WebApiUtils.Business
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
+                    //Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
                     throw;
                 }
             }
@@ -103,7 +104,7 @@ namespace CustomFramework.WebApiUtils.Business
             }
             catch (Exception ex)
             {
-                Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
+                //Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
                 throw;
             }
         }

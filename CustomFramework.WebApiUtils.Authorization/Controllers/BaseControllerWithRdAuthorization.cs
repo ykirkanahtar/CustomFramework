@@ -9,27 +9,21 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
-    public abstract class BaseControllerWithAuthorization<TEntity, TCreateRequest, TResponse, TManager, TKey> : Controller
+    public abstract class BaseControllerWithRdAuthorization<TEntity, TResponse, TManager, TKey> : Controller
         where TEntity : BaseModel<TKey>
-        where TManager : IBusinessManager<TEntity, TCreateRequest, TKey>
+        where TManager : IBusinessManager<TEntity, TKey>
     {
         protected readonly TManager Manager;
         protected readonly ILocalizationService LocalizationService;
         protected readonly ILogger<Controller> Logger;
         protected readonly IMapper Mapper;
 
-        protected BaseControllerWithAuthorization(TManager manager, ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper)
+        protected BaseControllerWithRdAuthorization(TManager manager, ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper)
         {
             Manager = manager;
             LocalizationService = localizationService;
             Logger = logger;
             Mapper = mapper;
-        }
-
-        protected async Task<IActionResult> BaseCreate([FromBody] TCreateRequest request)
-        {
-            var result = await Manager.CreateAsync(request);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TEntity, TResponse>(result)));
         }
 
         protected async Task<IActionResult> BaseDelete(TKey id)

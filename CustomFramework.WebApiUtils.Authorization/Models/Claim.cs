@@ -8,10 +8,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Models
     {
         public string CustomClaim { get; set; }
 
-        [JsonIgnore]
-        public IList<RoleClaim> RoleClaims { get; set; }
+        public virtual ICollection<RoleClaim> RoleClaims { get; set; }
 
-        [JsonIgnore]
-        public IList<UserClaim> UserClaims { get; set; }
+        public virtual ICollection<UserClaim> UserClaims { get; set; }
     }
 }

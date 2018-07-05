@@ -6,6 +6,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Constants
     public static class AuthorizationUtilConstants
     {
         public static readonly int IterationCountForHashing =
-            Convert.ToInt32(ConfigHelper.GetConfigurationValue("AppSettings:IterationCountForHashing") ?? "5");
+            Convert.ToInt32(ConfigHelper.GetConfigurationValue("IterationCountForHashing") ?? "5");
     }
 }

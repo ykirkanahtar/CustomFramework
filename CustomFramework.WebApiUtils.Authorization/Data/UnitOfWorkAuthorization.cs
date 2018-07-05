@@ -18,8 +18,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Data
             Users = new UserRepository(context);
             UserRoles = new UserRoleRepository(context);
             UserUtils = new UserUtilRepository(context);
+            Applications = new ApplicationRepository(context);
+            ApplicationUsers = new ApplicationUserRepository(context);
         }
 
+        public IApplicationUserRepository ApplicationUsers { get; }
         public IClaimRepository Claims { get; }
         public IClientApplicationRepository ClientApplications { get; }
         public IClientApplicationUtilRepository ClientApplicationUtils { get; }
@@ -31,5 +34,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Data
         public IUserRepository Users { get; }
         public IUserRoleRepository UserRoles { get; }
         public IUserUtilRepository UserUtils { get; }
+        public IApplicationRepository Applications { get; }
+
     }
 }

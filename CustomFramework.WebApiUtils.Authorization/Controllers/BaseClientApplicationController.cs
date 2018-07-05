@@ -16,7 +16,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     public class BaseClientApplicationController 
-        : BaseControllerWithAuthorization<ClientApplication, ClientApplicationRequest, ClientApplicationResponse, IClientApplicationManager, int>
+        : BaseControllerWithCrdAuthorization<ClientApplication, ClientApplicationRequest, ClientApplicationResponse, IClientApplicationManager, int>
     {
 
         public BaseClientApplicationController(IClientApplicationManager clientApplicationManager, ILocalizationService localizationService, ILogger<BaseClientApplicationController> logger, IMapper mapper)

@@ -16,7 +16,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     public class BaseRoleEntityClaimController
-        : BaseControllerWithAuthorizationAndUpdate<RoleEntityClaim, RoleEntityClaimRequest, EntityClaimRequest, RoleEntityClaimResponse, IRoleEntityClaimManager, int>
+        : BaseControllerWithCrudAuthorization<RoleEntityClaim, RoleEntityClaimRequest, EntityClaimRequest, RoleEntityClaimResponse, IRoleEntityClaimManager, int>
     {
         public BaseRoleEntityClaimController(IRoleEntityClaimManager roleEntityClaimManager, ILocalizationService localizationService, ILogger<BaseRoleEntityClaimController> logger, IMapper mapper)
             : base(roleEntityClaimManager, localizationService, logger, mapper)

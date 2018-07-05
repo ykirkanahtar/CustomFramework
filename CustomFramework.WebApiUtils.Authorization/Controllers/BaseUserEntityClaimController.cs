@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class BaseUserEntityClaimController : BaseControllerWithAuthorizationAndUpdate<UserEntityClaim, UserEntityClaimRequest, EntityClaimRequest, UserEntityClaimResponse, IUserEntityClaimManager, int>
+    public class BaseUserEntityClaimController : BaseControllerWithCrudAuthorization<UserEntityClaim, UserEntityClaimRequest, EntityClaimRequest, UserEntityClaimResponse, IUserEntityClaimManager, int>
     {
         public BaseUserEntityClaimController(IUserEntityClaimManager userEntityClaimManager, ILocalizationService localizationService, ILogger<BaseUserEntityClaimController> logger, IMapper mapper)
             : base(userEntityClaimManager, localizationService, logger, mapper)

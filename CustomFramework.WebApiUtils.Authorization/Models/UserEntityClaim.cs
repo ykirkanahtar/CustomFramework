@@ -5,6 +5,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Models
 {
     public class UserEntityClaim : BaseModel<int>
     {
+        public int ApplicationId { get; set; }
         public int UserId { get; set; }
         public string Entity { get; set; }
         public bool CanSelect { get; set; }
@@ -12,7 +13,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Models
         public bool CanUpdate { get; set; }
         public bool CanDelete { get; set; }
 
-        [JsonIgnore]
-        public User User { get; set; }
+        public virtual User User { get; set; }
+        public virtual Application Application { get; set; }
+
     }
 }

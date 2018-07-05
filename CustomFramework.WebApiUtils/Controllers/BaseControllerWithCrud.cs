@@ -9,13 +9,13 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Controllers
 {
-    public abstract class BaseControllerWithUpdate<TEntity, TCreateRequest, TUpdateRequest, TResponse, TManager, TKey>
-        : BaseController<TEntity, TCreateRequest, TResponse, TManager, TKey>
+    public abstract class BaseControllerWithCrud<TEntity, TCreateRequest, TUpdateRequest, TResponse, TManager, TKey>
+        : BaseControllerWithCrd<TEntity, TCreateRequest, TResponse, TManager, TKey>
         where TEntity : BaseModel<TKey>
         where TManager : IBusinessManager<TEntity, TCreateRequest, TKey>, IBusinessManagerUpdate<TEntity, TUpdateRequest, TKey>
     {
 
-        protected BaseControllerWithUpdate(TManager manager, ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper)
+        protected BaseControllerWithCrud(TManager manager, ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper)
         : base(manager, localizationService, logger, mapper)
         {
 

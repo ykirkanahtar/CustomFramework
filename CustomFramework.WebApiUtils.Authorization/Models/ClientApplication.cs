@@ -10,6 +10,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Models
         public string ClientApplicationPassword { get; set; }
 
         [JsonIgnore]
-        public ClientApplicationUtil ClientApplicationUtil { get; set; }
+        public virtual ClientApplicationUtil ClientApplicationUtil { get; set; }
     }
 }

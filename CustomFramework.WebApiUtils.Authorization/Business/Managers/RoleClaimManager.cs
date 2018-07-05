@@ -38,7 +38,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 /***************************************************************/
                 /***************************************************************/
 
-                var tempResult = await _uow.RoleClaims.GetByRoleIdAndClaimIdAsync(result.RoleId, result.ClaimId);
+                var tempResult = await _uow.RoleClaims.GetByApplicationIdAndRoleIdAndClaimIdAsync(result.ApplicationId, result.RoleId, result.ClaimId);
                 tempResult.CheckUniqueValue(GetType().Name);
 
                 _uow.RoleClaims.Add(result);
@@ -63,18 +63,18 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
-        public Task<bool> RolesAreAuthorizedForClaimAsync(IList<Role> roles, int claimId)
+        public Task<bool> RolesAreAuthorizedForClaimAsync(int applicationId, IList<Role> roles, int claimId)
         {
             return CommonOperationAsync(async () =>
             {
-                var result = await _uow.RoleClaims.RolesAreAuthorizedForClaimAsync(roles, claimId);
+                var result = await _uow.RoleClaims.RolesAreAuthorizedForClaimAsync(applicationId, roles, claimId);
                 return result.Count > 0;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }
 
         public Task<ICustomList<Claim>> GetClaimsByRoleIdAsync(int roleId)
         {
-            return CommonOperationAsync(async() => await _uow.RoleClaims.GetClaimsByRoleIdAsync(roleId), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.RoleClaims.GetClaimsByRoleIdAsync(roleId), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }
 
         public Task<ICustomList<Role>> GetRolesByClaimIdAsync(int claimId)

@@ -16,6 +16,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Seeding
         void SeedRoleData(ModelBuilder modelBuilder);
         void SeedUserRoleData(ModelBuilder modelBuilder);
         void SeedRoleEntityData(ModelBuilder modelBuilder);
+        void SeedApplicationData(ModelBuilder modelBuilder);
+        void SeedApplicationUsersData(ModelBuilder modelBuilder);
         void SeedAll(ModelBuilder modelBuilder);
     }
 }

@@ -9,6 +9,9 @@ namespace CustomFramework.WebApiUtils.Authorization.Validators
     {
         public UserEntityClaimValidator()
         {
+            RuleFor(x => x.ApplicationId).NotEmpty()
+                .WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.ApplicationId}");
+
             RuleFor(x => x.UserId).NotEmpty()
                 .WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.UserId}");
 

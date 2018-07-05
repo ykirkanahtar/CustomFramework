@@ -1,13 +1,13 @@
-﻿using System;
-using System.Net;
-using System.Threading.Tasks;
-using CustomFramework.WebApiUtils.Contracts;
+﻿using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;
 using CustomFramework.WebApiUtils.Utils.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace CustomFramework.WebApiUtils.Middlewares
 {
@@ -38,15 +38,21 @@ namespace CustomFramework.WebApiUtils.Middlewares
                     throw;
                 }
 
+                var errorMessage = ex.Message;
+                if (ex.InnerException != null) errorMessage += $"-- {ex.InnerException.Message}";
+
                 context.Response.StatusCode = (int)ex.ExceptionToStatusCode();
                 context.Response.ContentType = "application/json";
 
                 var apiResponse = new ApiResponse(_localizationService, _logger).Error((HttpStatusCode)context.Response.StatusCode, ex);
 
+                _logger.LogError(0, ex, errorMessage);
+
                 var json = JsonConvert.SerializeObject(apiResponse, new JsonSerializerSettings
                 {
                     ContractResolver = new CamelCasePropertyNamesContractResolver()
                 });
+                
                 await context.Response.WriteAsync(json);
             }
         }

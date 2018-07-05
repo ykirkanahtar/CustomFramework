@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class BaseUserController : BaseControllerWithAuthorization<User, UserRequest, UserResponse, IUserManager, int>
+    public class BaseUserController : BaseControllerWithCrdAuthorization<User, UserRequest, UserResponse, IUserManager, int>
     {
 
         public BaseUserController(IUserManager userManager, ILocalizationService localizationService, ILogger<BaseUserController> logger, IMapper mapper)

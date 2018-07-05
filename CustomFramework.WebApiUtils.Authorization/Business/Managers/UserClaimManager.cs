@@ -37,7 +37,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 /***************************************************************/
                 /***************************************************************/
 
-                var tempResult = await _uow.UserClaims.GetByUserIdAndClaimIdAsync(result.UserId, result.ClaimId);
+                var tempResult = await _uow.UserClaims.GetByApplicationIdAndUserIdAndClaimIdAsync(result.ApplicationId, result.UserId, result.ClaimId);
                 tempResult.CheckUniqueValue(GetType().Name);
 
                 _uow.UserClaims.Add(result);
@@ -62,14 +62,14 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
-        public Task<bool> UserIsAuthorizedForClaimAsync(int userId, int claimId)
+        public Task<bool> UserIsAuthorizedForClaimAsync(int applicationId, int userId, int claimId)
         {
-            return CommonOperationAsync(async() => (await _uow.UserClaims.UserIsAuthorizedForClaimAsync(userId, claimId)).Count > 0, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+            return CommonOperationAsync(async () => (await _uow.UserClaims.UserIsAuthorizedForClaimAsync(applicationId, userId, claimId)).Count > 0, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }
 
         public Task<ICustomList<Claim>> GetClaimsByUserIdAsync(int userId)
         {
-            return CommonOperationAsync(async() => await _uow.UserClaims.GetClaimsByUserIdAsync(userId), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.UserClaims.GetClaimsByUserIdAsync(userId), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }
 
         public Task<ICustomList<User>> GetUsersByClaimIdAsync(int claimId)

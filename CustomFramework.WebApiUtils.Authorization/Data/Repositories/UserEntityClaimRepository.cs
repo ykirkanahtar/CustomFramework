@@ -17,15 +17,16 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
 
         }
 
-        public async Task<UserEntityClaim> GetByUserIdAndEntityAsync(int userId, string entity)
+        public async Task<UserEntityClaim> GetByApplicationIdAndUserIdAndEntityAsync(int applicationId, int userId, string entity)
         {
-            return await Get(p => p.UserId == userId && p.Entity == entity).FirstOrDefaultAsync();
+            return await Get(p => p.ApplicationId == applicationId && p.UserId == userId && p.Entity == entity).FirstOrDefaultAsync();
 
         }
 
-        public async Task<ICustomList<UserEntityClaim>> UserIsAuthorizedForEntityClaimAsync(int userId, string entity, Crud crud)
+        public async Task<ICustomList<UserEntityClaim>> UserIsAuthorizedForEntityClaimAsync(int applicationId, int userId, string entity, Crud crud)
         {
             var predicate = PredicateBuilder.New<UserEntityClaim>();
+            predicate = predicate.And(p => p.ApplicationId == applicationId);
             predicate = predicate.And(p => p.UserId == userId);
             predicate = predicate.And(p => p.Entity == entity);
             PredicateBuilderForCrud(ref predicate, crud);

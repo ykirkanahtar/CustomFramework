@@ -9,13 +9,13 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
-    public abstract class BaseControllerWithAuthorizationAndUpdate<TEntity, TCreateRequest, TUpdateRequest, TResponse, TManager, TKey>
-        : BaseControllerWithAuthorization<TEntity, TCreateRequest, TResponse, TManager, TKey> 
+    public abstract class BaseControllerWithCrudAuthorization<TEntity, TCreateRequest, TUpdateRequest, TResponse, TManager, TKey>
+        : BaseControllerWithCrdAuthorization<TEntity, TCreateRequest, TResponse, TManager, TKey> 
         where TEntity : BaseModel<TKey>
         where TManager : IBusinessManager<TEntity, TCreateRequest, TKey>, IBusinessManagerUpdate<TEntity, TUpdateRequest, TKey>
     {
 
-        protected BaseControllerWithAuthorizationAndUpdate(TManager manager, ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper)
+        protected BaseControllerWithCrudAuthorization(TManager manager, ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper)
         : base(manager, localizationService, logger, mapper)
         {
 

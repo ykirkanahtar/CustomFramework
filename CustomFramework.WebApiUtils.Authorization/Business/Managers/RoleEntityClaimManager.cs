@@ -33,7 +33,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             {
                 var result = Mapper.Map<RoleEntityClaim>(request);
 
-                var tempResult = await _uow.RoleEntityClaims.GetByRoleIdAndEntityAsync(result.RoleId, result.Entity);
+                var tempResult = await _uow.RoleEntityClaims.GetByApplicationIdAndRoleIdAndEntityAsync(result.ApplicationId, result.RoleId, result.Entity);
                 tempResult.CheckUniqueValue(AuthorizationConstants.Entity);
 
                 _uow.RoleEntityClaims.Add(result);
@@ -71,11 +71,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
-        public Task<bool> RolesAreAuthorizedForEntityClaimAsync(IEnumerable<Role> roles, string entity, Crud crud)
+        public Task<bool> RolesAreAuthorizedForEntityClaimAsync(int applicationId, IEnumerable<Role> roles, string entity, Crud crud)
         {
             return CommonOperationAsync(async () =>
             {
-                var result = await _uow.RoleEntityClaims.RolesAreAuthorizedForEntityClaimAsync(roles, entity, crud);
+                var result = await _uow.RoleEntityClaims.RolesAreAuthorizedForEntityClaimAsync(applicationId, roles, entity, crud);
                 return result.Count > 0;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
         }

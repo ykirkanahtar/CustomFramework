@@ -8,8 +8,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
 {
     public interface IUserEntityClaimRepository : IRepository<UserEntityClaim, int>
     {
-        Task<UserEntityClaim> GetByUserIdAndEntityAsync(int userId, string entity);
-        Task<ICustomList<UserEntityClaim>> UserIsAuthorizedForEntityClaimAsync(int userId, string entity, Crud crud);
+        Task<UserEntityClaim> GetByApplicationIdAndUserIdAndEntityAsync(int applicationId, int userId, string entity);
+        Task<ICustomList<UserEntityClaim>> UserIsAuthorizedForEntityClaimAsync(int applicationId, int userId, string entity, Crud crud);
         Task<ICustomList<UserEntityClaim>> GetAllByEntityAsync(string entity);
         Task<ICustomList<UserEntityClaim>> GetAllByUserIdAsync(int userId);
 
