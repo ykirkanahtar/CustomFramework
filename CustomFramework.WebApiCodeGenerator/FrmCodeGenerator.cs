@@ -232,7 +232,7 @@ true, true, false, "Student");
             using (var fs = File.Create(fullPath))
             {
                 var byteContent = new UTF8Encoding(true).GetBytes(content);
-                await fs.WriteAsync(byteContent, 0, byteContent.Length);
+                //await fs.WriteAsync(byteContent, 0, byteContent.Length);
             }
 
             return true;
@@ -555,7 +555,7 @@ namespace {nameSpace}.Models
 
                 fields = fields + "\t" + GetFieldString() + Environment.NewLine;
 
-                fields = fields.Replace("{fieldDataType}", field.FieldDataType == "enum" ? field.FieldDataType : field.FieldName);
+                fields = fields.Replace("{fieldDataType}", field.FieldDataType == "enum" ? field.FieldName : field.FieldDataType);
 
                 fields = fields.Replace("{fieldName}", field.FieldName);
             }
@@ -992,10 +992,6 @@ namespace {nameSpace}.Business
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Data.Contracts;
-using CustomFramework.SampleWebApi.Constants;
-using CustomFramework.SampleWebApi.Data;
-using CustomFramework.SampleWebApi.Models;
-using CustomFramework.SampleWebApi.Requests;
 using CustomFramework.WebApiUtils.Authorization.Business;
 using CustomFramework.WebApiUtils.Authorization.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Utils;
@@ -1135,9 +1131,7 @@ namespace {nameSpace}.Business
         private string CreateValidatorClass(string className)
         {
             var value =
-@"using CustomFramework.SampleWebApi.Constants;
-using CustomFramework.SampleWebApi.Requests;
-using CustomFramework.WebApiUtils.Constants;
+@"using CustomFramework.WebApiUtils.Constants;
 using FluentValidation;
 
 namespace {nameSpace}.Validators
@@ -1240,7 +1234,7 @@ namespace {nameSpace}.Controllers
 
             if (ChkHasUpdateMethod.Checked)
             {
-                value = value.Replace("{baseController}", "BaseControllerWithAuthorizationAndUpdate<{className}, {className}Request, {className}Request, {className}Response, I{className}Manager, {idFieldDataType}>");
+                value = value.Replace("{baseController}", "BaseControllerWithCrudAuthorization<{className}, {className}Request, {className}Request, {className}Response, I{className}Manager, {idFieldDataType}>");
 
                 update +=
     "\t" +

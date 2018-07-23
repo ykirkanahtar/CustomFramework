@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
@@ -23,9 +24,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             _permissionManager = permissionManager;
         }
 
-
-
-        [Route("haspermission")]
         [HttpPost]
         public async Task<IActionResult> HasPermission([FromBody] HasPermissionRequest hasPermissionRequest)
         {

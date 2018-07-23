@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -11,8 +12,8 @@ namespace CustomFramework.Utils
 {
     public class WebApiConnector<TResponse>
     {
-        private readonly string _apiUrl;
-        private readonly object _credentials;
+        private string _apiUrl;
+        private object _credentials;
 
         public WebApiConnector(string apiUrl, object credentials)
         {
@@ -109,6 +110,12 @@ namespace CustomFramework.Utils
                 var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
                 var response = await client.PostAsync(requestPath, httpContent);
+
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new Exception(response.ReasonPhrase);
+                }
+
                 var jsonData = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<TResponse>(jsonData);
             }
@@ -187,6 +194,14 @@ namespace CustomFramework.Utils
                 var jObjectResult = JObject.Parse(jObjectResponse.GetValue("result").ToString());
                 return jObjectResult.GetValue("token").ToString();
             }
+        }
+
+        public async Task<string> GetApiTokenAsync(string apiUrl, object credentials)
+        {
+            _apiUrl = apiUrl;
+            _credentials = credentials;
+
+            return await GetApiTokenAsync();
         }
 
         public string GetApiToken()

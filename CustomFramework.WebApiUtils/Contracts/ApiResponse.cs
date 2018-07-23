@@ -23,6 +23,16 @@ namespace CustomFramework.WebApiUtils.Contracts
             _logger = logger;
         }
 
+        [JsonConstructor]
+        public ApiResponse(HttpStatusCode statusCode, string message, object result, int totalCount, ErrorResponse errorResponse)
+        {
+            StatusCode = statusCode;
+            Message = message;
+            Result = result;
+            TotalCount = totalCount;
+            ErrorResponse = errorResponse;
+        }
+
         public HttpStatusCode StatusCode { get; private set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -121,7 +131,7 @@ namespace CustomFramework.WebApiUtils.Contracts
             var returnMessage = new ExceptionOperation(exception).GetReturnMessage(ref message);
 
             var localizatedReturnMessage = _localizationService.GetValue(returnMessage);
-            return string.IsNullOrEmpty(message) ? $"{localizatedReturnMessage}" : $"{localizatedReturnMessage} : {_localizationService.GetValue(message)}";
+            return string.IsNullOrEmpty(message) ? $"{localizatedReturnMessage}" : $"{_localizationService.GetValue(message)}";
         }
     }
 }

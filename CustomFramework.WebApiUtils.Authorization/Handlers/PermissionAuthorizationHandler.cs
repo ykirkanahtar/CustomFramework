@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using CustomFramework.WebApiUtils.Constants;
 
 namespace CustomFramework.WebApiUtils.Authorization.Handlers
 {
@@ -27,13 +29,23 @@ namespace CustomFramework.WebApiUtils.Authorization.Handlers
                                                             , PermissionAuthorizationRequirement requirement
                                                             , IEnumerable<PermissionAttribute> attributes)
         {
+            UserIsAuthenticated(context.User);
+
             await _permissionManager.HasPermission(new HasPermissionRequest(
-                context.User,
                 Convert.ToInt32(ConfigHelper.GetConfigurationValue("ApplicationId")),
                 attributes
             ));
 
             context.Succeed(requirement);
+        }
+
+        private static void UserIsAuthenticated(ClaimsPrincipal claimsPrincipal)
+        {
+            if (claimsPrincipal == null) throw new ArgumentNullException(nameof(claimsPrincipal));
+            if (claimsPrincipal == null || !claimsPrincipal.Identity.IsAuthenticated)
+            {
+                throw new UnauthorizedAccessException(DefaultResponseMessages.UnauthorizedAccessError);
+            }
         }
     }
 }

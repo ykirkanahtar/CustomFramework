@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace CustomFramework.WebApiUtils.Contracts
 {
@@ -11,13 +12,14 @@ namespace CustomFramework.WebApiUtils.Contracts
 
         public ErrorResponse(Exception exception, string errorDetails)
         {
-            ExceptionType = exception.GetType().ToString();
+            ExceptionType = exception is null ? typeof(Exception).ToString() : exception.GetType().ToString();
             ErrorDetails = errorDetails;
         }
 
+        [JsonConstructor]
         public ErrorResponse(Exception exception, string errorDetails, string stackTrace)
         {
-            ExceptionType = exception.GetType().ToString();
+            ExceptionType = exception is null ? typeof(Exception).ToString() : exception.GetType().ToString();
             ErrorDetails = errorDetails;
             StackTrace = stackTrace;
         }

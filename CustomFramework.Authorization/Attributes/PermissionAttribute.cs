@@ -1,6 +1,7 @@
 ﻿using System;
 using CustomFramework.Authorization.Enums;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace CustomFramework.Authorization.Attributes
 {
@@ -18,6 +19,7 @@ namespace CustomFramework.Authorization.Attributes
             CustomClaim = customClaim;
         }
 
+        [JsonConstructor]
         public PermissionAttribute(string entity, Crud crud) : base("Permission")
         {
             Entity = entity;

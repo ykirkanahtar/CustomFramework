@@ -41,13 +41,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public async Task<bool> HasPermission(HasPermissionRequest hasPermissionRequest)
         {
-            UserIsAuthenticated(hasPermissionRequest.ClaimsPrincipal);
-
             try
             {
                 var userId = _apiRequest.User.Id;
 
-                if (_apiRequest.ApplicationId != hasPermissionRequest.ApplicationId) throw new KeyNotFoundException();
+                if (_apiRequest.ApplicationId != hasPermissionRequest.ApplicationId) throw new KeyNotFoundException("Uygulama id bulunamadı");
 
                 var roles = (await _userRoleManager.GetRolesByUserIdAsync(userId)).ResultList;
 
@@ -67,9 +65,9 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                     }
                 }
             }
-            catch (KeyNotFoundException)
+            catch (KeyNotFoundException ex)
             {
-                throw new UnauthorizedAccessException();
+                throw new UnauthorizedAccessException(ex.Message);
             }
             catch (Exception ex)
             {
@@ -78,15 +76,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             }
 
             return true;
-        }
-
-        private static void UserIsAuthenticated(ClaimsPrincipal claimsPrincipal)
-        {
-            if (claimsPrincipal == null) throw new ArgumentNullException(nameof(claimsPrincipal));
-            if (claimsPrincipal == null || !claimsPrincipal.Identity.IsAuthenticated)
-            {
-                throw new UnauthorizedAccessException(DefaultResponseMessages.UnauthorizedAccessError);
-            }
         }
 
         private async Task CheckCustomClaimAsync(int applicationId, int userId, IList<Role> roles, string customClaim)
@@ -105,7 +94,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 return;
             }
 
-            throw new KeyNotFoundException();
+            throw new KeyNotFoundException("Bu kullanıcı ya da rol, bu işlem için yetkili değil");
         }
 
         private async Task AuthorizeWithCustomClaimAsync(int applicationId, int userId, IList<Role> roles, int claimId)
@@ -117,7 +106,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 return;
             }
 
-            throw new KeyNotFoundException();
+            throw new KeyNotFoundException("Bu kullanıcı ya da rol, bu işlem için yetkili değil");
         }
 
     }

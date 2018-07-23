@@ -1,11 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Transactions;
-using AutoMapper;
-using CustomFramework.WebApiUtils.Constants;
+﻿using AutoMapper;
 using CustomFramework.WebApiUtils.Enums;
 using CustomFramework.WebApiUtils.Utils;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
+using System.Transactions;
 
 namespace CustomFramework.WebApiUtils.Business
 {
@@ -24,7 +23,7 @@ namespace CustomFramework.WebApiUtils.Business
         {
             try
             {
-                var result = await func.Invoke();
+                T result = await func.Invoke();
                 return result;
             }
             catch (Exception ex)
@@ -41,7 +40,7 @@ namespace CustomFramework.WebApiUtils.Business
         {
             try
             {
-                var result = await func.Invoke();
+                T result = await func.Invoke();
                 BusinessUtil.Execute(businessUtilMethod, result, additionalInfo);
 
                 return result;
@@ -61,9 +60,23 @@ namespace CustomFramework.WebApiUtils.Business
         {
             try
             {
-                var result = func.Invoke();
+                T result = func.Invoke();
                 BusinessUtil.Execute(businessUtilMethod, result, additionalInfo);
 
+                return result;
+            }
+            catch (Exception ex)
+            {
+                //Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
+                throw;
+            }
+        }
+
+        protected T CommonOperation<T>(Func<T> func, BusinessBaseRequest businessBaseRequest)
+        {
+            try
+            {
+                T result = func.Invoke();
                 return result;
             }
             catch (Exception ex)
@@ -76,11 +89,11 @@ namespace CustomFramework.WebApiUtils.Business
 
         protected async Task<T> CommonOperationWithTransactionAsync<T>(Func<Task<T>> func, BusinessBaseRequest businessBaseRequest)
         {
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
-                    var result = await func.Invoke();
+                    T result = await func.Invoke();
                     scope.Complete();
                     return result;
                 }
@@ -96,7 +109,7 @@ namespace CustomFramework.WebApiUtils.Business
         {
             try
             {
-                using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
                     await func.Invoke();
                     scope.Complete();

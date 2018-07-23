@@ -31,6 +31,8 @@ namespace CustomFramework.Authorization.Extensions
                             Encoding.UTF8.GetBytes(issuerSigningKey))
                     };
 
+                    options.SaveToken = true;
+
                     options.Events = new JwtBearerEvents
                     {
                         OnTokenValidated = ctx => Task.CompletedTask,

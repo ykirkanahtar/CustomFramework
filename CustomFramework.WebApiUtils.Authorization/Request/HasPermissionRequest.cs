@@ -7,15 +7,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Request
 {
     public class HasPermissionRequest
     {
-        public HasPermissionRequest(ClaimsPrincipal claimsPrincipal, int applicationId, IEnumerable<PermissionAttribute> permissionAttributes)
+        public HasPermissionRequest(int applicationId, IEnumerable<PermissionAttribute> permissionAttributes)
         {
-            ClaimsPrincipal = claimsPrincipal;
             ApplicationId = applicationId;
             PermissionAttributes = permissionAttributes;
         }
-
-        [Required]
-        public ClaimsPrincipal ClaimsPrincipal { get; }
 
         [Required]
         public int ApplicationId { get; }

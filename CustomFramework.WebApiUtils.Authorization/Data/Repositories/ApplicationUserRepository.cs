@@ -14,7 +14,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
         {
         }
 
-        public async Task<ApplicationUser> GetByUserIdAndApplicationIdAsync(int userId, int applicationId)
+        public async Task<ApplicationUser> GetByUserIdAndApplicationIdAsync(int applicationId, int userId)
         {
             return await Get(p => p.UserId == userId && p.ApplicationId == applicationId).FirstOrDefaultAsync();
         }
