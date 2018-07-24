@@ -18,6 +18,7 @@ namespace CustomFramework.Data
         IQueryable<TEntity> GetAll(
             Expression<Func<TEntity, bool>> predicate = null
             , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
+            , int? take = null
         );
 
         Task<ICustomQueryable<TEntity>> GetAllWithPagingAsync(

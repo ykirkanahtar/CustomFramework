@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using CustomFramework.Data.Contracts;
+﻿using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Enums;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace CustomFramework.Data
 {
@@ -39,9 +39,12 @@ namespace CustomFramework.Data
             return _dbSet.Where(PredicateBuild(predicate));
         }
 
+
+        //OrderBy kullanımı örneği : GetAll(orderBy: q => q.OrderByDescending(s => s.CreateDateTime), take: 10)
         public IQueryable<TEntity> GetAll(
             Expression<Func<TEntity, bool>> predicate = null
             , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
+            , int? take = null
         )
         {
             IQueryable<TEntity> query = _dbSet;
@@ -51,6 +54,11 @@ namespace CustomFramework.Data
             if (orderBy != null)
             {
                 query = orderBy(query);
+            }
+
+            if (take != null)
+            {
+                query = query.Take((int)take);
             }
 
             return query;
@@ -66,7 +74,7 @@ namespace CustomFramework.Data
 
             query = query.Where(predicate != null ? PredicateBuild(predicate) : PredicateBuild());
 
-            var rowCount = await query.CountAsync();
+            int rowCount = await query.CountAsync();
 
             if (orderBy != null)
             {
@@ -92,7 +100,7 @@ namespace CustomFramework.Data
 
             query = query.Where(predicate != null ? PredicateBuild(predicate) : PredicateBuild());
 
-            var rowCount = query.Count();
+            int rowCount = query.Count();
 
             if (orderBy != null)
             {
@@ -163,7 +171,7 @@ namespace CustomFramework.Data
 
         private static Expression<Func<TEntity, bool>> PredicateBuild()
         {
-            var predicate = PredicateBuilder.New<TEntity>();
+            ExpressionStarter<TEntity> predicate = PredicateBuilder.New<TEntity>();
             return predicate.And(p => (int)p.Status == (int)Status.Active);
         }
 
