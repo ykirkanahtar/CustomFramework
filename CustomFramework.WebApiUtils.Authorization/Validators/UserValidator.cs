@@ -14,6 +14,21 @@ namespace CustomFramework.WebApiUtils.Authorization.Validators
                 .MaximumLength(25)
                 .WithMessage($"{ValidatorConstants.MaxLengthError} : {AuthorizationConstants.UserName}, 25");
 
+            RuleFor(x => x.Name)
+                .NotEmpty().WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.Name}")
+                .MaximumLength(30)
+                .WithMessage($"{ValidatorConstants.MaxLengthError} : {AuthorizationConstants.Name}, 30");
+
+            RuleFor(x => x.Surname)
+                .NotEmpty().WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.UserName}")
+                .MaximumLength(30)
+                .WithMessage($"{ValidatorConstants.MaxLengthError} : {AuthorizationConstants.UserName}, 30");
+
+            RuleFor(x => x.UserName)
+                .NotEmpty().WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.UserName}")
+                .MaximumLength(25)
+                .WithMessage($"{ValidatorConstants.MaxLengthError} : {AuthorizationConstants.UserName}, 25");
+
             RuleFor(x => x.Password).NotEmpty()
                 .WithMessage($"{ValidatorConstants.CannotBeNullError} : {AuthorizationConstants.Pass}");
 
