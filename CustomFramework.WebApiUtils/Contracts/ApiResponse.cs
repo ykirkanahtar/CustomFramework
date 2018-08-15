@@ -131,7 +131,7 @@ namespace CustomFramework.WebApiUtils.Contracts
             var returnMessage = new ExceptionOperation(exception).GetReturnMessage(ref message);
 
             var localizatedReturnMessage = _localizationService.GetValue(returnMessage);
-            return string.IsNullOrEmpty(message) ? $"{localizatedReturnMessage}" : $"{_localizationService.GetValue(message)}";
+            return $"{localizatedReturnMessage} : {_localizationService.GetValue(message)}";
         }
     }
 }

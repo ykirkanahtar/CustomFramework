@@ -27,10 +27,14 @@ namespace CustomFramework.WebApiCodeGenerator
 
         private void Load_Datas()
         {
+            //TxtNameSpace.Text = @"CS.FaceDetection.WebApi"; 
             TxtNameSpace.Text = @"Cs.Crm.WebApi";
+
             _nameSpace = TxtNameSpace.Text;
 
+            //TxtProjectFolder.Text = @"C:\Users\ykirk\Documents\Projects\FaceDetection.WebApi\CS.FaceDetection.WebApi\CS.FaceDetection.WebApi";
             TxtProjectFolder.Text = @"C:\Users\ykirk\Documents\Projects\Crm\CS.Crm\Cs.Crm.WebApi";
+
             _projectPath = TxtProjectFolder.Text;
 
             //LoadStudentData();
@@ -232,7 +236,7 @@ true, true, false, "Student");
             using (var fs = File.Create(fullPath))
             {
                 var byteContent = new UTF8Encoding(true).GetBytes(content);
-                //await fs.WriteAsync(byteContent, 0, byteContent.Length);
+                await fs.WriteAsync(byteContent, 0, byteContent.Length);
             }
 
             return true;
@@ -1103,7 +1107,7 @@ namespace {nameSpace}.Business
                     "\t" +
                     @"public Task<ICustomList<{className}>> GetAllAsync()
                         {
-                            return CommonOperationAsync(async () => await _uow.{classNamePlural}.GetAllAsync(), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+                            return CommonOperationAsync(async () => await _uow.{classNamePlural}.GetAllAsync(), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
                         }" + Environment.NewLine;
             }
 
@@ -1113,7 +1117,7 @@ namespace {nameSpace}.Business
                     "\t" +
                     @"public Task<ICustomList<{className}>> GetAllAsync(int pageIndex, int pageSize)
                         {
-                            return CommonOperationAsync(async () => await _uow.{classNamePlural}.GetAllAsync(pageIndex, pageSize), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+                            return CommonOperationAsync(async () => await _uow.{classNamePlural}.GetAllAsync(pageIndex, pageSize), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
                         }" + Environment.NewLine;
             }
 
@@ -1482,7 +1486,7 @@ namespace {nameSpace}.Data.ModelConfiguration
 "\t" +
 @"public Task<ICustomList<{className}>> GetAllBy{fieldName}Async({fieldDataType} {fieldNameToLower})
                         {
-            return CommonOperationAsync(async () => await _uow.{classNamePlural}.GetAllBy{fieldName}Async({fieldNameToLower}), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+            return CommonOperationAsync(async () => await _uow.{classNamePlural}.GetAllBy{fieldName}Async({fieldNameToLower}), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
                         }" + Environment.NewLine;
                 }
             }

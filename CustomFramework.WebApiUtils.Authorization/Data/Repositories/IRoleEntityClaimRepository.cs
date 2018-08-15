@@ -13,6 +13,5 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
         Task<ICustomList<RoleEntityClaim>> RolesAreAuthorizedForEntityClaimAsync(int applicationId, IEnumerable<Role> roles, string entity, Crud crud);
         Task<ICustomList<RoleEntityClaim>> GetAllByEntityAsync(string entity);
         Task<ICustomList<RoleEntityClaim>> GetAllByRoleIdAsync(int roleId);
-
     }
 }

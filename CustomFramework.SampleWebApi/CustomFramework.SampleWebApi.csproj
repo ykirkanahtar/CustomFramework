@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CustomFramework.Data\CustomFramework.Data.csproj" />
-    <ProjectReference Include="..\CustomFramework.WebApiUtils.Authorization\CustomFramework.WebApiUtils.Authorization.csproj" />
     <ProjectReference Include="..\CustomFramework.WebApiUtils\CustomFramework.WebApiUtils.csproj" />
   </ItemGroup>
 
