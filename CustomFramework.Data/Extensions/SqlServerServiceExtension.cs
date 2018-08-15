@@ -10,6 +10,7 @@ namespace CustomFramework.Data.Extensions
             services.AddDbContext<TContext>(options =>
                 {
                     options.UseSqlServer(connectionString);
+                    options.UseLazyLoadingProxies();
                 }
             );
 

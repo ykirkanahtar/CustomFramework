@@ -8,7 +8,10 @@ namespace CustomFramework.Data.Extensions
         public static IServiceCollection AddPostgreSqlServer<TContext>(this IServiceCollection services, string connectionString) where TContext : DbContext
         {
             services.AddDbContext<TContext>(options =>
-                options.UseNpgsql(connectionString)
+                {
+                    options.UseNpgsql(connectionString);
+                    options.UseLazyLoadingProxies();
+                }
             );
 
             services.AddDbContext<TContext>();
