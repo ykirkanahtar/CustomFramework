@@ -6,37 +6,38 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CustomFramework.Data.Models;
 
-namespace CustomFramework.Data
+namespace CustomFramework.Data.Repositories
 {
-    public class BaseRepository<TEntity, TKey> : IRepository<TEntity, TKey>
-           where TEntity : BaseModel<TKey>
+    public abstract class AbstractRepository<TEntity, TKey> : IBaseRepository<TEntity, TKey>
+           where TEntity : BaseModelNonUser<TKey>
     {
-        private readonly DbContext _dbContext;
-        private readonly DbSet<TEntity> _dbSet;
+        protected readonly DbContext DbContext;
+        protected readonly DbSet<TEntity> DbSet;
         private bool _disposed;
 
-        public BaseRepository(DbContext dbContext)
+        protected AbstractRepository(DbContext dbContext)
         {
-            _dbContext = dbContext;
-            _dbSet = _dbContext.Set<TEntity>();
+            DbContext = dbContext;
+            DbSet = DbContext.Set<TEntity>();
         }
 
         #region IRepository members
 
         public async Task<TEntity> GetByIdAsync(TKey id)
         {
-            return await _dbContext.Set<TEntity>().FindAsync(id);
+            return await DbContext.Set<TEntity>().FindAsync(id);
         }
 
         public TEntity GetById(TKey id)
         {
-            return _dbContext.Set<TEntity>().Find(id);
+            return DbContext.Set<TEntity>().Find(id);
         }
 
         public IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> predicate)
         {
-            return _dbSet.Where(PredicateBuild(predicate));
+            return DbSet.Where(PredicateBuild(predicate));
         }
 
 
@@ -47,7 +48,7 @@ namespace CustomFramework.Data
             , int? take = null
         )
         {
-            IQueryable<TEntity> query = _dbSet;
+            IQueryable<TEntity> query = DbSet;
 
             query = query.Where(predicate != null ? PredicateBuild(predicate) : PredicateBuild());
 
@@ -70,11 +71,11 @@ namespace CustomFramework.Data
             , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
         )
         {
-            IQueryable<TEntity> query = _dbSet;
+            IQueryable<TEntity> query = DbSet;
 
             query = query.Where(predicate != null ? PredicateBuild(predicate) : PredicateBuild());
 
-            int rowCount = await query.CountAsync();
+            var rowCount = await query.CountAsync();
 
             if (orderBy != null)
             {
@@ -96,11 +97,11 @@ namespace CustomFramework.Data
             , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
         )
         {
-            IQueryable<TEntity> query = _dbSet;
+            IQueryable<TEntity> query = DbSet;
 
             query = query.Where(predicate != null ? PredicateBuild(predicate) : PredicateBuild());
 
-            int rowCount = query.Count();
+            var rowCount = query.Count();
 
             if (orderBy != null)
             {
@@ -116,34 +117,10 @@ namespace CustomFramework.Data
             };
         }
 
-        public void Add(TEntity entity)
-        {
-            entity.CreateDateTime = DateTime.Now;
-            entity.Status = Status.Active;
-            _dbSet.Add(entity);
-        }
-
-        public void Update(TEntity entity)
-        {
-            entity.UpdateDateTime = DateTime.Now;
-
-            _dbSet.Attach(entity);
-            _dbContext.Entry(entity).State = EntityState.Modified;
-        }
-
-        public void Delete(TEntity entity)
-        {
-            entity.DeleteDateTime = DateTime.Now;
-            entity.Status = Status.Deleted;
-
-            _dbSet.Attach(entity);
-            _dbContext.Entry(entity).State = EntityState.Modified;
-        }
-
         #endregion
 
         #region IDisposable members
-        ~BaseRepository()
+        ~AbstractRepository()
         {
             Dispose(false);
         }
@@ -158,7 +135,7 @@ namespace CustomFramework.Data
         {
             if (disposing && !_disposed)
             {
-                _dbContext.Dispose();
+                DbContext.Dispose();
             }
 
             _disposed = true;

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CustomFramework.SampleWebApi.Data.Repositories
 {
-    public interface ISchoolRepository : IRepository<School, int>
+    public interface ISchoolRepository : IBaseRepository<School, int>
     {
         Task<School> GetByNameAsync(string name);
 

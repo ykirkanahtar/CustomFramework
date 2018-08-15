@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
-using AutoMapper;
-using CustomFramework.Data;
+﻿using AutoMapper;
+using CustomFramework.Data.Models;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {

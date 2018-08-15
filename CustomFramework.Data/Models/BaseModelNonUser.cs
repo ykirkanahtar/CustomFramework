@@ -1,9 +1,9 @@
 ﻿using System;
 using CustomFramework.Data.Enums;
 
-namespace CustomFramework.Data
+namespace CustomFramework.Data.Models
 {
-    public class BaseModel<TKey> : IBaseModel<TKey>
+    public abstract class BaseModelNonUser<TKey> : IBaseModelNonUser<TKey>
     {
         public TKey Id { get; set; }
         public DateTime CreateDateTime { get; set; }

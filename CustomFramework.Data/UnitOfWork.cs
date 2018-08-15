@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CustomFramework.Data.Models;
+using CustomFramework.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -13,14 +15,14 @@ namespace CustomFramework.Data
         private bool _disposed;
         private Dictionary<Type, object> _repositories;
 
-        public UnitOfWork(TContext context)
+        protected UnitOfWork(TContext context)
         {
             DbContext = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public TContext DbContext { get; }
 
-        public IRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : BaseModel<TKey>
+        public BaseRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : BaseModel<TKey>
         {
             if (_repositories == null)
             {
@@ -33,7 +35,23 @@ namespace CustomFramework.Data
                 _repositories[type] = new BaseRepository<TEntity, TKey>(DbContext);
             }
 
-            return (IRepository<TEntity, TKey>)_repositories[type];
+            return (BaseRepository<TEntity, TKey>)_repositories[type];
+        }
+
+        public BaseRepositoryNonUser<TEntity, TKey> GetRepositoryNonUser<TEntity, TKey>() where TEntity : BaseModelNonUser<TKey>
+        {
+            if (_repositories == null)
+            {
+                _repositories = new Dictionary<Type, object>();
+            }
+
+            var type = typeof(TEntity);
+            if (!_repositories.ContainsKey(type))
+            {
+                _repositories[type] = new BaseRepositoryNonUser<TEntity, TKey>(DbContext);
+            }
+
+            return (BaseRepositoryNonUser<TEntity, TKey>)_repositories[type];
         }
 
         public int ExecuteSqlCommand(string sql, params object[] parameters) => DbContext.Database.ExecuteSqlCommand(sql, parameters);

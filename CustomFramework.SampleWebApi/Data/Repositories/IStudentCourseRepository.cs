@@ -5,7 +5,7 @@ using CustomFramework.SampleWebApi.Models;
 
 namespace CustomFramework.SampleWebApi.Data.Repositories
 {
-    public interface IStudentCourseRepository : IRepository<StudentCourse, int>
+    public interface IStudentCourseRepository : IBaseRepository<StudentCourse, int>
     {
         Task<ICustomList<StudentCourse>> GetAllByStudentIdAsync(int studentId);
         Task<ICustomList<StudentCourse>> GetAllByCourseIdAsync(int courseId);

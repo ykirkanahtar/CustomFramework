@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using CustomFramework.Authorization.Enums;
-using CustomFramework.Data;
+﻿using CustomFramework.Authorization.Enums;
 using CustomFramework.Data.Contracts;
+using CustomFramework.Data.Repositories;
 using CustomFramework.Data.Utils;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 
 namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
 {

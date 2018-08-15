@@ -3,11 +3,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CustomFramework.Data.Contracts;
+using CustomFramework.Data.Models;
 
-namespace CustomFramework.Data
+namespace CustomFramework.Data.Repositories
 {
-    public interface IRepository<TEntity, in TKey> : IDisposable
-        where TEntity : BaseModel<TKey>
+    public interface IBaseRepository<TEntity, in TKey> : IDisposable
+        where TEntity : BaseModelNonUser<TKey>
     {
         Task<TEntity> GetByIdAsync(TKey id);
 
@@ -32,9 +33,5 @@ namespace CustomFramework.Data
             , Expression<Func<TEntity, bool>> predicate = null
             , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
         );
-
-        void Add(TEntity entity);
-        void Update(TEntity entity);
-        void Delete(TEntity entity);
     }
 }

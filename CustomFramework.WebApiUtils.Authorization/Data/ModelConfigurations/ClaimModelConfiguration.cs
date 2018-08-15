@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
 {
-    public class ClaimModelConfiguration<T> : BaseModelConfiguration<T, int> where T : Claim
+    public class ClaimModelConfiguration<T> : BaseModelNonUserConfiguration<T, int> where T : Claim
     {
         public override void Configure(EntityTypeBuilder<T> builder)
         {

@@ -21,6 +21,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
     public class RoleEntityClaimManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IRoleEntityClaimManager
     {
         private readonly IUnitOfWorkAuthorization _uow;
+
         public RoleEntityClaimManager(IUnitOfWorkAuthorization uow, ILogger<RoleEntityClaimManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
             : base(logger, mapper, apiRequestAccessor)
         {
@@ -36,7 +37,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 var tempResult = await _uow.RoleEntityClaims.GetByApplicationIdAndRoleIdAndEntityAsync(result.ApplicationId, result.RoleId, result.Entity);
                 tempResult.CheckUniqueValue(AuthorizationConstants.Entity);
 
-                _uow.RoleEntityClaims.Add(result);
+                _uow.RoleEntityClaims.Add(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -49,7 +50,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 var result = await GetByIdAsync(id);
                 Mapper.Map(request, result);
 
-                _uow.RoleEntityClaims.Update(result);
+                _uow.RoleEntityClaims.Update(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -60,7 +61,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
-                _uow.RoleEntityClaims.Delete(result);
+                _uow.RoleEntityClaims.Delete(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }

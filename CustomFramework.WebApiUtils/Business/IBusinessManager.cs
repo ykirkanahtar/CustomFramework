@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CustomFramework.Data;
+using CustomFramework.Data.Models;
 
 namespace CustomFramework.WebApiUtils.Business
 {

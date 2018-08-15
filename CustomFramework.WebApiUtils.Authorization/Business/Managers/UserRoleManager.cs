@@ -18,6 +18,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
     public class UserRoleManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IUserRoleManager
     {
         private readonly IUnitOfWorkAuthorization _uow;
+
         public UserRoleManager(IUnitOfWorkAuthorization uow, ILogger<UserRoleManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
             : base(logger, mapper, apiRequestAccessor)
         {
@@ -44,7 +45,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 var tempResult = await _uow.UserRoles.GetByUserIdAndRoleIdAsync(result.UserId, result.RoleId);
                 tempResult.CheckUniqueValue(GetType().Name);
 
-                _uow.UserRoles.Add(result);
+                _uow.UserRoles.Add(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -55,7 +56,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
-                _uow.UserRoles.Delete(result);
+                _uow.UserRoles.Delete(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }

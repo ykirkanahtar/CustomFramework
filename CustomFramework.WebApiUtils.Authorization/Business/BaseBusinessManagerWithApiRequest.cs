@@ -11,10 +11,15 @@ namespace CustomFramework.WebApiUtils.Authorization.Business
     {
         protected readonly IApiRequest ApiRequestAccessor;
 
-        public BaseBusinessManagerWithApiRequest(ILogger<BaseBusinessManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
+        protected BaseBusinessManagerWithApiRequest(ILogger<BaseBusinessManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
             : base(logger, mapper)
         {
             ApiRequestAccessor = apiRequestAccessor.GetApiRequest<TApiRequest>();
+        }
+
+        protected int GetLoggedInUserId()
+        {
+            return ApiRequestAccessor.User.Id;
         }
     }
 }

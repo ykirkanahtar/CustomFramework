@@ -1,5 +1,4 @@
-using CustomFramework.Data;
-using Newtonsoft.Json;
+using CustomFramework.Data.Models;
 
 namespace CustomFramework.WebApiUtils.Authorization.Models
 {

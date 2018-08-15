@@ -19,6 +19,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
     public class ClaimManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IClaimManager
     {
         private readonly IUnitOfWorkAuthorization _uow;
+
         public ClaimManager(IUnitOfWorkAuthorization uow, ILogger<ClaimManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
             : base(logger, mapper, apiRequestAccessor)
         {
@@ -34,7 +35,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 var tempResult = await _uow.Claims.GetByCustomClaimAsync(result.CustomClaim);
                 tempResult.CheckUniqueValue(AuthorizationConstants.CustomClaim);
 
-                _uow.Claims.Add(result);
+                _uow.Claims.Add(result, GetLoggedInUserId());
 
                 await _uow.SaveChangesAsync();
                 return result;
@@ -52,7 +53,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 tempResult.CheckUniqueValueForUpdate(id, AuthorizationConstants.CustomClaim);
 
 
-                _uow.Claims.Update(result);
+                _uow.Claims.Update(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -63,7 +64,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
-                _uow.Claims.Delete(result);
+                _uow.Claims.Delete(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }

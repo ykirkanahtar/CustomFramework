@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CustomFramework.Data;
+using CustomFramework.Data.Models;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;

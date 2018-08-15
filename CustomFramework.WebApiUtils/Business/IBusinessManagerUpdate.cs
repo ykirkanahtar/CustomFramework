@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using CustomFramework.Data;
+﻿using CustomFramework.Data.Models;
+using System.Threading.Tasks;
 
 namespace CustomFramework.WebApiUtils.Business
 {

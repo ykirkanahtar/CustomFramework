@@ -16,6 +16,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
     public class UserUtilManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IUserUtilManager
     {
         private readonly IUnitOfWorkAuthorization _uow;
+
         public UserUtilManager(IUnitOfWorkAuthorization uow, ILogger<UserUtilManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
             : base(logger, mapper, apiRequestAccessor)
         {
@@ -27,7 +28,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = Mapper.Map<UserUtil>(request);
-                _uow.UserUtils.Add(result);
+                _uow.UserUtils.Add(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -39,7 +40,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             {
                 var result = await GetByIdAsync(id);
                 Mapper.Map(request, result);
-                _uow.UserUtils.Update(result);
+                _uow.UserUtils.Update(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -50,7 +51,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
-                _uow.UserUtils.Delete(result);
+                _uow.UserUtils.Delete(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }

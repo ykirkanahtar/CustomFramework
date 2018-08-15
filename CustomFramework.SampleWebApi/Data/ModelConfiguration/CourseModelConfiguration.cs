@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CustomFramework.SampleWebApi.Data.ModelConfiguration
 {
-    public class CourseModelConfiguration<T> : BaseModelConfiguration<T, int> where T : Course
+    public class CourseModelConfiguration<T> : BaseModelNonUserConfiguration<T, int> where T : Course
     {
         public override void Configure(EntityTypeBuilder<T> builder)
         {

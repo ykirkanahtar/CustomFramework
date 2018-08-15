@@ -21,6 +21,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
     public class ClientApplicationManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IClientApplicationManager
     {
         private readonly IUnitOfWorkAuthorization _uow;
+
         public ClientApplicationManager(IUnitOfWorkAuthorization uow, ILogger<ClientApplicationManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
             : base(logger, mapper, apiRequestAccessor)
         {
@@ -45,7 +46,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
                 result.ClientApplicationPassword = hashPassword;
 
-                _uow.ClientApplications.Add(result);
+                _uow.ClientApplications.Add(result, GetLoggedInUserId());
 
                 CreateClientApplicationUtil(result.Id, salt);
 
@@ -67,7 +68,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 tempResult = await _uow.ClientApplications.GetByCodeAsync(result.ClientApplicationCode);
                 tempResult.CheckUniqueValueForUpdate(id, AuthorizationConstants.ClientApplicationCode);
 
-                _uow.ClientApplications.Update(result);
+                _uow.ClientApplications.Update(result, GetLoggedInUserId());
 
                 await _uow.SaveChangesAsync();
                 return result;
@@ -87,7 +88,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
                 result.ClientApplicationPassword = hashPassword;
 
-                _uow.ClientApplications.Update(result);
+                _uow.ClientApplications.Update(result, GetLoggedInUserId());
 
                 await UpdateClientApplicationUtilAsync(id, salt);
 
@@ -102,7 +103,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             {
                 var result = await GetByIdAsync(id);
 
-                _uow.ClientApplications.Delete(result);
+                _uow.ClientApplications.Delete(result, GetLoggedInUserId());
 
                 await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -153,7 +154,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
         {
             var clientApplicationUtil = await _uow.ClientApplicationUtils.GetByClientApplicationIdAsync(clientApplicationId);
             clientApplicationUtil.SpecialValue = salt;
-            _uow.ClientApplicationUtils.Update(clientApplicationUtil);
+            _uow.ClientApplicationUtils.Update(clientApplicationUtil, GetLoggedInUserId());
         }
 
         private void CreateClientApplicationUtil(int id, string salt)
@@ -164,7 +165,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 SpecialValue = salt,
             };
 
-            _uow.ClientApplicationUtils.Add(clientApplicationUtil);
+            _uow.ClientApplicationUtils.Add(clientApplicationUtil, GetLoggedInUserId());
         }
 
         #endregion

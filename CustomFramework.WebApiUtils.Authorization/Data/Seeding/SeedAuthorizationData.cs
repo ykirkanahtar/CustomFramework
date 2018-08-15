@@ -10,6 +10,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Seeding
     {
         private static int ClientApplicationUtilId { get; set; }
         private static int UserUtilId { get; set; }
+        private static int LoggedUserId { get; set; }
 
         public SeedAuthorizationData()
         {
@@ -21,6 +22,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Seeding
             Applications = new List<Application>();
             ClientApplicationUtilId = 1;
             UserUtilId = 1;
+            LoggedUserId = 1;
         }
 
         public IList<Application> Applications { get; set; }
@@ -48,8 +50,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Seeding
 
                 user.Password = hashPassword;
 
-                SeedDataUtil.SetCommonFields<User, int>(user);
-                SeedDataUtil.SetCommonFields<UserUtil, int>(userUtil);
+                SeedDataUtil.SetCommonFields<User, int>(user, LoggedUserId);
+                SeedDataUtil.SetCommonFields<UserUtil, int>(userUtil, LoggedUserId);
 
                 modelBuilder.Entity<User>()
                     .HasData(user);
@@ -77,8 +79,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Seeding
 
                 clientApplication.ClientApplicationPassword = hashPassword;
 
-                SeedDataUtil.SetCommonFields<ClientApplication, int>(clientApplication);
-                SeedDataUtil.SetCommonFields<ClientApplicationUtil, int>(clientApplicationUtil);
+                SeedDataUtil.SetCommonFields<ClientApplication, int>(clientApplication, LoggedUserId);
+                SeedDataUtil.SetCommonFields<ClientApplicationUtil, int>(clientApplicationUtil, LoggedUserId);
 
                 modelBuilder.Entity<ClientApplication>()
                     .HasData(clientApplication);
@@ -92,27 +94,27 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Seeding
 
         public void SeedRoleData(ModelBuilder modelBuilder)
         {
-            SeedDataUtil.SeedTData<Role, int>(modelBuilder, Roles);
+            SeedDataUtil.SeedTData<Role, int>(modelBuilder, Roles, LoggedUserId);
         }
 
         public void SeedUserRoleData(ModelBuilder modelBuilder)
         {
-            SeedDataUtil.SeedTData<UserRole, int>(modelBuilder, UserRoles);
+            SeedDataUtil.SeedTData<UserRole, int>(modelBuilder, UserRoles, LoggedUserId);
         }
 
         public void SeedRoleEntityData(ModelBuilder modelBuilder)
         {
-            SeedDataUtil.SeedTData<RoleEntityClaim, int>(modelBuilder, RoleEntityClaims);
+            SeedDataUtil.SeedTData<RoleEntityClaim, int>(modelBuilder, RoleEntityClaims, LoggedUserId);
         }
 
         public void SeedApplicationData(ModelBuilder modelBuilder)
         {
-            SeedDataUtil.SeedTData<Application, int>(modelBuilder, Applications);
+            SeedDataUtil.SeedTData<Application, int>(modelBuilder, Applications, LoggedUserId);
         }
 
         public void SeedApplicationUsersData(ModelBuilder modelBuilder)
         {
-            SeedDataUtil.SeedTData<ApplicationUser, int>(modelBuilder, ApplicationUsers);
+            SeedDataUtil.SeedTData<ApplicationUser, int>(modelBuilder, ApplicationUsers, LoggedUserId);
         }
 
         public void SeedAll(ModelBuilder modelBuilder)

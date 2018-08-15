@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using CustomFramework.Data;
+using CustomFramework.Data.Models;
 using Newtonsoft.Json;
 
 namespace CustomFramework.WebApiUtils.Authorization.Models

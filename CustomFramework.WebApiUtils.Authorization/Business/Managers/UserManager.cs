@@ -21,6 +21,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
     public class UserManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IUserManager
     {
         private readonly IUnitOfWorkAuthorization _uow;
+
         public UserManager(IUnitOfWorkAuthorization uow, ILogger<UserManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
             : base(logger, mapper, apiRequestAccessor)
         {
@@ -45,7 +46,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
                 result.Password = hashPassword;
 
-                _uow.Users.Add(result);
+                _uow.Users.Add(result, GetLoggedInUserId());
 
                 CreateUserUtil(result.Id, salt);
 
@@ -64,7 +65,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 var tempResult = await _uow.Users.GetByUserNameAsync(result.UserName);
                 tempResult.CheckUniqueValueForUpdate(id, AuthorizationConstants.UserName);
 
-                _uow.Users.Update(result);
+                _uow.Users.Update(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -82,7 +83,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
                 result.Password = hashPassword;
 
-                _uow.Users.Update(result);
+                _uow.Users.Update(result, GetLoggedInUserId());
 
                 await UpdateUserUtilAsync(id, salt);
 
@@ -101,7 +102,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 var tempResult = await _uow.Users.GetByEmailAsync(result.Email);
                 tempResult.CheckUniqueValueForUpdate(id, AuthorizationConstants.Email);
 
-                _uow.Users.Update(result);
+                _uow.Users.Update(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -112,7 +113,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
-                _uow.Users.Delete(result);
+                _uow.Users.Delete(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
@@ -166,7 +167,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
         {
             var userUtil = await _uow.UserUtils.GetByUserIdAsync(userId);
             userUtil.SpecialValue = salt;
-            _uow.UserUtils.Update(userUtil);
+            _uow.UserUtils.Update(userUtil, GetLoggedInUserId());
         }
 
         private void CreateUserUtil(int id, string salt)
@@ -176,7 +177,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 UserId = id,
                 SpecialValue = salt,
             };
-            _uow.UserUtils.Add(userUtil);
+            _uow.UserUtils.Add(userUtil, GetLoggedInUserId());
         }
         #endregion
     }

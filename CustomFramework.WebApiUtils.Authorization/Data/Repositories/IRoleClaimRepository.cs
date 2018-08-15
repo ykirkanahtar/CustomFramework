@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using CustomFramework.Data;
-using CustomFramework.Data.Contracts;
+﻿using CustomFramework.Data.Contracts;
+using CustomFramework.Data.Repositories;
 using CustomFramework.WebApiUtils.Authorization.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
 {
