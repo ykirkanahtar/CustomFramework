@@ -3,6 +3,7 @@ using CustomFramework.Data;
 using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Utils;
 using CustomFramework.WebApiUtils.Authorization.Models;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 
 namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
@@ -26,6 +27,17 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
         public async Task<User> GetByUserNameAndPasswordAsync(string userName, string password)
         {
             return await Get(p => p.UserName == userName && p.Password == password).FirstOrDefaultAsync();
+        }
+
+        public async Task<ICustomList<User>> GetAllByKeywordAsync(string keyword, int pageIndex, int pageSize)
+        {
+            var predicate = PredicateBuilder.New<User>();
+            predicate = predicate.Or(p => p.UserName == keyword);
+            predicate = predicate.Or(p => p.Email == keyword);
+            predicate = predicate.Or(p => p.Name == keyword);
+            predicate = predicate.Or(p => p.Surname == keyword);
+
+            return await (await GetAllWithPagingAsync(predicate: predicate, paging: new Paging(pageIndex, pageSize))).ToCustomList();
         }
 
         public async Task<ICustomList<User>> GetAllAsync()

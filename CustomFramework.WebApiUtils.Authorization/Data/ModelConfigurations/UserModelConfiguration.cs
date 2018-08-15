@@ -16,6 +16,14 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.ModelConfigurations
                 .IsRequired()
                 .HasMaxLength(25);
 
+            builder.Property(p => p.Name)
+                .IsRequired()
+                .HasMaxLength(30);
+
+            builder.Property(p => p.Surname)
+                .IsRequired()
+                .HasMaxLength(30);
+
             builder.Property(p => p.Password)
                 .IsRequired()
                 .HasMaxLength(256);
