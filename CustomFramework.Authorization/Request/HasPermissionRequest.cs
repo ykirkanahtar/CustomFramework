@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
 using CustomFramework.Authorization.Attributes;
 
-namespace CustomFramework.WebApiUtils.Authorization.Request
+namespace CustomFramework.Authorization.Request
 {
     public class HasPermissionRequest
     {
@@ -19,4 +18,5 @@ namespace CustomFramework.WebApiUtils.Authorization.Request
         [Required]
         public IEnumerable<PermissionAttribute> PermissionAttributes { get; }
     }
+
 }

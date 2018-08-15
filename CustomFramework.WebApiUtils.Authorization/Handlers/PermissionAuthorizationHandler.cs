@@ -1,7 +1,8 @@
 ﻿using CustomFramework.Authorization.Attributes;
 using CustomFramework.Authorization.Handlers;
+using CustomFramework.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
-using CustomFramework.WebApiUtils.Authorization.Request;
+using CustomFramework.WebApiUtils.Constants;
 using CustomFramework.WebApiUtils.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
@@ -9,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using CustomFramework.WebApiUtils.Constants;
 
 namespace CustomFramework.WebApiUtils.Authorization.Handlers
 {
