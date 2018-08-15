@@ -58,7 +58,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<ClientApplication, ClientApplicationResponse>(result)));
         }
 
-        [Route("{id:int}/update/clientapplicationpassword")]
+        [Route("{id:int}/update/clientApplicationPassword")]
         [HttpPut]
         [AllowAnonymous]
         [Permission(nameof(ClientApplication), Crud.Update)]
@@ -68,12 +68,12 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<ClientApplication, ClientApplicationResponse>(result)));
         }
 
-        [Route("get/clientapplicationcode/{clientapplicationcode}")]
+        [Route("get/clientapplicationcode/{clientApplicationCode}")]
         [HttpGet]
         [Permission(nameof(ClientApplication), Crud.Select)]
-        public async Task<IActionResult> GetByClientApplicationCode(string clientapplicationcode)
+        public async Task<IActionResult> GetByClientApplicationCode(string clientApplicationCode)
         {
-            var result = await Manager.GetByClientApplicationCodeAsync(clientapplicationcode);
+            var result = await Manager.GetByClientApplicationCodeAsync(clientApplicationCode);
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<ClientApplication, ClientApplicationResponse>(result)));
         }
     }

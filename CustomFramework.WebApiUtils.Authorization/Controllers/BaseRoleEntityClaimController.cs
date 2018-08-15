@@ -67,7 +67,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
                 result.Count));
         }
 
-        [Route("getall/roleid/{roleid:int}")]
+        [Route("getall/roleid/{roleId:int}")]
         [HttpGet]
         [Permission(nameof(RoleEntityClaim), Crud.Select)]
         public async Task<IActionResult> GetAllByRoleId(int roleId)

@@ -66,7 +66,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
                 result.Count));
         }
 
-        [Route("getall/userid/{userid:int}")]
+        [Route("getall/userid/{userId:int}")]
         [HttpGet]
         [Permission(nameof(UserEntityClaim), Crud.Select)]
         public async Task<IActionResult> GetAllByUserId(int userId)

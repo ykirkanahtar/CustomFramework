@@ -55,7 +55,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             return await BaseGetById(id);
         }
 
-        [Route("get/customclaim/{customclaim}")]
+        [Route("get/customclaim/{customClaim}")]
         [HttpGet]
         [Permission(nameof(Claim), Crud.Select)]
         public async Task<IActionResult> GetByCustomClaim(string customClaim)

@@ -47,7 +47,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             return await BaseGetById(id);
         }
 
-        [Route("get/users/roleid/{roleid:int}")]
+        [Route("get/users/roleid/{roleId:int}")]
         [HttpGet]
         [Permission(nameof(UserRole), Crud.Select)]
         public async Task<IActionResult> GetUsersByRoleId(int roleId)
@@ -58,7 +58,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
                 result.Count));
         }
 
-        [Route("get/role/userid/{userid:int}")]
+        [Route("get/role/userid/{userId:int}")]
         [HttpGet]
         [Permission(nameof(UserRole), Crud.Select)]
         public async Task<IActionResult> GetRolesByUserId(int userId)

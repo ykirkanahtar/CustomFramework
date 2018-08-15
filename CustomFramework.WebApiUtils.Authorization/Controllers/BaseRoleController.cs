@@ -55,7 +55,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             return await BaseGetById(id);
         }
 
-        [Route("get/rolename/{rolename}")]
+        [Route("get/rolename/{roleName}")]
         [HttpGet]
         [Permission(nameof(Role), Crud.Select)]
         public async Task<IActionResult> GetByRoleName(string roleName)

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using CustomFramework.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
-using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Controllers;
 using CustomFramework.WebApiUtils.Resources;
@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
