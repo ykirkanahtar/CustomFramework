@@ -1,5 +1,5 @@
-using CustomFramework.Data.Models;
 using System.Collections.Generic;
+using CustomFramework.Data.Models;
 
 namespace CustomFramework.WebApiUtils.Authorization.Models
 {

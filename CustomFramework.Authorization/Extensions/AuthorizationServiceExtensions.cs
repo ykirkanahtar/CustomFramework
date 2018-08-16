@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CustomFramework.Authorization.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CustomFramework.Authorization.Extensions
@@ -15,8 +16,7 @@ namespace CustomFramework.Authorization.Extensions
                     {
                         foreach (var authorizationRequirement in authorizationPolicy.AuthorizationRequirements)
                         {
-                        policyBuilder.Requirements.Add(authorizationRequirement);
-
+                            policyBuilder.Requirements.Add(authorizationRequirement);
                         }
                     });
                 }

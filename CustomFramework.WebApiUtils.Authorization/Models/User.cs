@@ -1,7 +1,7 @@
-﻿using CustomFramework.Data.Models;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using CustomFramework.Data.Models;
+using Newtonsoft.Json;
 
 namespace CustomFramework.WebApiUtils.Authorization.Models
 {

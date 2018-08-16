@@ -1,18 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
+using CustomFramework.Authorization;
 using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
-using CustomFramework.WebApiUtils.Authorization.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
-using CustomFramework.WebApiUtils.Authorization.Utils;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Enums;
 using CustomFramework.WebApiUtils.Utils;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Threading.Tasks;
+using CustomFramework.Authorization.Utils;
+using CustomFramework.WebApiUtils.Contracts;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {

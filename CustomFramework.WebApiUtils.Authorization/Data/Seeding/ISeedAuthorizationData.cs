@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using CustomFramework.WebApiUtils.Authorization.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace CustomFramework.WebApiUtils.Authorization.Data.Seeding
 {

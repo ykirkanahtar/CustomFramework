@@ -1,12 +1,11 @@
-﻿using CustomFramework.Authorization.Utils;
+﻿using CustomFramework.Authorization;
+using CustomFramework.Authorization.Utils;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Business.Managers;
-using CustomFramework.WebApiUtils.Authorization.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Data.Repositories;
 using CustomFramework.WebApiUtils.Authorization.Handlers;
 using CustomFramework.WebApiUtils.Authorization.Request;
-using CustomFramework.WebApiUtils.Authorization.Utils;
 using CustomFramework.WebApiUtils.Authorization.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -22,8 +21,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Extensions
             services.AddTransient<IUnitOfWorkAuthorization, UnitOfWorkAuthorization>();
             services.AddScoped<DbContext, AuthorizationContext>();
             services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
-            services.AddTransient<IApiRequestAccessor, ApiRequestAccessor>();
-            services.AddTransient<IApiRequest, ApiRequest>();
             services.AddSingleton<IToken, Token>();
 
             /*********Repositories*********/

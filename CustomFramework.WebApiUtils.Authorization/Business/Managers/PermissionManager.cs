@@ -1,10 +1,10 @@
 ﻿using CustomFramework.Authorization.Enums;
 using CustomFramework.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
-using CustomFramework.WebApiUtils.Authorization.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Handlers;
 using CustomFramework.WebApiUtils.Authorization.Models;
-using CustomFramework.WebApiUtils.Authorization.Utils;
+using CustomFramework.WebApiUtils.Contracts;
+using CustomFramework.WebApiUtils.Utils;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -41,7 +41,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
         {
             try
             {
-                var userId = _apiRequest.User.Id;
+                var userId = _apiRequest.UserId;
 
                 if (_apiRequest.ApplicationId != hasPermissionRequest.ApplicationId) throw new KeyNotFoundException("Uygulama id bulunamadı");
 

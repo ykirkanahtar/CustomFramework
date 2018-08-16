@@ -1,9 +1,9 @@
 ﻿using System.Linq;
-using CustomFramework.WebApiUtils.Authorization.Contracts;
+using CustomFramework.WebApiUtils.Contracts;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace CustomFramework.WebApiUtils.Authorization.Utils
+namespace CustomFramework.WebApiUtils.Utils
 {
     public class ApiRequestAccessor : IApiRequestAccessor
     {

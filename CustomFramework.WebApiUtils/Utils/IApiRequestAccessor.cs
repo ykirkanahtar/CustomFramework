@@ -1,4 +1,4 @@
-﻿namespace CustomFramework.WebApiUtils.Authorization.Utils
+﻿namespace CustomFramework.WebApiUtils.Utils
 {
     public interface IApiRequestAccessor
     {

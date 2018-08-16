@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
 using CustomFramework.Authorization;
+using CustomFramework.Authorization.Utils;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
-using CustomFramework.WebApiUtils.Authorization.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Authorization.Response;
-using CustomFramework.WebApiUtils.Authorization.Utils;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Controllers;
 using CustomFramework.WebApiUtils.Resources;
@@ -18,7 +17,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using CustomFramework.Authorization.Utils;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
@@ -60,7 +58,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
 
             await _applicationUserManager.GetByApplicationIdAndUserIdAsync(application.Id, user.Id);
 
-            var apiRequest = new ApiRequest(login.ApplicationId, user, clientApplication);
+            var apiRequest = new ApiRequest(login.ApplicationId, user.Id, clientApplication.Id);
 
             var claims = new List<Claim>
             {

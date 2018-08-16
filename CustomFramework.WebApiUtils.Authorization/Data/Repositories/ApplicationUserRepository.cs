@@ -1,10 +1,10 @@
 ﻿using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Repositories;
 using CustomFramework.Data.Utils;
-using CustomFramework.WebApiUtils.Authorization.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using CustomFramework.WebApiUtils.Authorization.Models;
 
 namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
 {
