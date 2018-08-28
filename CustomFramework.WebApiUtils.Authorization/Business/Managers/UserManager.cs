@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Security.Authentication;
 using System.Threading.Tasks;
 using CustomFramework.Authorization.Utils;
+using CustomFramework.Data;
 using CustomFramework.WebApiUtils.Contracts;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
@@ -161,6 +162,16 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
         public Task<ICustomList<User>> GetAllAsync()
         {
             return CommonOperationAsync(async () => await _uow.Users.GetAllAsync(), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+        }
+
+        public Task<ICustomList<User>> GetAllAsync(int pageIndex, int pageSize)
+        {
+            return CommonOperationAsync(async () => await _uow.Users.GetAllAsync(pageIndex, pageSize), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);
+        }
+
+        public Task<ICustomList<User>> GetAllLast10UserAsync()
+        {
+            return CommonOperationAsync(async () => await _uow.Users.GetAllLast10UserAsync(), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
         #region UserUtil

@@ -1,4 +1,5 @@
-﻿using CustomFramework.Data;
+﻿using System.Linq;
+using CustomFramework.Data;
 using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Repositories;
 using CustomFramework.Data.Utils;
@@ -44,6 +45,16 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
         public async Task<ICustomList<User>> GetAllAsync()
         {
             return await GetAll().ToCustomList();
+        }
+
+        public async Task<ICustomList<User>> GetAllAsync(int pageIndex, int pageSize)
+        {
+            return await (await GetAllWithPagingAsync(paging: new Paging(pageIndex, pageSize))).ToCustomList();
+        }
+
+        public async Task<ICustomList<User>> GetAllLast10UserAsync()
+        {
+            return await GetAll(orderBy: q => q.OrderByDescending(s => s.CreateDateTime), take: 10).ToCustomList();
         }
     }
 }

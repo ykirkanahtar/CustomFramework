@@ -14,6 +14,9 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
         Task<User> LoginAsync(string userName, string password);
         Task<User> GetByUserNameAsync(string userName);
         Task<User> GetByEmailAsync(string email);
+        Task<ICustomList<User>> GetAllLast10UserAsync();
         Task<ICustomList<User>> GetAllAsync();
+        Task<ICustomList<User>> GetAllAsync(int pageIndex, int pageSize);
+
     }
 }

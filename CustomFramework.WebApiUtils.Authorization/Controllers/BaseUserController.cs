@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Authorization.Attributes;
 using CustomFramework.Authorization.Enums;
@@ -92,5 +94,26 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             var result = await Manager.GetByEmailAsync(email);
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<User, UserResponse>(result)));
         }
+
+        [Route("getall/last10user")]
+        [HttpGet]
+        [Permission(nameof(User), Crud.Select)]
+        public async Task<IActionResult> GetAllLast10User()
+        {
+            var result = await Manager.GetAllLast10UserAsync();
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                Mapper.Map<IList<User>, IList<UserResponse>>(result.ResultList.ToList()), result.Count));
+        }
+
+        [Route("getall/pageindex/{pageIndex:int}/pagesize/{pageSize:int}")]
+        [HttpGet]
+        [Permission(nameof(User), Crud.Select)]
+        public async Task<IActionResult> GetAll(int pageIndex, int pageSize)
+        {
+            var result = await Manager.GetAllAsync(pageIndex, pageSize);
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                Mapper.Map<IList<User>, IList<UserResponse>>(result.ResultList.ToList()), result.Count));
+        }
+
     }
 }
