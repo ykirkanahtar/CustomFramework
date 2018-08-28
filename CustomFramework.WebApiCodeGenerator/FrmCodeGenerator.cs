@@ -17,6 +17,7 @@ namespace CustomFramework.WebApiCodeGenerator
         };
 
         private string _projectPath;
+        private string _projectName;
 
         //private readonly string _applicationPath = Path.GetDirectoryName(Path.GetDirectoryName(Directory.GetCurrentDirectory())) + "\\output";
 
@@ -43,72 +44,72 @@ namespace CustomFramework.WebApiCodeGenerator
             //LoadStudentCourseData();
         }
 
-    //    private void LoadStudentData()
-    //    {
-    //        TxtClassName.Text = @"Student";
-    //        RdInt32.Checked = true;
-    //        ChkHasGetAllMethod.Checked = true;
-    //        ChkGetAllWithPaging.Checked = true;
-    //        ChkHasUpdateMethod.Checked = true;
+        //    private void LoadStudentData()
+        //    {
+        //        TxtClassName.Text = @"Student";
+        //        RdInt32.Checked = true;
+        //        ChkHasGetAllMethod.Checked = true;
+        //        ChkGetAllWithPaging.Checked = true;
+        //        ChkHasUpdateMethod.Checked = true;
 
-    //        var fieldNo = new Field("StudentNo", "int", string.Empty, true, true, true, true, true);
-    //        var fieldName = new Field("Name", "string", "25", true, true, true, false, false);
-    //        var fieldSurname = new Field("Surname", "string", "25", true, true, true, false, false);
+        //        var fieldNo = new Field("StudentNo", "int", string.Empty, true, true, true, true, true);
+        //        var fieldName = new Field("Name", "string", "25", true, true, true, false, false);
+        //        var fieldSurname = new Field("Surname", "string", "25", true, true, true, false, false);
 
-    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldNo)));
-    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldName)));
-    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldSurname)));
+        //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldNo)));
+        //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldName)));
+        //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldSurname)));
 
-    //        var referenceCourse = new Reference("StudentCourses", "int", Relations.OneToMany, false, false,
-    //            false, false, false, "StudentCourse");
+        //        var referenceCourse = new Reference("StudentCourses", "int", Relations.OneToMany, false, false,
+        //            false, false, false, "StudentCourse");
 
-    //        LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceCourse)));
-    //    }
+        //        LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceCourse)));
+        //    }
 
-    //    private void LoadCourseData()
-    //    {
-    //        TxtClassName.Text = @"Course";
-    //        RdInt32.Checked = true;
-    //        ChkHasGetAllMethod.Checked = true;
-    //        ChkGetAllWithPaging.Checked = false;
-    //        ChkHasUpdateMethod.Checked = true;
+        //    private void LoadCourseData()
+        //    {
+        //        TxtClassName.Text = @"Course";
+        //        RdInt32.Checked = true;
+        //        ChkHasGetAllMethod.Checked = true;
+        //        ChkGetAllWithPaging.Checked = false;
+        //        ChkHasUpdateMethod.Checked = true;
 
-    //        var fieldNo = new Field("CourseNo", "int", string.Empty, true, true, true, true, true);
-    //        var fieldName = new Field("Name", "string", "25", true, true, true, false, false);
+        //        var fieldNo = new Field("CourseNo", "int", string.Empty, true, true, true, true, true);
+        //        var fieldName = new Field("Name", "string", "25", true, true, true, false, false);
 
-    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldNo)));
-    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldName)));
+        //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldNo)));
+        //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldName)));
 
-    //        var referenceTeacher = new Reference("TeacherId", "int", Relations.ManyToOne, true, true,
-    //true, true, false, "Teacher");
-    //        var referenceStudent = new Reference("StudentCourses", "int", Relations.OneToMany, false, false,
-    //            false, false, false, "StudentCourse");
+        //        var referenceTeacher = new Reference("TeacherId", "int", Relations.ManyToOne, true, true,
+        //true, true, false, "Teacher");
+        //        var referenceStudent = new Reference("StudentCourses", "int", Relations.OneToMany, false, false,
+        //            false, false, false, "StudentCourse");
 
-    //        LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceTeacher)));
-    //        LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceStudent)));
-    //    }
+        //        LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceTeacher)));
+        //        LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceStudent)));
+        //    }
 
-    //    private void LoadTeacherData()
-    //    {
-    //        TxtClassName.Text = @"Teacher";
-    //        RdInt32.Checked = true;
-    //        ChkHasGetAllMethod.Checked = true;
-    //        ChkGetAllWithPaging.Checked = false;
-    //        ChkHasUpdateMethod.Checked = true;
+        //    private void LoadTeacherData()
+        //    {
+        //        TxtClassName.Text = @"Teacher";
+        //        RdInt32.Checked = true;
+        //        ChkHasGetAllMethod.Checked = true;
+        //        ChkGetAllWithPaging.Checked = false;
+        //        ChkHasUpdateMethod.Checked = true;
 
-    //        var fieldNo = new Field("TeacherNo", "int", string.Empty, true, true, true, true, true);
-    //        var fieldName = new Field("Name", "string", "25", true, true, true, false, false);
-    //        var fieldSurname = new Field("Surname", "string", "25", true, true, true, false, false);
+        //        var fieldNo = new Field("TeacherNo", "int", string.Empty, true, true, true, true, true);
+        //        var fieldName = new Field("Name", "string", "25", true, true, true, false, false);
+        //        var fieldSurname = new Field("Surname", "string", "25", true, true, true, false, false);
 
-    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldNo)));
-    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldName)));
-    //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldSurname)));
+        //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldNo)));
+        //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldName)));
+        //        LstViewFields.Items.Add(new ListViewItem(FieldToListRow(fieldSurname)));
 
-    //        var referenceCourse = new Reference("Courses", "int", Relations.ManyToMany, false, false,
-    //            false, false, false, "Course");
+        //        var referenceCourse = new Reference("Courses", "int", Relations.ManyToMany, false, false,
+        //            false, false, false, "Course");
 
-    //        LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceCourse)));
-    //    }
+        //        LstViewReferences.Items.Add(new ListViewItem(RefToListRow(referenceCourse)));
+        //    }
 
         private void LoadStudentCourseData()
         {
@@ -228,6 +229,8 @@ true, true, false, "Student");
         {
             var fullPath = $"{path}\\{fileName}";
 
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
             if (File.Exists(fullPath))
             {
                 File.Delete(fullPath);
@@ -265,13 +268,6 @@ true, true, false, "Student");
 
         private void frmCodeGenerator_Load(object sender, EventArgs e)
         {
-            _nameSpace = Interaction.InputBox("Please enter the namespace value");
-            _projectPath = Interaction.InputBox("Please enter the project root folder");
-
-
-            TxtNameSpace.Text = _nameSpace;
-            TxtProjectFolder.Text = _projectPath;
-
             CmbFieldDataTypes.DataSource = _fieldDataTypes;
             ListViews_Configuration();
             Load_Datas();
@@ -280,6 +276,22 @@ true, true, false, "Student");
 
         private void BtnClass_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(TxtNameSpace.Text))
+            {
+                MessageBox.Show(@"You must enter a value for namespace", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(TxtProjectFolder.Text))
+            {
+                MessageBox.Show(@"You must enter a value for project folder path", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            _nameSpace = TxtNameSpace.Text;
+            _projectPath = TxtProjectFolder.Text;
+            _projectName = TxtProjectName.Text;
+
             if (string.IsNullOrEmpty(TxtClassName.Text))
             {
                 MessageBox.Show(@"You must enter a value for class name", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -445,16 +457,66 @@ true, true, false, "Student");
             const string unitOfWorkInstanceTag = "/*********End of Instances*********/";
             const string constantTag = "/*********End of Constants*********/";
 
-            Task t1 = FileCreatorAsync(Path.Combine(_projectPath, "Models"), $"{className}.cs", CreateEntityClass(className, idFieldDataType));
-            Task t2 = FileCreatorAsync(Path.Combine(_projectPath, "Data/Repositories"), $"I{className}Repository.cs", CreateRepositoryInterfaceClass(className, idFieldDataType));
-            Task t3 = FileCreatorAsync(Path.Combine(_projectPath, "Data/Repositories"), $"{className}Repository.cs", CreateRepositoryClass(className, idFieldDataType));
-            Task t4 = FileCreatorAsync(Path.Combine(_projectPath, "Requests"), $"{className}Request.cs", CreateRequestEntityClass(className));
-            Task t5 = FileCreatorAsync(Path.Combine(_projectPath, "Responses"), $"{className}Response.cs", CreateResponseEntityClass(className, idFieldDataType));
-            Task t6 = FileCreatorAsync(Path.Combine(_projectPath, "Business"), $"I{className}Manager.cs", CreateBusinessInterfaceClass(className, idFieldDataType));
-            Task t7 = FileCreatorAsync(Path.Combine(_projectPath, "Business"), $"{className}Manager.cs", CreateBusinessClass(className, idFieldDataType));
-            Task t8 = FileCreatorAsync(Path.Combine(_projectPath, "Validators"), $"{className}Validator.cs", CreateValidatorClass(className));
-            Task t9 = FileCreatorAsync(Path.Combine(_projectPath, "Controllers"), $"{className}Controller.cs", CreateControllerClass(className, idFieldDataType));
-            Task t10 = FileCreatorAsync(Path.Combine(_projectPath, "Data/ModelConfiguration"), $"{className}ModelConfiguration.cs", CreateModelConfigurationClass(className, idFieldDataType));
+
+            Task t1 = FileCreatorAsync(
+                Path.Combine(_projectPath,
+                    string.IsNullOrEmpty(_projectName) ? "Models" : Path.Combine(_projectName, "Models"))
+                , $"{className}.cs"
+                , CreateEntityClass(className, idFieldDataType));
+
+            Task t2 = FileCreatorAsync(
+                Path.Combine(_projectPath,
+                    string.IsNullOrEmpty(_projectName) ? "Data/Repositories" : Path.Combine(_projectName, "Data/Repositories"))
+                , $"I{className}Repository.cs"
+                , CreateRepositoryInterfaceClass(className, idFieldDataType));
+
+            Task t3 = FileCreatorAsync(
+                Path.Combine(_projectPath,
+                    string.IsNullOrEmpty(_projectName) ? "Data/Repositories" : Path.Combine(_projectName, "Data/Repositories"))
+                , $"{className}Repository.cs"
+                , CreateRepositoryClass(className, idFieldDataType));
+
+            Task t4 = FileCreatorAsync(
+                Path.Combine(_projectPath,
+                    string.IsNullOrEmpty(_projectName) ? "Requests" : Path.Combine(_projectName, "Requests"))
+                , $"{className}Request.cs"
+                , CreateRequestEntityClass(className));
+
+            Task t5 = FileCreatorAsync(
+                Path.Combine(_projectPath,
+                    string.IsNullOrEmpty(_projectName) ? "Responses" : Path.Combine(_projectName, "Responses"))
+                , $"{className}Response.cs"
+                , CreateResponseEntityClass(className, idFieldDataType));
+
+            Task t6 = FileCreatorAsync(
+                Path.Combine(_projectPath,
+                    string.IsNullOrEmpty(_projectName) ? "Business" : Path.Combine(_projectName, "Business"))
+                , $"I{className}Manager.cs"
+                , CreateBusinessInterfaceClass(className, idFieldDataType));
+
+            Task t7 = FileCreatorAsync(
+                Path.Combine(_projectPath,
+                    string.IsNullOrEmpty(_projectName) ? "Business" : Path.Combine(_projectName, "Business"))
+                , $"{className}Manager.cs"
+                , CreateBusinessClass(className, idFieldDataType));
+
+            Task t8 = FileCreatorAsync(
+                Path.Combine(_projectPath,
+                    string.IsNullOrEmpty(_projectName) ? "Validators" : Path.Combine(_projectName, "Validators"))
+                , $"{className}Validator.cs"
+                , CreateValidatorClass(className));
+
+            Task t9 = FileCreatorAsync(
+                Path.Combine(_projectPath,
+                    string.IsNullOrEmpty(_projectName) ? "Controllers" : Path.Combine(_projectName, "Controllers"))
+               , $"{className}Controller.cs"
+                , CreateControllerClass(className, idFieldDataType));
+
+            Task t10 = FileCreatorAsync(
+                Path.Combine(_projectPath,
+                    string.IsNullOrEmpty(_projectName) ? "Data/ModelConfigurations" : Path.Combine(_projectName, "Data/ModelConfigurations"))
+                , $"{className}ModelConfiguration.cs"
+                , CreateModelConfigurationClass(className, idFieldDataType));
 
             EditCodeFileAsync(mappingProfilePath, mappingProfileTag, CreateMappingProfile(className) + Environment.NewLine + mappingProfileTag);
             EditCodeFileAsync(contextPath, contextDbSetsTag, CreateContextDbSet(className) + Environment.NewLine + contextDbSetsTag);
@@ -537,7 +599,7 @@ true, true, false, "Student");
 @"using System.Collections.Generic;
 using CustomFramework.Data;
 
-namespace {nameSpace}.Models
+namespace {nameSpace}{projectName}.Models
 {
     public class {className} : BaseModel<{idFieldDataType}>
     {
@@ -547,6 +609,8 @@ namespace {nameSpace}.Models
 }
 ";
             value = value.Replace("{nameSpace}", _nameSpace);
+            value = value.Replace("{projectName}", string.IsNullOrEmpty(_projectName) ? string.Empty : $".{_projectName}");
+
             value = value.Replace("{className}", className);
             value = value.Replace("{idFieldDataType}", idFieldDataType);
 
@@ -605,21 +669,18 @@ namespace {nameSpace}.Models
         {
             var value =
 @"{list}
-namespace {nameSpace}.Requests
+namespace {nameSpace}{projectName}.Requests
 {
     public class {className}Request
     {
 {fields}
-{referenceTypes}
     }
 }
 ";
             value = value.Replace("{className}", className);
 
             var list = string.Empty;
-            var addList = false;
             var fields = string.Empty;
-            var referenceTypes = string.Empty;
 
             foreach (ListViewItem item in LstViewFields.Items)
             {
@@ -629,7 +690,7 @@ namespace {nameSpace}.Requests
 
                 fields = fields + "\t" + GetFieldString() + Environment.NewLine;
 
-                fields = fields.Replace("{fieldDataType}", field.FieldDataType);
+                fields = fields.Replace("{fieldDataType}", field.FieldDataType == "enum" ? field.FieldName : field.FieldDataType);
                 fields = fields.Replace("{fieldName}", field.FieldName);
             }
 
@@ -648,37 +709,10 @@ namespace {nameSpace}.Requests
                 fields = fields.Replace("{fieldName}", reference.FieldName);
             }
 
-            foreach (ListViewItem item in LstViewReferences.Items)
-            {
-                var reference = item.ToReference();
-
-                if (!reference.AddToRequest) continue;
-
-                if (reference.Relation == Relations.OneToMany || reference.Relation == Relations.ManyToMany)
-                {
-                    referenceTypes = referenceTypes + "\t" + GetRequestReferenceListFieldString() + Environment.NewLine;
-                    addList = true;
-                }
-                else
-                {
-                    referenceTypes = referenceTypes + "\t" + GetRequestReferenceFieldString() + Environment.NewLine;
-                }
-
-                referenceTypes = referenceTypes.Replace("{referenceClassName}", reference.ReferenceClassName);
-                referenceTypes =
-                    referenceTypes.Replace("{referenceClassNamePlural}", reference.ReferenceClassName.ToPlural());
-            }
-
-            if (addList)
-            {
-                list = @"using System.Collections.Generic;";
-            }
-
             value = value.Replace("{list}", list);
             value = value.Replace("{nameSpace}", _nameSpace);
+            value = value.Replace("{projectName}", string.IsNullOrEmpty(_projectName) ? string.Empty : $".{_projectName}");
             value = value.Replace("{fields}", fields);
-            value = value.Replace("{referenceTypes}", referenceTypes);
-
 
             return value;
         }
@@ -688,7 +722,7 @@ namespace {nameSpace}.Requests
             var value =
 @"{list}
 
-namespace {nameSpace}.Responses
+namespace {nameSpace}{projectName}.Responses
 {
     public class {className}Response
     {
@@ -702,6 +736,7 @@ namespace {nameSpace}.Responses
             var addList = false;
             value = value.Replace("{idFieldDataType}", idFieldDataType);
             value = value.Replace("{nameSpace}", _nameSpace);
+            value = value.Replace("{projectName}", string.IsNullOrEmpty(_projectName) ? string.Empty : $".{_projectName}");
             value = value.Replace("{className}", className);
 
             var fields = string.Empty;
@@ -715,7 +750,7 @@ namespace {nameSpace}.Responses
 
                 fields = fields + "\t" + GetFieldString() + Environment.NewLine;
 
-                fields = fields.Replace("{fieldDataType}", field.FieldDataType);
+                fields = fields.Replace("{fieldDataType}", field.FieldDataType == "enum" ? field.FieldName : field.FieldDataType);
                 fields = fields.Replace("{fieldName}", field.FieldName);
             }
 
@@ -776,9 +811,8 @@ namespace {nameSpace}.Responses
 @"using System.Threading.Tasks;
 using CustomFramework.Data;
 using CustomFramework.Data.Contracts;
-using CustomFramework.SampleWebApi.Models;
 
-namespace {nameSpace}.Data.Repositories
+namespace {nameSpace}{projectName}.Data.Repositories
 {
     public interface I{className}Repository : IRepository<{className}, {idFieldDataType}>
     {
@@ -787,6 +821,7 @@ namespace {nameSpace}.Data.Repositories
 }";
 
             value = value.Replace("{nameSpace}", _nameSpace);
+            value = value.Replace("{projectName}", string.IsNullOrEmpty(_projectName) ? string.Empty : $".{_projectName}");
 
             var methods = string.Empty;
 
@@ -832,10 +867,9 @@ namespace {nameSpace}.Data.Repositories
 using CustomFramework.Data;
 using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Utils;
-using CustomFramework.SampleWebApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace {nameSpace}.Data.Repositories
+namespace {nameSpace}{projectName}.Data.Repositories
 {
     public class {className}Repository : BaseRepository<{className}, {idFieldDataType}>, I{className}Repository
     {
@@ -849,6 +883,7 @@ namespace {nameSpace}.Data.Repositories
 }";
 
             value = value.Replace("{nameSpace}", _nameSpace);
+            value = value.Replace("{projectName}", string.IsNullOrEmpty(_projectName) ? string.Empty : $".{_projectName}");
 
             var methods = string.Empty;
 
@@ -928,11 +963,9 @@ namespace {nameSpace}.Data.Repositories
             var value =
 @"using System.Threading.Tasks;
 using CustomFramework.Data.Contracts;
-using CustomFramework.SampleWebApi.Models;
 using CustomFramework.WebApiUtils.Business;
-using CustomFramework.SampleWebApi.Requests;
 
-namespace {nameSpace}.Business
+namespace {nameSpace}{projectName}.Business
 {
     public interface I{className}Manager :  IBusinessManager<{className}, {className}Request, {idFieldDataType}>
         {update}
@@ -942,6 +975,8 @@ namespace {nameSpace}.Business
 }";
 
             value = value.Replace("{nameSpace}", _nameSpace);
+            value = value.Replace("{projectName}", string.IsNullOrEmpty(_projectName) ? string.Empty : $".{_projectName}");
+
             var update = string.Empty;
 
             if (ChkHasUpdateMethod.Checked)
@@ -996,15 +1031,12 @@ namespace {nameSpace}.Business
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Data.Contracts;
-using CustomFramework.WebApiUtils.Authorization.Business;
-using CustomFramework.WebApiUtils.Authorization.Contracts;
-using CustomFramework.WebApiUtils.Authorization.Utils;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Enums;
 using CustomFramework.WebApiUtils.Utils;
 using Microsoft.Extensions.Logging;
 
-namespace {nameSpace}.Business
+namespace {nameSpace}{projectName}.Business
 {
     public class {className}Manager : BaseBusinessManagerWithApiRequest<ApiRequest>, I{className}Manager
     {
@@ -1024,7 +1056,7 @@ namespace {nameSpace}.Business
 
                 {createUnique}
 
-                _uow.{classNamePlural}.Add(result);
+                _uow.{classNamePlural}.Add(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
 
                 return result;
@@ -1039,7 +1071,7 @@ namespace {nameSpace}.Business
             {
                 var result = await GetByIdAsync(id);
 
-                _uow.{classNamePlural}.Delete(result);
+                _uow.{classNamePlural}.Delete(result, GetLoggedInUserId());
 
                 await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
@@ -1056,6 +1088,7 @@ namespace {nameSpace}.Business
 }";
 
             value = value.Replace("{nameSpace}", _nameSpace);
+            value = value.Replace("{projectName}", string.IsNullOrEmpty(_projectName) ? string.Empty : $".{_projectName}");
 
             var methods = string.Empty;
             var createUnique = string.Empty;
@@ -1075,7 +1108,7 @@ namespace {nameSpace}.Business
 
                 {updateUnique}
 
-                _uow.{classNamePlural}.Update(result);
+                _uow.{classNamePlural}.Update(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
 
                 return result;
@@ -1138,7 +1171,7 @@ namespace {nameSpace}.Business
 @"using CustomFramework.WebApiUtils.Constants;
 using FluentValidation;
 
-namespace {nameSpace}.Validators
+namespace {nameSpace}{projectName}.Validators
 {
     public class {className}Validator : AbstractValidator<{className}Request>
     {
@@ -1150,6 +1183,8 @@ namespace {nameSpace}.Validators
 }
 ";
             value = value.Replace("{nameSpace}", _nameSpace);
+            value = value.Replace("{projectName}", string.IsNullOrEmpty(_projectName) ? string.Empty : $".{_projectName}");
+
             value = value.Replace("{className}", className);
 
             var rules = string.Empty;
@@ -1166,7 +1201,7 @@ namespace {nameSpace}.Validators
             {
                 var reference = item.ToReference();
 
-                rules = CreateValidatorProperty(rules, reference.NotNull, reference.FieldName, reference.FieldDataType);
+                rules = CreateValidatorProperty(rules, reference.NotNull, reference.FieldName, reference.FieldDataType, _projectName);
             }
 
             value = value.Replace("{rules}", rules);
@@ -1191,9 +1226,9 @@ using CustomFramework.WebApiUtils.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace {nameSpace}.Controllers
+namespace {nameSpace}{projectName}.Controllers
 {
-    [Route(ApiConstants.DefaultRoute + nameof({className}))]
+    [Route(ApiConstants.DefaultRoute + {projectNameRoute} nameof({className}))]
     public class {className}Controller : {baseController}
     {
 
@@ -1307,6 +1342,9 @@ namespace {nameSpace}.Controllers
             value = value.Replace("{classNamePlural}", className.ToPlural());
             value = value.Replace("{idFieldDataType}", idFieldDataType);
             value = value.Replace("{nameSpace}", _nameSpace);
+            value = value.Replace("{projectName}", string.IsNullOrEmpty(_projectName) ? string.Empty : $".{_projectName}");
+            value = value.Replace("{projectNameRoute}", string.IsNullOrEmpty(_projectName) ? string.Empty : "ApiConstants.AtsProjectRoute +");
+
             value = value.Replace("'", "\"");
 
             return value;
@@ -1319,7 +1357,7 @@ namespace {nameSpace}.Controllers
 using CustomFramework.Data.ModelConfiguration;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace {nameSpace}.Data.ModelConfiguration
+namespace {nameSpace}{projectName}.Data.ModelConfigurations
 {
     public class {className}ModelConfiguration<T> : BaseModelConfiguration<T, {idFieldDataType}> where T : {className}
     {
@@ -1379,6 +1417,7 @@ namespace {nameSpace}.Data.ModelConfiguration
             value = value.Replace("{idFieldDataType}", idFieldDataType);
             value = value.Replace("{className}", className);
             value = value.Replace("{nameSpace}", _nameSpace);
+            value = value.Replace("{projectName}", string.IsNullOrEmpty(_projectName) ? string.Empty : $".{_projectName}");
 
             return value;
         }
@@ -1404,9 +1443,10 @@ namespace {nameSpace}.Data.ModelConfiguration
                     @"Task<ICustomList<{className}>> GetAllBy{fieldName}Async({fieldDataType} {fieldNameToLower});" + Environment.NewLine;
             }
 
+
             methods = methods.Replace("{fieldName}", fieldName);
             methods = methods.Replace("{fieldNameToLower}", fieldName.ToLowerFirstLetter());
-            methods = methods.Replace("{fieldDataType}", fieldDataType);
+            methods = methods.Replace("{fieldDataType}", fieldDataType == "enum" ? fieldName : fieldDataType);
 
             return methods;
         }
@@ -1437,7 +1477,7 @@ namespace {nameSpace}.Data.ModelConfiguration
 
             methods = methods.Replace("{fieldName}", fieldName);
             methods = methods.Replace("{fieldNameToLower}", fieldName.ToLowerFirstLetter());
-            methods = methods.Replace("{fieldDataType}", fieldDataType);
+            methods = methods.Replace("{fieldDataType}", fieldDataType == "enum" ? fieldName : fieldDataType);
 
             return methods;
         }
@@ -1461,7 +1501,7 @@ namespace {nameSpace}.Data.ModelConfiguration
 
             methods = methods.Replace("{fieldName}", fieldName);
             methods = methods.Replace("{fieldNameToLower}", fieldName.ToLowerFirstLetter());
-            methods = methods.Replace("{fieldDataType}", fieldDataType);
+            methods = methods.Replace("{fieldDataType}", fieldDataType == "enum" ? fieldName : fieldDataType);
 
             return methods;
         }
@@ -1523,12 +1563,12 @@ namespace {nameSpace}.Data.ModelConfiguration
 
             methods = methods.Replace("{fieldName}", fieldName);
             methods = methods.Replace("{fieldNameToLower}", fieldName.ToLowerFirstLetter());
-            methods = methods.Replace("{fieldDataType}", fieldDataType);
+            methods = methods.Replace("{fieldDataType}", fieldDataType == "enum" ? fieldName : fieldDataType);
 
             return methods;
         }
 
-        private static string CreateValidatorProperty(string rules, bool notNull, string fieldName, string fieldDataType, string fieldDataLength = "")
+        private static string CreateValidatorProperty(string rules, bool notNull, string fieldName, string fieldDataType, string projectName, string fieldDataLength = "")
         {
             if (!notNull && fieldDataType != "string") return rules;
 
@@ -1538,16 +1578,18 @@ namespace {nameSpace}.Data.ModelConfiguration
             rules = rules + "\t" + @"
                 RuleFor(x => x.{fieldName}){empty}{maxlength};" + Environment.NewLine;
 
+            var constant = string.IsNullOrEmpty(projectName) ? "WebApiResourceConstants" : $"{projectName}ResourceConstants";
+
             if (notNull)
             {
                 empty =
-                    @".NotEmpty().WithMessage($'{ValidatorConstants.CannotBeNullError} : {WebApiResourceConstants.{fieldName}}')";
+                    @".NotEmpty().WithMessage($'{ValidatorConstants.CannotBeNullError} : {{constant}.{fieldName}}')";
             }
 
             if (fieldDataType.ToLower() == typeof(string).Name.ToLower())
             {
                 maxLength =
-                    @".MaximumLength({fieldMaxLength}).WithMessage($'{ValidatorConstants.MaxLengthError} : {WebApiResourceConstants.{fieldName}}, {fieldMaxLength}')";
+                    @".MaximumLength({fieldMaxLength}).WithMessage($'{ValidatorConstants.MaxLengthError} : {{constant}.{fieldName}}, {fieldMaxLength}')";
             }
 
             rules = rules.Replace("{empty}", empty);
@@ -1555,6 +1597,7 @@ namespace {nameSpace}.Data.ModelConfiguration
 
             rules = rules.Replace("{fieldName}", fieldName);
             rules = rules.Replace("{fieldMaxLength}", fieldDataLength);
+            rules = rules.Replace("{constant}", constant);
 
             return rules;
         }
@@ -1759,13 +1802,17 @@ CreateMap<{className}Request, {className}>();";
         {
             var value = string.Empty;
 
+            var constantPath = Path.Combine(_projectPath,
+                string.IsNullOrEmpty(_projectName)
+                    ? Path.Combine("Constants", "WebApiResourceConstants.cs")
+                    : Path.Combine(_projectName, Path.Combine("Constants", $"{_projectName}ResourceConstants.cs")));
+
             foreach (ListViewItem item in LstViewFields.Items)
             {
                 var field = item.ToField();
 
                 var stringText = @"public const string {fieldName} = '{fieldName}';".Replace("{fieldName}", field.FieldName).Replace("'", "\"");
 
-                var constantPath = Path.Combine(_projectPath, Path.Combine("Constants", "WebApiResourceConstants.cs"));
                 var reader = new StreamReader(constantPath);
                 var input = reader.ReadToEnd();
                 reader.Close();
@@ -1782,7 +1829,6 @@ CreateMap<{className}Request, {className}>();";
 
                 var stringText = @"public const string {fieldName} = '{fieldName}';".Replace("{fieldName}", reference.FieldName).Replace("'", "\"");
 
-                var constantPath = Path.Combine(_projectPath, Path.Combine("Constants", "WebApiResourceConstants.cs"));
                 var reader = new StreamReader(constantPath);
                 var input = reader.ReadToEnd();
                 reader.Close();
@@ -1835,5 +1881,6 @@ CreateMap<{className}Request, {className}>();";
             TxtFieldName.Text = $@"{TxtRefClassName.Text.TrimEnd()}Id";
             TxtFieldName.Enabled = false;
         }
+
     }
 }

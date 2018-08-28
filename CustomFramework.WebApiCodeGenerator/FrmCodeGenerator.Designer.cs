@@ -79,6 +79,8 @@
             this.BtnAddOneToManyRef = new System.Windows.Forms.Button();
             this.TxtProjectFolder = new System.Windows.Forms.TextBox();
             this.LblProjectFolder = new System.Windows.Forms.Label();
+            this.TxtProjectName = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.GrpKeys.SuspendLayout();
             this.GrpClass.SuspendLayout();
             this.GrpField.SuspendLayout();
@@ -100,14 +102,13 @@
             // 
             this.TxtNameSpace.Location = new System.Drawing.Point(87, 6);
             this.TxtNameSpace.Name = "TxtNameSpace";
-            this.TxtNameSpace.ReadOnly = true;
             this.TxtNameSpace.Size = new System.Drawing.Size(239, 20);
             this.TxtNameSpace.TabIndex = 1;
             // 
             // LblClassName
             // 
             this.LblClassName.AutoSize = true;
-            this.LblClassName.Location = new System.Drawing.Point(6, 27);
+            this.LblClassName.Location = new System.Drawing.Point(6, 41);
             this.LblClassName.Name = "LblClassName";
             this.LblClassName.Size = new System.Drawing.Size(63, 13);
             this.LblClassName.TabIndex = 2;
@@ -115,7 +116,7 @@
             // 
             // TxtClassName
             // 
-            this.TxtClassName.Location = new System.Drawing.Point(75, 24);
+            this.TxtClassName.Location = new System.Drawing.Point(75, 38);
             this.TxtClassName.Name = "TxtClassName";
             this.TxtClassName.Size = new System.Drawing.Size(236, 20);
             this.TxtClassName.TabIndex = 3;
@@ -123,7 +124,7 @@
             // LblPrimaryKey
             // 
             this.LblPrimaryKey.AutoSize = true;
-            this.LblPrimaryKey.Location = new System.Drawing.Point(7, 71);
+            this.LblPrimaryKey.Location = new System.Drawing.Point(7, 85);
             this.LblPrimaryKey.Name = "LblPrimaryKey";
             this.LblPrimaryKey.Size = new System.Drawing.Size(62, 13);
             this.LblPrimaryKey.TabIndex = 5;
@@ -155,7 +156,7 @@
             // 
             this.GrpKeys.Controls.Add(this.RdLong);
             this.GrpKeys.Controls.Add(this.RdInt32);
-            this.GrpKeys.Location = new System.Drawing.Point(75, 50);
+            this.GrpKeys.Location = new System.Drawing.Point(75, 64);
             this.GrpKeys.Name = "GrpKeys";
             this.GrpKeys.Size = new System.Drawing.Size(123, 52);
             this.GrpKeys.TabIndex = 4;
@@ -163,7 +164,7 @@
             // 
             // BtnClass
             // 
-            this.BtnClass.Location = new System.Drawing.Point(236, 131);
+            this.BtnClass.Location = new System.Drawing.Point(236, 145);
             this.BtnClass.Name = "BtnClass";
             this.BtnClass.Size = new System.Drawing.Size(75, 23);
             this.BtnClass.TabIndex = 10;
@@ -173,9 +174,11 @@
             // 
             // GrpClass
             // 
+            this.GrpClass.Controls.Add(this.TxtProjectName);
             this.GrpClass.Controls.Add(this.ChkHasUpdateMethod);
             this.GrpClass.Controls.Add(this.ChkGetAllWithPaging);
             this.GrpClass.Controls.Add(this.ChkHasGetAllMethod);
+            this.GrpClass.Controls.Add(this.label1);
             this.GrpClass.Controls.Add(this.LblClassName);
             this.GrpClass.Controls.Add(this.BtnClass);
             this.GrpClass.Controls.Add(this.TxtClassName);
@@ -191,7 +194,7 @@
             // ChkHasUpdateMethod
             // 
             this.ChkHasUpdateMethod.AutoSize = true;
-            this.ChkHasUpdateMethod.Location = new System.Drawing.Point(75, 131);
+            this.ChkHasUpdateMethod.Location = new System.Drawing.Point(75, 145);
             this.ChkHasUpdateMethod.Name = "ChkHasUpdateMethod";
             this.ChkHasUpdateMethod.Size = new System.Drawing.Size(83, 17);
             this.ChkHasUpdateMethod.TabIndex = 9;
@@ -201,7 +204,7 @@
             // ChkGetAllWithPaging
             // 
             this.ChkGetAllWithPaging.AutoSize = true;
-            this.ChkGetAllWithPaging.Location = new System.Drawing.Point(199, 108);
+            this.ChkGetAllWithPaging.Location = new System.Drawing.Point(199, 122);
             this.ChkGetAllWithPaging.Name = "ChkGetAllWithPaging";
             this.ChkGetAllWithPaging.Size = new System.Drawing.Size(118, 17);
             this.ChkGetAllWithPaging.TabIndex = 8;
@@ -213,7 +216,7 @@
             // ChkHasGetAllMethod
             // 
             this.ChkHasGetAllMethod.AutoSize = true;
-            this.ChkHasGetAllMethod.Location = new System.Drawing.Point(75, 108);
+            this.ChkHasGetAllMethod.Location = new System.Drawing.Point(75, 122);
             this.ChkHasGetAllMethod.Name = "ChkHasGetAllMethod";
             this.ChkHasGetAllMethod.Size = new System.Drawing.Size(118, 17);
             this.ChkHasGetAllMethod.TabIndex = 7;
@@ -604,7 +607,6 @@
             // 
             this.TxtProjectFolder.Location = new System.Drawing.Point(427, 6);
             this.TxtProjectFolder.Name = "TxtProjectFolder";
-            this.TxtProjectFolder.ReadOnly = true;
             this.TxtProjectFolder.Size = new System.Drawing.Size(239, 20);
             this.TxtProjectFolder.TabIndex = 17;
             // 
@@ -617,11 +619,27 @@
             this.LblProjectFolder.TabIndex = 16;
             this.LblProjectFolder.Text = "Project Folder";
             // 
+            // TxtProjectName
+            // 
+            this.TxtProjectName.Location = new System.Drawing.Point(75, 12);
+            this.TxtProjectName.Name = "TxtProjectName";
+            this.TxtProjectName.Size = new System.Drawing.Size(236, 20);
+            this.TxtProjectName.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(71, 13);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "Project Name";
+            // 
             // FrmCodeGenerator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1247, 577);
+            this.ClientSize = new System.Drawing.Size(1252, 564);
             this.Controls.Add(this.TxtProjectFolder);
             this.Controls.Add(this.LblProjectFolder);
             this.Controls.Add(this.GrpVirtualList);
@@ -706,6 +724,8 @@
         private System.Windows.Forms.Label LblRefClassName;
         private System.Windows.Forms.TextBox TxtProjectFolder;
         private System.Windows.Forms.Label LblProjectFolder;
+        private System.Windows.Forms.TextBox TxtProjectName;
+        private System.Windows.Forms.Label label1;
     }
 }
 
