@@ -31,12 +31,13 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             return await BaseCreate(request);
         }
 
-        [Route("delete/{id:int}")]
+        [Route("delete")]
         [HttpDelete]
         [Permission(nameof(UserRole), Crud.Delete)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete([FromBody] UserRoleRequest request)
         {
-            return await BaseDelete(id);
+            await Manager.DeleteAsync(request.UserId, request.RoleId);
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
         }
 
         [Route("get/id/{id}")]

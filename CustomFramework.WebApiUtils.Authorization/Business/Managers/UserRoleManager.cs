@@ -62,6 +62,16 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
+        public Task DeleteAsync(int userId, int roleId)
+        {
+            return CommonOperationWithTransactionAsync(async () =>
+            {
+                var result = await _uow.UserRoles.GetByUserIdAndRoleIdAsync(userId, roleId);
+                _uow.UserRoles.Delete(result, GetLoggedInUserId());
+                await _uow.SaveChangesAsync();
+            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
+        }
+
         public Task<UserRole> GetByIdAsync(int id)
         {
             return CommonOperationAsync(async () => await _uow.UserRoles.GetByIdAsync(id), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
