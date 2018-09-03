@@ -34,6 +34,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
                 /******************References Table Check Values****************/
                 /***************************************************************/
+                (await _uow.Applications.GetByIdAsync(result.ApplicationId)).CheckRecordIsExist(typeof(Application).Name);
                 (await _uow.Users.GetByIdAsync(result.UserId)).CheckRecordIsExist(typeof(User).Name);
                 (await _uow.Claims.GetByIdAsync(result.ClaimId)).CheckRecordIsExist(typeof(Claim).Name);
                 /***************************************************************/

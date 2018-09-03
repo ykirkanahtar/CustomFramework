@@ -1592,12 +1592,12 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
                     @".MaximumLength({fieldMaxLength}).WithMessage($'{ValidatorConstants.MaxLengthError} : {{constant}.{fieldName}}, {fieldMaxLength}')";
             }
 
-            rules = rules.Replace("{empty}", empty);
-            rules = rules.Replace("{maxlength}", maxLength);
-
             rules = rules.Replace("{fieldName}", fieldName);
             rules = rules.Replace("{fieldMaxLength}", fieldDataLength);
             rules = rules.Replace("{constant}", constant);
+
+            rules = rules.Replace("{empty}", empty);
+            rules = rules.Replace("{maxlength}", maxLength);
 
             return rules;
         }

@@ -35,6 +35,13 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             {
                 var result = Mapper.Map<RoleEntityClaim>(request);
 
+                /******************References Table Check Values****************/
+                /***************************************************************/
+                (await _uow.Applications.GetByIdAsync(result.ApplicationId)).CheckRecordIsExist(typeof(Application).Name);
+                (await _uow.Roles.GetByIdAsync(result.RoleId)).CheckRecordIsExist(typeof(Role).Name);
+                /***************************************************************/
+                /***************************************************************/
+
                 var tempResult = await _uow.RoleEntityClaims.GetByApplicationIdAndRoleIdAndEntityAsync(result.ApplicationId, result.RoleId, result.Entity);
                 tempResult.CheckUniqueValue(AuthorizationConstants.Entity);
 

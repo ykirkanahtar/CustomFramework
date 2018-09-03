@@ -29,6 +29,12 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             {
                 var result = Mapper.Map<ClientApplicationUtil>(request);
 
+                /******************References Table Check Values****************/
+                /***************************************************************/
+                (await _uow.ClientApplications.GetByIdAsync(request.ClientApplicationId)).CheckRecordIsExist(typeof(ClientApplication).Name);
+                /***************************************************************/
+                /***************************************************************/
+
                 _uow.ClientApplicationUtils.Add(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
                 return result;

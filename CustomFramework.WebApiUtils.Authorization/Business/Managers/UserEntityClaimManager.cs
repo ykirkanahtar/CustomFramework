@@ -34,6 +34,13 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             {
                 var result = Mapper.Map<UserEntityClaim>(request);
 
+                /******************References Table Check Values****************/
+                /***************************************************************/
+                (await _uow.Applications.GetByIdAsync(result.ApplicationId)).CheckRecordIsExist(typeof(Application).Name);
+                (await _uow.Users.GetByIdAsync(result.UserId)).CheckRecordIsExist(typeof(User).Name);
+                /***************************************************************/
+                /***************************************************************/
+
                 var tempResult = await _uow.UserEntityClaims.GetByApplicationIdAndUserIdAndEntityAsync(result.ApplicationId, result.UserId, result.Entity);
                 tempResult.CheckUniqueValue(AuthorizationConstants.Entity);
 

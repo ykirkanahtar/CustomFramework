@@ -28,6 +28,13 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = Mapper.Map<UserUtil>(request);
+
+                /******************References Table Check Values****************/
+                /***************************************************************/
+                (await _uow.Users.GetByIdAsync(result.UserId)).CheckRecordIsExist(typeof(User).Name);
+                /***************************************************************/
+                /***************************************************************/
+
                 _uow.UserUtils.Add(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
                 return result;
