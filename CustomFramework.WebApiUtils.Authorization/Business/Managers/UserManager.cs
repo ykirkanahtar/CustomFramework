@@ -159,6 +159,12 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
+        public Task<ICustomList<User>> GetAllByKeywordAsync(string keyword, int pageIndex, int pageSize)
+        {
+            return CommonOperationAsync(async () => await _uow.Users.GetAllByKeywordAsync(keyword, pageIndex, pageSize), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+                BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
+        }
+
         public Task<ICustomList<User>> GetAllAsync()
         {
             return CommonOperationAsync(async () => await _uow.Users.GetAllAsync(), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckNothing, GetType().Name);

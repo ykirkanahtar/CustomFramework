@@ -11,7 +11,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
         Task<User> GetByEmailAsync(string email);
         Task<User> GetByUserNameAndPasswordAsync(string userName, string password);
         Task<ICustomList<User>> GetAllLast10UserAsync();
-
+        Task<ICustomList<User>> GetAllByKeywordAsync(string keyword, int pageIndex, int pageSize);
         Task<ICustomList<User>> GetAllAsync();
         Task<ICustomList<User>> GetAllAsync(int pageIndex, int pageSize);
 

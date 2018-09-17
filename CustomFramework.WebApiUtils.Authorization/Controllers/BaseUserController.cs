@@ -95,6 +95,16 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<User, UserResponse>(result)));
         }
 
+        [Route("getall/keyword/{keyword}/pageindex/{pageIndex:int}/pagesize/{pageSize:int}")]
+        [HttpGet]
+        [Permission(nameof(User), Crud.Select)]
+        public async Task<IActionResult> GetAllByKeywor(string keyword, int pageIndex, int pageSize)
+        {
+            var result = await Manager.GetAllByKeywordAsync(keyword, pageIndex, pageSize);
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                Mapper.Map<IList<User>, IList<UserResponse>>(result.ResultList.ToList()), result.Count));
+        }
+
         [Route("getall/last10user")]
         [HttpGet]
         [Permission(nameof(User), Crud.Select)]
