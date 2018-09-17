@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,6 +36,8 @@ namespace CustomFramework.WebApiCodeGenerator
 
             //TxtProjectFolder.Text = @"C:\Users\ykirk\Documents\Projects\FaceDetection.WebApi\CS.FaceDetection.WebApi\CS.FaceDetection.WebApi";
             TxtProjectFolder.Text = @"C:\Users\ykirk\Documents\Projects\Crm\CS.Crm\Cs.Crm.WebApi";
+            //TxtProjectFolder.Text = @"C:\Users\ykirk\Desktop\Project";
+
 
             _projectPath = TxtProjectFolder.Text;
 
@@ -444,7 +447,10 @@ true, true, false, "Student");
             var startupPath = Path.Combine(_projectPath, "Startup.cs");
             var iUnitOfWorkPath = Path.Combine(_projectPath, Path.Combine("Data", "IUnitOfWorkWebApi.cs"));
             var unitOfWorkPath = Path.Combine(_projectPath, Path.Combine("Data", "unitOfWorkWebApi.cs"));
-            var constantPath = Path.Combine(_projectPath, Path.Combine("Constants", "WebApiResourceConstants.cs"));
+            var constantPath = Path.Combine(_projectPath,
+                string.IsNullOrEmpty(_projectName)
+                    ? Path.Combine("Constants", "WebApiResourceConstants.cs")
+                    : Path.Combine(_projectName, Path.Combine("Constants", $"{_projectName}ResourceConstants.cs")));
 
             const string mappingProfileTag = "/*********End of Entities Mapping*********/";
             const string contextDbSetsTag = "/*********End of DbSets**********/";
@@ -519,22 +525,22 @@ true, true, false, "Student");
                 , CreateModelConfigurationClass(className, idFieldDataType));
 
             EditCodeFileAsync(mappingProfilePath, mappingProfileTag, CreateMappingProfile(className) + Environment.NewLine + mappingProfileTag);
-            EditCodeFileAsync(contextPath, contextDbSetsTag, CreateContextDbSet(className) + Environment.NewLine + contextDbSetsTag);
-            EditCodeFileAsync(contextPath, contextModelConfigurationTag, CreateContextModelConfiguration(className) + Environment.NewLine + contextModelConfigurationTag);
+            EditCodeFileAsync(contextPath, contextDbSetsTag, CreateContextDbSet(className) + Environment.NewLine + "        " + contextDbSetsTag);
+            EditCodeFileAsync(contextPath, contextModelConfigurationTag, CreateContextModelConfiguration(className) + Environment.NewLine + "           " + contextModelConfigurationTag);
             EditCodeFileAsync(startupPath, startupRepositoryTag,
-                CreateStartupRepository(className) + Environment.NewLine + startupRepositoryTag);
+                CreateStartupRepository(className) + Environment.NewLine + "            " + startupRepositoryTag);
             EditCodeFileAsync(startupPath, startupManagerTag,
-                CreateStartupManager(className) + Environment.NewLine + startupManagerTag);
+                CreateStartupManager(className) + Environment.NewLine + "            " + startupManagerTag);
             EditCodeFileAsync(startupPath, startupFluentValidationTag,
-                CreateStartupValidator(className) + Environment.NewLine + startupFluentValidationTag);
+                CreateStartupValidator(className) + Environment.NewLine + "            " + startupFluentValidationTag);
             EditCodeFileAsync(iUnitOfWorkPath, iUnitOfWorkTag,
-                CreateIUnitOfWork(className) + Environment.NewLine + iUnitOfWorkTag);
+                CreateIUnitOfWork(className) + Environment.NewLine + "        " + iUnitOfWorkTag);
             EditCodeFileAsync(unitOfWorkPath, unitOfWorkRepositoryTag,
-                CreateUnitOfWorkRepository(className) + Environment.NewLine + unitOfWorkRepositoryTag);
+                CreateUnitOfWorkRepository(className) + Environment.NewLine + "        " + unitOfWorkRepositoryTag);
             EditCodeFileAsync(unitOfWorkPath, unitOfWorkInstanceTag,
-                CreateUnitOfWorkInstance(className) + Environment.NewLine + unitOfWorkInstanceTag);
+                CreateUnitOfWorkInstance(className) + Environment.NewLine + "           " + unitOfWorkInstanceTag);
             EditCodeFileAsync(constantPath, constantTag,
-                CreateConstant() + Environment.NewLine + constantTag);
+                CreateConstant() + Environment.NewLine + "        " + constantTag);
 
             Task.Factory.StartNew(() => t1);
             Task.Factory.StartNew(() => t2);
@@ -557,17 +563,17 @@ true, true, false, "Student");
 
         private static string GetFieldString()
         {
-            return "public {fieldDataType} {fieldName} { get; set; }";
+            return "    public {fieldDataType} {fieldName} { get; set; }";
         }
 
         private static string GetReferenceFieldString()
         {
-            return "public virtual {referenceClassName} {referenceClassName} { get; set; }";
+            return "    public virtual {referenceClassName} {referenceClassName} { get; set; }";
         }
 
         private static string GetReferenceListFieldString()
         {
-            return "public virtual ICollection<{referenceClassName}> {referenceClassNamePlural} { get; set; }";
+            return "    public virtual ICollection<{referenceClassName}> {referenceClassNamePlural} { get; set; }";
         }
 
         private static string GetRequestReferenceFieldString()
@@ -582,12 +588,12 @@ true, true, false, "Student");
 
         private static string GetResponseReferenceFieldString()
         {
-            return "public virtual {referenceClassName}Response {referenceClassName} { get; set; }";
+            return "    public virtual {referenceClassName}Response {referenceClassName} { get; set; }";
         }
 
         private static string GetResponseReferenceListFieldString()
         {
-            return "public virtual ICollection<{referenceClassName}Response> {referenceClassNamePlural} { get; set; }";
+            return "    public virtual ICollection<{referenceClassName}Response> {referenceClassNamePlural} { get; set; }";
         }
 
         #endregion
@@ -721,7 +727,6 @@ namespace {nameSpace}{projectName}.Requests
         {
             var value =
 @"{list}
-
 namespace {nameSpace}{projectName}.Responses
 {
     public class {className}Response
@@ -841,16 +846,14 @@ namespace {nameSpace}{projectName}.Data.Repositories
 
             if (ChkHasGetAllMethod.Checked)
             {
-                methods +=
-                    "\t" +
-                    @"Task<ICustomList<{className}>> GetAllAsync();" + Environment.NewLine;
+                methods += "\t" + @"
+        Task<ICustomList<{className}>> GetAllAsync();" + Environment.NewLine;
             }
 
             if (ChkGetAllWithPaging.Checked)
             {
-                methods +=
-                    "\t" +
-                    @"Task<ICustomList<{className}>> GetAllAsync(int pageIndex, int pageCount);" + Environment.NewLine;
+                methods += "\t" + @"
+        Task<ICustomList<{className}>> GetAllAsync(int pageIndex, int pageCount);" + Environment.NewLine;
             }
 
             value = value.Replace("{methods}", methods);
@@ -877,7 +880,6 @@ namespace {nameSpace}{projectName}.Data.Repositories
         {
 
         }
-
 {methods}
     }
 }";
@@ -903,22 +905,20 @@ namespace {nameSpace}{projectName}.Data.Repositories
 
             if (ChkHasGetAllMethod.Checked)
             {
-                methods +=
-                    "\t" +
-                    @"public async Task<ICustomList<{className}>> GetAllAsync()
-                        {
-                            return await GetAll(){include}.ToCustomList();
-                        }" + Environment.NewLine;
+                methods += "\t" + @"
+        public async Task<ICustomList<{className}>> GetAllAsync()
+        {
+            return await GetAll(){include}.ToCustomList();
+        }" + Environment.NewLine;
             }
 
             if (ChkGetAllWithPaging.Checked)
             {
-                methods +=
-                    "\t" +
-                    @"public async Task<ICustomList<{className}>> GetAllAsync(int pageIndex, int pageSize)
-                        {
-                            return await (await GetAllWithPagingAsync(paging: new Paging(pageIndex, pageSize))){include}.ToCustomList();
-                        }" + Environment.NewLine;
+                methods += "\t" + @"
+        public async Task<ICustomList<{className}>> GetAllAsync(int pageIndex, int pageSize)
+        {
+            return await (await GetAllWithPagingAsync(paging: new Paging(pageIndex, pageSize))){include}.ToCustomList();
+        }" + Environment.NewLine;
             }
 
             var includeString = string.Empty;
@@ -1053,18 +1053,15 @@ namespace {nameSpace}{projectName}.Business
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = Mapper.Map<{className}>(request);
-
+                {reference}
                 {createUnique}
-
                 _uow.{classNamePlural}.Add(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
 
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
-
 {update}
-
         public Task DeleteAsync({idFieldDataType} id)
         {
             return CommonOperationWithTransactionAsync(async () =>
@@ -1082,8 +1079,7 @@ namespace {nameSpace}{projectName}.Business
             return CommonOperationAsync(async () => await _uow.{classNamePlural}.GetByIdAsync(id), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
                 BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
-
-{methods}
+        {methods}
     }
 }";
 
@@ -1094,27 +1090,25 @@ namespace {nameSpace}{projectName}.Business
             var createUnique = string.Empty;
             var update = string.Empty;
             var updateUnique = string.Empty;
+            var referenceList = new List<Reference>();
 
             if (ChkHasUpdateMethod.Checked)
             {
-                update +=
-    "\t" +
-    @"  public Task<{className}> UpdateAsync(int id, {className}Request request)
+                update += "\t" + @"
+        public Task<{className}> UpdateAsync(int id, {className}Request request)
         {
             return CommonOperationWithTransactionAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 Mapper.Map(request, result);
-
+                {reference}
                 {updateUnique}
-
                 _uow.{classNamePlural}.Update(result, GetLoggedInUserId());
                 await _uow.SaveChangesAsync();
 
                 return result;
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
-        }
-" + Environment.NewLine;
+        }" + Environment.NewLine;
 
             }
 
@@ -1129,6 +1123,7 @@ namespace {nameSpace}{projectName}.Business
             foreach (ListViewItem item in LstViewReferences.Items)
             {
                 var reference = item.ToReference();
+                referenceList.Add(reference);
 
                 methods = CreateBusinessMethod(methods, ref createUnique, ref updateUnique, reference.HasGetMethod,
                     reference.IsUnique, reference.FieldName, reference.FieldDataType);
@@ -1137,24 +1132,48 @@ namespace {nameSpace}{projectName}.Business
             if (ChkHasGetAllMethod.Checked)
             {
                 methods +=
-                    "\t" +
-                    @"public Task<ICustomList<{className}>> GetAllAsync()
-                        {
-                            return CommonOperationAsync(async () => await _uow.{classNamePlural}.GetAllAsync(), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
-                        }" + Environment.NewLine;
+                    "\t" + @"
+        public Task<ICustomList<{className}>> GetAllAsync()
+        {
+            return CommonOperationAsync(async () => await _uow.{classNamePlural}.GetAllAsync(), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
+        }" + Environment.NewLine;
             }
 
             if (ChkGetAllWithPaging.Checked)
             {
                 methods +=
-                    "\t" +
-                    @"public Task<ICustomList<{className}>> GetAllAsync(int pageIndex, int pageSize)
-                        {
-                            return CommonOperationAsync(async () => await _uow.{classNamePlural}.GetAllAsync(pageIndex, pageSize), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
-                        }" + Environment.NewLine;
+                    "\t" + @"
+        public Task<ICustomList<{className}>> GetAllAsync(int pageIndex, int pageSize)
+        {
+            return CommonOperationAsync(async () => await _uow.{classNamePlural}.GetAllAsync(pageIndex, pageSize), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
+        }" + Environment.NewLine;
+            }
+
+            var referenceString = string.Empty;
+            if (referenceList.Count > 0)
+            {
+                referenceString = @"
+                /******************References Table Check Values****************/
+                /***************************************************************/";
+
+                foreach (var reference in referenceList)
+                {
+                    if (!reference.NotNull)
+                        referenceString += @"
+                if (result." + reference.FieldName + " != null)";
+
+                    referenceString += @"
+                (await _uow." + reference.ReferenceClassName.ToPlural() + ".GetByIdAsync(result." + reference.FieldName + ")).CheckRecordIsExist(typeof(" + reference.ReferenceClassName + ").Name);";
+                }
+
+                referenceString += @"
+                /***************************************************************/
+                /***************************************************************/";
+
             }
 
             value = value.Replace("{update}", update);
+            value = value.Replace("{reference}", referenceString);
             value = value.Replace("{createUnique}", createUnique);
             value = value.Replace("{updateUnique}", updateUnique);
             value = value.Replace("{methods}", methods);
@@ -1183,8 +1202,6 @@ namespace {nameSpace}{projectName}.Validators
 }
 ";
             value = value.Replace("{nameSpace}", _nameSpace);
-            value = value.Replace("{projectName}", string.IsNullOrEmpty(_projectName) ? string.Empty : $".{_projectName}");
-
             value = value.Replace("{className}", className);
 
             var rules = string.Empty;
@@ -1193,7 +1210,7 @@ namespace {nameSpace}{projectName}.Validators
             {
                 var field = item.ToField();
 
-                rules = CreateValidatorProperty(rules, field.NotNull, field.FieldName, field.FieldDataType,
+                rules = CreateValidatorProperty(rules, field.NotNull, field.FieldName, field.FieldDataType, _projectName,
                     field.FieldDataLength);
             }
 
@@ -1204,6 +1221,7 @@ namespace {nameSpace}{projectName}.Validators
                 rules = CreateValidatorProperty(rules, reference.NotNull, reference.FieldName, reference.FieldDataType, _projectName);
             }
 
+            value = value.Replace("{projectName}", string.IsNullOrEmpty(_projectName) ? string.Empty : $".{_projectName}");
             value = value.Replace("{rules}", rules);
             value = value.Replace("'", "\"");
 
@@ -1243,10 +1261,9 @@ namespace {nameSpace}{projectName}.Controllers
         [Permission(nameof({className}), Crud.Create)]
         public async Task<IActionResult> Create([FromBody] {className}Request request)
         {
-                return await BaseCreate(request);
+            return await BaseCreate(request);
         }
-
-        {update}
+{update}
 
         [Route('delete/{id:{idFieldDataType}}')]
         [HttpDelete]
@@ -1263,7 +1280,6 @@ namespace {nameSpace}{projectName}.Controllers
         {
             return await BaseGetById(id);
         }
-
 {methods}
     }
 }";
@@ -1275,15 +1291,14 @@ namespace {nameSpace}{projectName}.Controllers
             {
                 value = value.Replace("{baseController}", "BaseControllerWithCrudAuthorization<{className}, {className}Request, {className}Request, {className}Response, I{className}Manager, {idFieldDataType}>");
 
-                update +=
-    "\t" +
-    @"[Route('{id:{idFieldDataType}}/update')]
-      [HttpPut]
-      [Permission(nameof({className}), Crud.Update)]
-      public async Task<IActionResult> Update(int id, [FromBody] {className}Request request)
-      {
-            return await BaseUpdate(id, request);
-      }" + Environment.NewLine;
+                update += @"
+        [Route('{id:{idFieldDataType}}/update')]
+        [HttpPut]
+        [Permission(nameof({className}), Crud.Update)]
+        public async Task<IActionResult> Update(int id, [FromBody] {className}Request request)
+        {
+                return await BaseUpdate(id, request);
+        }";
 
             }
             else
@@ -1307,32 +1322,30 @@ namespace {nameSpace}{projectName}.Controllers
 
             if (ChkHasGetAllMethod.Checked)
             {
-                methods +=
-                    "\t" +
-                    @"[Route('getall')]
-                    [HttpGet]
-                    [Permission(nameof({className}), Crud.Select)]
-                    public async Task<IActionResult> GetAll()
-                    {
-                        var result = await Manager.GetAllAsync();
-                        return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                            Mapper.Map<IEnumerable<{className}>, IEnumerable<{className}Response>>(result.ResultList),result.Count));
-                    }" + Environment.NewLine;
+                methods += Environment.NewLine + @"
+        [Route('getall')]
+        [HttpGet]
+        [Permission(nameof({className}), Crud.Select)]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await Manager.GetAllAsync();
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                Mapper.Map<IEnumerable<{className}>, IEnumerable<{className}Response>>(result.ResultList),result.Count));
+        }";
             }
 
             if (ChkGetAllWithPaging.Checked)
             {
-                methods +=
-                    "\t" +
-                    @"[Route('getall/pageindex/{pageIndex:int}/pagesize/{pageSize:int}')]
-                    [HttpGet]
-                    [Permission(nameof({className}), Crud.Select)]
-                    public async Task<IActionResult> GetAll(int pageIndex, int pageSize)
-                    {
-                        var result = await Manager.GetAllAsync(pageIndex, pageSize);
-                        return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                            Mapper.Map<IList<{className}>, IList<{className}Response>>(result.ResultList.ToList()), result.Count));
-                    }" + Environment.NewLine;
+                methods += Environment.NewLine + @"
+        [Route('getall/pageindex/{pageIndex:int}/pagesize/{pageSize:int}')]
+        [HttpGet]
+        [Permission(nameof({className}), Crud.Select)]
+        public async Task<IActionResult> GetAll(int pageIndex, int pageSize)
+        {
+            var result = await Manager.GetAllAsync(pageIndex, pageSize);
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                Mapper.Map<IList<{className}>, IList<{className}Response>>(result.ResultList.ToList()), result.Count));
+        }";
             }
 
             value = value.Replace("{update}", update);
@@ -1353,7 +1366,7 @@ namespace {nameSpace}{projectName}.Controllers
         private string CreateModelConfigurationClass(string className, string idFieldDataType)
         {
             var value =
-@"using System.Collections.Generic;
+        @"using System.Collections.Generic;
 using CustomFramework.Data.ModelConfiguration;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -1364,11 +1377,8 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
         public override void Configure(EntityTypeBuilder<T> builder)
         {
             base.Configure(builder);
-
             {property}
-
             {reference}
-
             {index}
         }
     }
@@ -1432,15 +1442,13 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
 
             if (isUnique)
             {
-                methods +=
-                    "\t" +
-                    @"Task<{className}> GetBy{fieldName}Async({fieldDataType} {fieldNameToLower});" + Environment.NewLine;
+                methods += "\t" + @"
+        Task<{className}> GetBy{fieldName}Async({fieldDataType} {fieldNameToLower});" + Environment.NewLine;
             }
             else
             {
-                methods +=
-                    "\t" +
-                    @"Task<ICustomList<{className}>> GetAllBy{fieldName}Async({fieldDataType} {fieldNameToLower});" + Environment.NewLine;
+                methods += "\t" + @"
+        Task<ICustomList<{className}>> GetAllBy{fieldName}Async({fieldDataType} {fieldNameToLower});" + Environment.NewLine;
             }
 
 
@@ -1452,27 +1460,25 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
         }
 
         private static string CreateRepositoryMethod(string methods, bool hasGetMethod, bool isUnique, string fieldName,
-    string fieldDataType)
+        string fieldDataType)
         {
             if (!hasGetMethod) return methods;
 
             if (isUnique)
             {
-                methods +=
-                    "\t" +
-                    @"public async Task<{className}> GetBy{fieldName}Async({fieldDataType} {fieldNameToLower})
-                        {
-                            return await Get(p => p.{fieldName} == {fieldNameToLower}){include}.FirstOrDefaultAsync();
-                        }" + Environment.NewLine;
+                methods += "\t" + @"
+        public async Task<{className}> GetBy{fieldName}Async({fieldDataType} {fieldNameToLower})
+        {
+            return await Get(p => p.{fieldName} == {fieldNameToLower}){include}.FirstOrDefaultAsync();
+        }" + Environment.NewLine;
             }
             else
             {
-                methods +=
-                    "\t" +
-                    @"public async Task<ICustomList<{className}>> GetAllBy{fieldName}Async({fieldDataType} {fieldNameToLower})
-                        {
-                            return await GetAll(predicate: p => p.{fieldName} == {fieldNameToLower}){include}.ToCustomList();
-                        }" + Environment.NewLine;
+                methods += "\t" + @"
+        public async Task<ICustomList<{className}>> GetAllBy{fieldName}Async({fieldDataType} {fieldNameToLower})
+        {
+            return await GetAll(predicate: p => p.{fieldName} == {fieldNameToLower}){include}.ToCustomList();
+        }" + Environment.NewLine;
             }
 
             methods = methods.Replace("{fieldName}", fieldName);
@@ -1512,30 +1518,27 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
             {
                 if (isUnique)
                 {
-                    methods +=
-                        "\t" +
-                        @"public Task<{className}> GetBy{fieldName}Async({fieldDataType} {fieldNameToLower})
-                        {
+                    methods += "\t" + @"
+        public Task<{className}> GetBy{fieldName}Async({fieldDataType} {fieldNameToLower})
+        {
             return CommonOperationAsync(async () => await _uow.{classNamePlural}.GetBy{fieldName}Async({fieldNameToLower}), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
                 BusinessUtilMethod.CheckRecordIsExist, GetType().Name);                        
-                        }" + Environment.NewLine;
+        }" + Environment.NewLine;
                 }
                 else
                 {
-                    methods +=
-"\t" +
-@"public Task<ICustomList<{className}>> GetAllBy{fieldName}Async({fieldDataType} {fieldNameToLower})
-                        {
+                    methods += "\t" + @"
+        public Task<ICustomList<{className}>> GetAllBy{fieldName}Async({fieldDataType} {fieldNameToLower})
+        {
             return CommonOperationAsync(async () => await _uow.{classNamePlural}.GetAllBy{fieldName}Async({fieldNameToLower}), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() }, BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
-                        }" + Environment.NewLine;
+        }" + Environment.NewLine;
                 }
             }
 
             if (isUnique)
             {
-                createUnique +=
-                    "\t" +
-                    @"/******************{fieldName} is unique*********************/
+                createUnique += "\t" + @"
+                /******************{fieldName} is unique*********************/
                 /*****************************************************/
                 var {fieldNameToLower}UniqueResult = await _uow.{classNamePlural}.GetBy{fieldName}Async(request.{fieldName});
 
@@ -1543,9 +1546,8 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
                 /*****************************************************/
                 /******************{fieldName} is unique*********************/" + Environment.NewLine;
 
-                updateUnique +=
-"\t" +
-@"/******************{fieldName} is unique*********************/
+                updateUnique += "\t" + @"
+                /******************{fieldName} is unique*********************/
                 /*****************************************************/
                 var {fieldNameToLower}UniqueResult = await _uow.{classNamePlural}.GetBy{fieldName}Async(request.{fieldName});
 
@@ -1576,7 +1578,7 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
             var maxLength = string.Empty;
 
             rules = rules + "\t" + @"
-                RuleFor(x => x.{fieldName}){empty}{maxlength};" + Environment.NewLine;
+            RuleFor(x => x.{fieldName}){empty}{maxlength};" + Environment.NewLine;
 
             var constant = string.IsNullOrEmpty(projectName) ? "WebApiResourceConstants" : $"{projectName}ResourceConstants";
 
@@ -1592,12 +1594,13 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
                     @".MaximumLength({fieldMaxLength}).WithMessage($'{ValidatorConstants.MaxLengthError} : {{constant}.{fieldName}}, {fieldMaxLength}')";
             }
 
+            rules = rules.Replace("{empty}", empty);
+            rules = rules.Replace("{maxlength}", maxLength);
+
             rules = rules.Replace("{fieldName}", fieldName);
             rules = rules.Replace("{fieldMaxLength}", fieldDataLength);
             rules = rules.Replace("{constant}", constant);
 
-            rules = rules.Replace("{empty}", empty);
-            rules = rules.Replace("{maxlength}", maxLength);
 
             return rules;
         }
@@ -1609,30 +1612,28 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
             {
                 if (isUnique)
                 {
-                    methods +=
-                        "\t" +
-                        @"[Route('get/{fieldNameToLower}/{{fieldNameToLower}{fieldDataTypeController}}')]
-                            [HttpGet]
-                            [Permission(nameof({className}), Crud.Select)]
-                            public async Task<IActionResult> GetBy{fieldName}({fieldDataType} {fieldNameToLower})
-                            {
-                                var result = await Manager.GetBy{fieldName}Async({fieldNameToLower});
-                                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<{className}, {className}Response>(result)));
-                            }" + Environment.NewLine;
+                    methods += Environment.NewLine + @"
+        [Route('get/{fieldNameToLower}/{{fieldNameToLower}{fieldDataTypeController}}')]
+        [HttpGet]
+        [Permission(nameof({className}), Crud.Select)]
+        public async Task<IActionResult> GetBy{fieldName}({fieldDataType} {fieldNameToLower})
+        {
+            var result = await Manager.GetBy{fieldName}Async({fieldNameToLower});
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<{className}, {className}Response>(result)));
+        }";
                 }
                 else
                 {
-                    methods +=
-                        "\t" +
-                        @"[Route('getall/{fieldNameToLower}/{{fieldNameToLower}{fieldDataTypeController}}')]
-                            [HttpGet]
-                            [Permission(nameof({className}), Crud.Select)]
-                            public async Task<IActionResult> GetAllBy{fieldName}({fieldDataType} {fieldNameToLower})
-                            {
-                                var result = await Manager.GetAllBy{fieldName}Async({fieldNameToLower});
-                                return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                                    Mapper.Map<IList<{className}>, IList<{className}Response>>(result.ResultList), result.Count));
-                            }" + Environment.NewLine;
+                    methods += Environment.NewLine + @"
+        [Route('getall/{fieldNameToLower}/{{fieldNameToLower}{fieldDataTypeController}}')]
+        [HttpGet]
+        [Permission(nameof({className}), Crud.Select)]
+        public async Task<IActionResult> GetAllBy{fieldName}({fieldDataType} {fieldNameToLower})
+        {
+            var result = await Manager.GetAllBy{fieldName}Async({fieldNameToLower});
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                Mapper.Map<IList<{className}>, IList<{className}Response>>(result.ResultList), result.Count));
+        }";
                 }
             }
 
@@ -1654,9 +1655,8 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
 
         private static string CreateModelConfigurationPropertyMethod(string property, bool isRequired, string maxLength, string fieldName)
         {
-            property +=
-                "\t" +
-                @"builder.Property(p => p.{fieldName}){required}{maxLength};" + Environment.NewLine;
+            property += "\t" + @"
+            builder.Property(p => p.{fieldName}){required}{maxLength};";
 
             property = property.Replace("{required}", isRequired ? @".IsRequired()" : string.Empty);
             property = property.Replace("{maxLength}", string.IsNullOrEmpty(maxLength) == false ? $".HasMaxLength({maxLength})" : string.Empty);
@@ -1672,16 +1672,12 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
             switch (relation)
             {
                 case Relations.OneToOne:
-                    reference +=
-                        "\t" +
-                        @"builder.HasOne(r => r.{referenceClassName}).WithOne(c => (T)c.{className}).HasForeignKey<{className}>(r => r.{fieldName}).HasPrincipalKey<{referenceClassName}>(c => c.Id){required};" +
-                        Environment.NewLine;
+                    reference += "\t" + @"
+            builder.HasOne(r => r.{referenceClassName}).WithOne(c => (T)c.{className}).HasForeignKey<{className}>(r => r.{fieldName}).HasPrincipalKey<{referenceClassName}>(c => c.Id){required};";
                     break;
                 case Relations.ManyToOne:
-                    reference +=
-                        "\t" +
-                        @"builder.HasOne(r => r.{referenceClassName}).WithMany(c => (IEnumerable<T>)c.{classNameToPlural}).HasForeignKey(r => r.{fieldName}).HasPrincipalKey(c => c.Id){required};" +
-                        Environment.NewLine;
+                    reference += "\t" + @"
+            builder.HasOne(r => r.{referenceClassName}).WithMany(c => (IEnumerable<T>)c.{classNameToPlural}).HasForeignKey(r => r.{fieldName}).HasPrincipalKey(c => c.Id){required};";
                     break;
                 case Relations.OneToMany:
                 case Relations.ManyToMany:
@@ -1707,9 +1703,8 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
         {
             if (!isUnique) return index;
 
-            index +=
-                "\t" +
-                @"builder.HasIndex(p => p.{fieldName}).IsUnique();" + Environment.NewLine;
+            index += "\t" + @"
+            builder.HasIndex(p => p.{fieldName}).IsUnique();";
 
             index = index.Replace("{fieldName}", fieldName);
 
@@ -1723,7 +1718,7 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
         private static string CreateMappingProfile(string className)
         {
             var value =
-@"CreateMap<{className}, {className}Response>();
+        @"CreateMap<{className}, {className}Response>();
 CreateMap<{className}Request, {className}>();";
             value = value.Replace("{className}", className);
             return value;
@@ -1732,7 +1727,7 @@ CreateMap<{className}Request, {className}>();";
         private static string CreateContextDbSet(string className)
         {
             var value =
-@"public virtual DbSet<{className}> {classNameToPlural} { get; set; }";
+        @"public virtual DbSet<{className}> {classNameToPlural} { get; set; }";
             value = value.Replace("{className}", className);
             value = value.Replace("{classNameToPlural}", className.ToPlural());
             return value;
@@ -1741,7 +1736,7 @@ CreateMap<{className}Request, {className}>();";
         private static string CreateContextModelConfiguration(string className)
         {
             var value =
-@"modelBuilder.ApplyConfiguration(new {className}ModelConfiguration<{className}>());";
+        @"modelBuilder.ApplyConfiguration(new {className}ModelConfiguration<{className}>());";
             value = value.Replace("{className}", className);
             return value;
         }
@@ -1749,7 +1744,7 @@ CreateMap<{className}Request, {className}>();";
         private static string CreateStartupRepository(string className)
         {
             var value =
-@"services.AddTransient<I{className}Repository, {className}Repository>();";
+        @"services.AddTransient<I{className}Repository, {className}Repository>();";
             value = value.Replace("{className}", className);
             return value;
         }
@@ -1757,7 +1752,7 @@ CreateMap<{className}Request, {className}>();";
         private static string CreateStartupManager(string className)
         {
             var value =
-@"services.AddTransient<I{className}Manager, {className}Manager>();";
+        @"services.AddTransient<I{className}Manager, {className}Manager>();";
             value = value.Replace("{className}", className);
             return value;
         }
@@ -1765,7 +1760,7 @@ CreateMap<{className}Request, {className}>();";
         private static string CreateStartupValidator(string className)
         {
             var value =
-@"services.AddTransient<IValidator<{className}Request>, {className}Validator>();";
+        @"services.AddTransient<IValidator<{className}Request>, {className}Validator>();";
             value = value.Replace("{className}", className);
             return value;
         }
@@ -1773,7 +1768,7 @@ CreateMap<{className}Request, {className}>();";
         private static string CreateIUnitOfWork(string className)
         {
             var value =
-@"I{className}Repository {classNameToPlural} { get; }";
+        @"I{className}Repository {classNameToPlural} { get; }";
             value = value.Replace("{className}", className);
             value = value.Replace("{classNameToPlural}", className.ToPlural());
 
@@ -1792,7 +1787,7 @@ CreateMap<{className}Request, {className}>();";
         private static string CreateUnitOfWorkRepository(string className)
         {
             var value =
-@"public I{className}Repository {classNameToPlural} { get; }";
+        @"public I{className}Repository {classNameToPlural} { get; }";
             value = value.Replace("{className}", className);
             value = value.Replace("{classNameToPlural}", className.ToPlural());
             return value;
@@ -1858,6 +1853,7 @@ CreateMap<{className}Request, {className}>();";
             ChkRefNotNull.Enabled = false;
 
             TxtFieldName.Text = TxtRefClassName.Text.ToPlural();
+            TxtRefName.Text = TxtRefClassName.Text.ToPlural();
             TxtFieldName.Enabled = false;
         }
 
@@ -1865,20 +1861,45 @@ CreateMap<{className}Request, {className}>();";
         {
             if (RdOneToMany.Checked != true) return;
             TxtFieldName.Text = TxtRefClassName.Text.ToPlural();
+            TxtRefName.Text = TxtRefClassName.Text.ToPlural();
             TxtFieldName.Enabled = false;
         }
 
         private void RdManyToOne_CheckedChanged(object sender, EventArgs e)
         {
             if (!RdManyToOne.Checked) return;
+            ChkRefIsUnique.Checked = false;
+            ChkRefIsUnique.Enabled = true;
+            ChkRefAddToRequest.Checked = false;
+            ChkRefAddToRequest.Enabled = true;
+            ChkRefAddToResponse.Checked = false;
+            ChkRefAddToResponse.Enabled = true;
+            ChkRefHasGet.Checked = false;
+            ChkRefHasGet.Enabled = true;
+            ChkRefNotNull.Checked = false;
+            ChkRefNotNull.Enabled = true;
+
             TxtFieldName.Text = $@"{TxtRefClassName.Text.TrimEnd()}Id";
+            TxtRefName.Text = $@"{TxtRefClassName.Text.TrimEnd()}Id";
             TxtFieldName.Enabled = false;
         }
 
         private void RdOneToOne_CheckedChanged(object sender, EventArgs e)
         {
             if (!RdOneToOne.Checked) return;
+            ChkRefIsUnique.Checked = false;
+            ChkRefIsUnique.Enabled = true;
+            ChkRefAddToRequest.Checked = false;
+            ChkRefAddToRequest.Enabled = true;
+            ChkRefAddToResponse.Checked = false;
+            ChkRefAddToResponse.Enabled = true;
+            ChkRefHasGet.Checked = false;
+            ChkRefHasGet.Enabled = true;
+            ChkRefNotNull.Checked = false;
+            ChkRefNotNull.Enabled = true;
+
             TxtFieldName.Text = $@"{TxtRefClassName.Text.TrimEnd()}Id";
+            TxtRefName.Text = $@"{TxtRefClassName.Text.TrimEnd()}Id";
             TxtFieldName.Enabled = false;
         }
 
