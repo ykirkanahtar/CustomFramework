@@ -57,6 +57,25 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
+        public Task<User> UpdateNameSurnameAsync(int id, UserNameSurnameUpdate nameSurname)
+        {
+            return CommonOperationWithTransactionAsync(async () =>
+            {
+                var result = await GetByIdAsync(id);
+
+                result.Name = nameSurname.Name;
+                result.Surname = nameSurname.Surname;
+
+                var tempResult = await _uow.Users.GetByUserNameAsync(result.UserName);
+                tempResult.CheckUniqueValueForUpdate(id, AuthorizationConstants.UserName);
+
+                _uow.Users.Update(result, GetLoggedInUserId());
+                await _uow.SaveChangesAsync();
+                return result;
+            }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
+        }
+
+
         public Task<User> UpdateUserNameAsync(int id, string userName)
         {
             return CommonOperationWithTransactionAsync(async () =>

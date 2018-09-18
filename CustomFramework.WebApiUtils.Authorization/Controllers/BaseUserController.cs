@@ -49,6 +49,15 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             return await BaseGetById(id);
         }
 
+        [Route("{id:int}/update/namesurname")]
+        [HttpPut]
+        [Permission(nameof(User), Crud.Update)]
+        public async Task<IActionResult> UpdateNameSurname(int id, [FromBody] UserNameSurnameUpdate nameSurname)
+        {
+            var result = await Manager.UpdateNameSurnameAsync(id, nameSurname);
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<User, UserResponse>(result)));
+        }
+
         [Route("{id:int}/update/userName")]
         [HttpPut]
         [Permission(nameof(User), Crud.Update)]
