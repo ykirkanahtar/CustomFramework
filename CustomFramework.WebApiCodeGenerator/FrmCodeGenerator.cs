@@ -1704,7 +1704,7 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
             if (!isUnique) return index;
 
             index += "\t" + @"
-            builder.HasIndex(p => p.{fieldName}).IsUnique();";
+            builder.HasIndex(p => p.{fieldName});";
 
             index = index.Replace("{fieldName}", fieldName);
 
