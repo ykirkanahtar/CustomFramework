@@ -602,8 +602,7 @@ true, true, false, "Student");
         private string CreateEntityClass(string className, string idFieldDataType)
         {
             var value =
-@"using System.Collections.Generic;
-using CustomFramework.Data;
+@"using CustomFramework.Data.Models;
 
 namespace {nameSpace}{projectName}.Models
 {
