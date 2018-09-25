@@ -27,12 +27,14 @@ namespace CustomFramework.Data.Repositories
 
         public async Task<TEntity> GetByIdAsync(TKey id)
         {
-            return await DbContext.Set<TEntity>().FindAsync(id);
+            var entity = await DbContext.Set<TEntity>().FindAsync(id);
+            return entity?.Status == Status.Active ? entity : null;
         }
 
         public TEntity GetById(TKey id)
         {
-            return DbContext.Set<TEntity>().Find(id);
+            var entity = DbContext.Set<TEntity>().Find(id);
+            return entity?.Status == Status.Active ? entity : null;
         }
 
         public IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> predicate)
@@ -148,7 +150,7 @@ namespace CustomFramework.Data.Repositories
 
         private static Expression<Func<TEntity, bool>> PredicateBuild()
         {
-            ExpressionStarter<TEntity> predicate = PredicateBuilder.New<TEntity>();
+            var predicate = PredicateBuilder.New<TEntity>();
             return predicate.And(p => (int)p.Status == (int)Status.Active);
         }
 
