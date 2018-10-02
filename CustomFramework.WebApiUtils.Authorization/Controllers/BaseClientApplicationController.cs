@@ -28,53 +28,65 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
         [Route("create")]
         [HttpPost]
         [Permission(nameof(ClientApplication), Crud.Create)]
-        public async Task<IActionResult> Create([FromBody] ClientApplicationRequest request)
+        public async Task<IActionResult> CreateAsync([FromBody] ClientApplicationRequest request)
         {
-            return await BaseCreate(request);
+            return await BaseCreateAsync(request);
         }
 
         [Route("delete/{id:int}")]
         [HttpDelete]
         [Permission(nameof(ClientApplication), Crud.Delete)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            return await BaseDelete(id);
+            return await BaseDeleteAsync(id);
         }
 
         [Route("get/id/{id}")]
         [HttpGet]
         [Permission(nameof(ClientApplication), Crud.Select)]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetByIdAsync(int id)
         {
-            return await BaseGetById(id);
+            return await BaseGetByIdAsync(id);
         }
 
         [Route("{id:int}/update")]
         [HttpPut]
         [Permission(nameof(ClientApplication), Crud.Update)]
-        public async Task<IActionResult> UpdateClientApplicationName(int id, [FromBody] ClientApplicationUpdateRequest request)
+        public Task<IActionResult> UpdateClientApplicationNameAsync(int id, [FromBody] ClientApplicationUpdateRequest request)
         {
-            var result = await Manager.UpdateAsync(id, request);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<ClientApplication, ClientApplicationResponse>(result)));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.UpdateAsync(id, request);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                    Mapper.Map<ClientApplication, ClientApplicationResponse>(result)));
+            });
         }
 
         [Route("{id:int}/update/clientApplicationPassword")]
         [HttpPut]
         [AllowAnonymous]
         [Permission(nameof(ClientApplication), Crud.Update)]
-        public async Task<IActionResult> UpdateClientApplicationPassword(int id, [FromBody] string clientApplicationPassword)
+        public Task<IActionResult> UpdateClientApplicationPasswordAsync(int id, [FromBody] string clientApplicationPassword)
         {
-            var result = await Manager.UpdateClientApplicationPasswordAsync(id, clientApplicationPassword);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<ClientApplication, ClientApplicationResponse>(result)));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.UpdateClientApplicationPasswordAsync(id, clientApplicationPassword);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                    Mapper.Map<ClientApplication, ClientApplicationResponse>(result)));
+            });
         }
 
         [Route("get/clientapplicationcode/{clientApplicationCode}")]
         [HttpGet]
         [Permission(nameof(ClientApplication), Crud.Select)]
-        public async Task<IActionResult> GetByClientApplicationCode(string clientApplicationCode)
+        public Task<IActionResult> GetByClientApplicationCodeAsync(string clientApplicationCode)
         {
-            var result = await Manager.GetByClientApplicationCodeAsync(clientApplicationCode);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<ClientApplication, ClientApplicationResponse>(result)));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.GetByClientApplicationCodeAsync(clientApplicationCode);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                    Mapper.Map<ClientApplication, ClientApplicationResponse>(result)));
+            });
         }
     }
 }

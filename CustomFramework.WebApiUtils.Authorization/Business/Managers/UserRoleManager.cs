@@ -26,7 +26,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<UserRole> CreateAsync(UserRoleRequest request)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = new UserRole()
                 {
@@ -52,7 +52,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task DeleteAsync(int id)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 _uow.UserRoles.Delete(result, GetLoggedInUserId());
@@ -62,7 +62,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task DeleteAsync(int userId, int roleId)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await _uow.UserRoles.GetByUserIdAndRoleIdAsync(userId, roleId);
                 _uow.UserRoles.Delete(result, GetLoggedInUserId());

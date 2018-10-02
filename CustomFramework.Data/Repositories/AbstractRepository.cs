@@ -1,12 +1,12 @@
 ﻿using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Enums;
+using CustomFramework.Data.Models;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using CustomFramework.Data.Models;
 
 namespace CustomFramework.Data.Repositories
 {

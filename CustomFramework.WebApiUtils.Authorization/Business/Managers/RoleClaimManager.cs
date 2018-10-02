@@ -29,7 +29,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<RoleClaim> CreateAsync(RoleClaimRequest request)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = Mapper.Map<RoleClaim>(request);
 
@@ -52,7 +52,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task DeleteAsync(int id)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 _uow.RoleClaims.Delete(result, GetLoggedInUserId());

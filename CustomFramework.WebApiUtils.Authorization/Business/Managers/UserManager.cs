@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CustomFramework.Authorization;
 using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Utils;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
@@ -8,15 +7,13 @@ using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Business;
+using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Enums;
 using CustomFramework.WebApiUtils.Utils;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 using System.Security.Authentication;
 using System.Threading.Tasks;
-using CustomFramework.Authorization.Utils;
-using CustomFramework.Data;
-using CustomFramework.WebApiUtils.Contracts;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
@@ -32,7 +29,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<User> CreateAsync(UserRequest request)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = Mapper.Map<User>(request);
 
@@ -59,7 +56,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<User> UpdateNameSurnameAsync(int id, UserNameSurnameUpdate nameSurname)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
 
@@ -78,7 +75,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<User> UpdateUserNameAsync(int id, string userName)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 result.UserName = userName;
@@ -94,7 +91,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<User> UpdatePasswordAsync(int id, string password)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
 
@@ -115,7 +112,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<User> UpdateEmailAsync(int id, string email)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 result.Email = email;
@@ -131,7 +128,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task DeleteAsync(int id)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 _uow.Users.Delete(result, GetLoggedInUserId());

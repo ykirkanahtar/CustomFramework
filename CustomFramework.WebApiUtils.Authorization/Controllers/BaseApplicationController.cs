@@ -26,53 +26,59 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
         [Route("create")]
         [HttpPost]
         [Permission(nameof(Application), Crud.Create)]
-        public async Task<IActionResult> Create([FromBody] ApplicationRequest request)
+        public async Task<IActionResult> CreateAsync([FromBody] ApplicationRequest request)
         {
-            return await BaseCreate(request);
+            return await BaseCreateAsync(request);
         }
 
         [Route("{id}/update")]
         [HttpPut]
         [Permission(nameof(Application), Crud.Update)]
-        public async Task<IActionResult> Update(int id, [FromBody] ApplicationRequest request)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] ApplicationRequest request)
         {
-            return await BaseUpdate(id, request);
+            return await BaseUpdateAsync(id, request);
         }
 
         [Route("delete/{id:int}")]
         [HttpDelete]
         [Permission(nameof(Application), Crud.Delete)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            return await BaseDelete(id);
+            return await BaseDeleteAsync(id);
         }
 
         [Route("get/id/{id}")]
         [HttpGet]
         [Permission(nameof(Role), Crud.Select)]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetByIdAsync(int id)
         {
-            return await BaseGetById(id);
+            return await BaseGetByIdAsync(id);
         }
 
         [Route("get/name/{name}")]
         [HttpGet]
         [Permission(nameof(Role), Crud.Select)]
-        public async Task<IActionResult> GetByName(string name)
+        public Task<IActionResult> GetByNameAsync(string name)
         {
-            var result = await Manager.GetByNameAsync(name);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<Application, ApplicationResponse>(result)));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.GetByNameAsync(name);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<Application, ApplicationResponse>(result)));
+            });
         }
 
         [Route("getall")]
         [HttpGet]
         [Permission(nameof(Role), Crud.Select)]
-        public async Task<IActionResult> GetAll()
+        public Task<IActionResult> GetAllAsync()
         {
-            var result = await Manager.GetAllAsync();
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IEnumerable<Application>, IEnumerable<ApplicationResponse>>(result.ResultList),
-                result.Count));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.GetAllAsync();
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                    Mapper.Map<IEnumerable<Application>, IEnumerable<ApplicationResponse>>(result.ResultList),
+                    result.Count));
+            });
         }
     }
 }

@@ -26,47 +26,53 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
         [Route("create")]
         [HttpPost]
         [Permission(nameof(RoleClaim), Crud.Create)]
-        public async Task<IActionResult> Create([FromBody] RoleClaimRequest request)
+        public async Task<IActionResult> CreateAsync([FromBody] RoleClaimRequest request)
         {
-            return await BaseCreate(request);
+            return await BaseCreateAsync(request);
         }
 
         [Route("delete/{id:int}")]
         [HttpDelete]
         [Permission(nameof(RoleClaim), Crud.Delete)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            return await BaseDelete(id);
+            return await BaseDeleteAsync(id);
         }
 
         [Route("get/id/{id}")]
         [HttpGet]
         [Permission(nameof(RoleClaim), Crud.Select)]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetByIdAsync(int id)
         {
-            return await BaseGetById(id);
+            return await BaseGetByIdAsync(id);
         }
 
         [Route("get/roles/claimid/{id:int}")]
         [HttpGet]
         [Permission(nameof(RoleClaim), Crud.Select)]
-        public async Task<IActionResult> GetRolesByClaimId(int claimId)
+        public Task<IActionResult> GetRolesByClaimIdAsync(int claimId)
         {
-            var result = await Manager.GetRolesByClaimIdAsync(claimId);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IList<Role>, IList<RoleResponse>>(result.ResultList),
-                result.Count));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.GetRolesByClaimIdAsync(claimId);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                    Mapper.Map<IList<Role>, IList<RoleResponse>>(result.ResultList),
+                    result.Count));
+            });
         }
 
         [Route("get/claim/roleid/{id:int}")]
         [HttpGet]
         [Permission(nameof(RoleClaim), Crud.Select)]
-        public async Task<IActionResult> GetClaimsByRoleId(int roleId)
+        public Task<IActionResult> GetClaimsByRoleIdAsync(int roleId)
         {
-            var result = await Manager.GetClaimsByRoleIdAsync(roleId);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result.ResultList),
-                result.Count));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.GetClaimsByRoleIdAsync(roleId);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                    Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result.ResultList),
+                    result.Count));
+            });
         }
     }
 }

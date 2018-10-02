@@ -26,55 +26,61 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
         [Route("create")]
         [HttpPost]
         [Permission(nameof(UserEntityClaim), Crud.Create)]
-        public async Task<IActionResult> Create([FromBody] UserEntityClaimRequest request)
+        public async Task<IActionResult> CreateAsync([FromBody] UserEntityClaimRequest request)
         {
-            return await BaseCreate(request);
+            return await BaseCreateAsync(request);
         }
 
         [Route("{id}/update")]
         [HttpPut]
         [Permission(nameof(UserEntityClaim), Crud.Update)]
-        public async Task<IActionResult> Update(int id, [FromBody] EntityClaimRequest request)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] EntityClaimRequest request)
         {
-            return await BaseUpdate(id, request);
+            return await BaseUpdateAsync(id, request);
         }
 
         [Route("delete/{id:int}")]
         [HttpDelete]
         [Permission(nameof(UserEntityClaim), Crud.Delete)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            return await BaseDelete(id);
+            return await BaseDeleteAsync(id);
         }
 
         [Route("get/id/{id}")]
         [HttpGet]
         [Permission(nameof(UserEntityClaim), Crud.Select)]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetByIdAsync(int id)
         {
-            return await BaseGetById(id);
+            return await BaseGetByIdAsync(id);
         }
 
         [Route("getall/entity/{entity}")]
         [HttpGet]
         [Permission(nameof(UserEntityClaim), Crud.Select)]
-        public async Task<IActionResult> GetAllByEntity(string entity)
+        public Task<IActionResult> GetAllByEntityAsync(string entity)
         {
-            var result = await Manager.GetAllByEntityAsync(entity);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IList<UserEntityClaim>, IList<UserEntityClaimResponse>>(result.ResultList),
-                result.Count));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.GetAllByEntityAsync(entity);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                    Mapper.Map<IList<UserEntityClaim>, IList<UserEntityClaimResponse>>(result.ResultList),
+                    result.Count));
+            });
         }
 
         [Route("getall/userid/{userId:int}")]
         [HttpGet]
         [Permission(nameof(UserEntityClaim), Crud.Select)]
-        public async Task<IActionResult> GetAllByUserId(int userId)
+        public Task<IActionResult> GetAllByUserIdAsync(int userId)
         {
-            var result = await Manager.GetAllByUserIdAsync(userId);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IList<UserEntityClaim>, IList<UserEntityClaimResponse>>(result.ResultList),
-                result.Count));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.GetAllByUserIdAsync(userId);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                    Mapper.Map<IList<UserEntityClaim>, IList<UserEntityClaimResponse>>(result.ResultList),
+                    result.Count));
+            });
         }
     }
 }

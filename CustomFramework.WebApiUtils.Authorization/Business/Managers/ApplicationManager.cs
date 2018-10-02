@@ -29,7 +29,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<Application> CreateAsync(ApplicationRequest request)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = Mapper.Map<Application>(request);
 
@@ -45,7 +45,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<Application> UpdateAsync(int id, ApplicationRequest request)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 Mapper.Map(request, result);
@@ -62,7 +62,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task DeleteAsync(int id)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 _uow.Applications.Delete(result, GetLoggedInUserId());

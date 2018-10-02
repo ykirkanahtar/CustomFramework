@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CustomFramework.Authorization;
 using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Constants;
@@ -7,13 +6,12 @@ using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Models;
 using CustomFramework.WebApiUtils.Authorization.Request;
 using CustomFramework.WebApiUtils.Business;
+using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Enums;
 using CustomFramework.WebApiUtils.Utils;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 using System.Threading.Tasks;
-using CustomFramework.Authorization.Utils;
-using CustomFramework.WebApiUtils.Contracts;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 {
@@ -29,7 +27,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<Claim> CreateAsync(ClaimRequest request)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = Mapper.Map<Claim>(request);
 
@@ -45,7 +43,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<Claim> UpdateAsync(int id, ClaimRequest request)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 Mapper.Map(request, result);
@@ -62,7 +60,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task DeleteAsync(int id)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 _uow.Claims.Delete(result, GetLoggedInUserId());

@@ -5,17 +5,18 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using System.Transactions;
+using CustomFramework.WebApiUtils.Constants;
 
 namespace CustomFramework.WebApiUtils.Business
 {
     public abstract class BaseBusinessManager
     {
-        protected readonly ILogger<BaseBusinessManager> Logger;
+        private readonly ILogger<BaseBusinessManager> _logger;
         protected readonly IMapper Mapper;
 
         protected BaseBusinessManager(ILogger<BaseBusinessManager> logger, IMapper mapper)
         {
-            Logger = logger;
+            _logger = logger;
             Mapper = mapper;
         }
 
@@ -23,12 +24,12 @@ namespace CustomFramework.WebApiUtils.Business
         {
             try
             {
-                T result = await func.Invoke();
+                var result = await func.Invoke();
                 return result;
             }
             catch (Exception ex)
             {
-                //Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
+                _logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
                 throw;
             }
         }
@@ -40,15 +41,27 @@ namespace CustomFramework.WebApiUtils.Business
         {
             try
             {
-                T result = await func.Invoke();
+                var result = await func.Invoke();
                 BusinessUtil.Execute(businessUtilMethod, result, additionalInfo);
 
                 return result;
             }
             catch (Exception ex)
             {
-                //TODO : ex.Message string değilse hataya yol açıyor daha genel bir çözüm bul
-                //Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
+                _logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
+                throw;
+            }
+        }
+
+        protected async Task CommonOperationAsync(Func<Task> func, BusinessBaseRequest businessBaseRequest)
+        {
+            try
+            {
+                await func.Invoke();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
                 throw;
             }
         }
@@ -60,14 +73,14 @@ namespace CustomFramework.WebApiUtils.Business
         {
             try
             {
-                T result = func.Invoke();
+                var result = func.Invoke();
                 BusinessUtil.Execute(businessUtilMethod, result, additionalInfo);
 
                 return result;
             }
             catch (Exception ex)
             {
-                //Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
+                _logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
                 throw;
             }
         }
@@ -76,48 +89,12 @@ namespace CustomFramework.WebApiUtils.Business
         {
             try
             {
-                T result = func.Invoke();
+                var result = func.Invoke();
                 return result;
             }
             catch (Exception ex)
             {
-                //Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
-                throw;
-            }
-        }
-
-
-        protected async Task<T> CommonOperationWithTransactionAsync<T>(Func<Task<T>> func, BusinessBaseRequest businessBaseRequest)
-        {
-            using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            {
-                try
-                {
-                    T result = await func.Invoke();
-                    scope.Complete();
-                    return result;
-                }
-                catch (Exception ex)
-                {
-                    //Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
-                    throw;
-                }
-            }
-        }
-
-        protected async Task CommonOperationWithTransactionAsync(Func<Task> func, BusinessBaseRequest businessBaseRequest)
-        {
-            try
-            {
-                using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-                {
-                    await func.Invoke();
-                    scope.Complete();
-                }
-            }
-            catch (Exception ex)
-            {
-                //Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
+                _logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
                 throw;
             }
         }

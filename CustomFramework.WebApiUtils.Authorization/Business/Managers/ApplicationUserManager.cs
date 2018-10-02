@@ -28,7 +28,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<ApplicationUser> CreateAsync(ApplicationUserRequest request)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = new ApplicationUser
                 {
@@ -54,7 +54,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task DeleteAsync(int id)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 _uow.ApplicationUsers.Delete(result, GetLoggedInUserId());

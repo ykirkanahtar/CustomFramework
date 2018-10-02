@@ -42,51 +42,57 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] Login login)
+        public Task<IActionResult> LoginAsync([FromBody] Login login)
         {
-            if (!ModelState.IsValid)
+            return CommonOperationAsync<IActionResult>(async () =>
             {
-                throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
-            }
+                if (!ModelState.IsValid)
+                {
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+                }
 
-            var application = await _applicationManager.GetByIdAsync(login.ApplicationId);
+                var application = await _applicationManager.GetByIdAsync(login.ApplicationId);
 
-            var clientApplication =
-                await _clientApplicationManager.LoginAsync(login.ClientApplicationCode, login.ClientApplicationPassword);
+                var clientApplication =
+                    await _clientApplicationManager.LoginAsync(login.ClientApplicationCode,
+                        login.ClientApplicationPassword);
 
-            var user = await _userManager.LoginAsync(login.UserName, login.UserPassword);
+                var user = await _userManager.LoginAsync(login.UserName, login.UserPassword);
 
-            await _applicationUserManager.GetByApplicationIdAndUserIdAsync(application.Id, user.Id);
+                await _applicationUserManager.GetByApplicationIdAndUserIdAsync(application.Id, user.Id);
 
-            var apiRequest = new ApiRequest(login.ApplicationId, user.Id, clientApplication.Id);
+                var apiRequest = new ApiRequest(login.ApplicationId, user.Id, clientApplication.Id);
 
-            var claims = new List<Claim>
-            {
-                new Claim(typeof(IApiRequest).Name, JsonConvert.SerializeObject(apiRequest, new JsonSerializerSettings
-                                                                                            {
-                                                                                                PreserveReferencesHandling = PreserveReferencesHandling.All,
-                                                                                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                                                                                            }
-                                                                                )
-                        ),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            };
+                var claims = new List<Claim>
+                {
+                    new Claim(typeof(IApiRequest).Name, JsonConvert.SerializeObject(apiRequest,
+                            new JsonSerializerSettings
+                            {
+                                PreserveReferencesHandling = PreserveReferencesHandling.All,
+                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                            }
+                        )
+                    ),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
 
-            var key = _token.Key;
-            var issuer = _token.Issuer;
-            var audience = _token.Audience;
-            var expireInMinutes = _token.ExpireInMinutes;
-            var token = JwtManager.GenerateToken(claims, key, issuer, audience, out var expireDateTime, expireInMinutes);
+                var key = _token.Key;
+                var issuer = _token.Issuer;
+                var audience = _token.Audience;
+                var expireInMinutes = _token.ExpireInMinutes;
+                var token = JwtManager.GenerateToken(claims, key, issuer, audience, out var expireDateTime,
+                    expireInMinutes);
 
-            var tokenResponse = new TokenResponse
-            {
-                Token = token,
-                ExpireInMinutes = expireInMinutes,
-                RequestUtcDateTime = DateTime.UtcNow,
-                ExpireUtcDateTime = expireDateTime,
-            };
+                var tokenResponse = new TokenResponse
+                {
+                    Token = token,
+                    ExpireInMinutes = expireInMinutes,
+                    RequestUtcDateTime = DateTime.UtcNow,
+                    ExpireUtcDateTime = expireDateTime,
+                };
 
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(tokenResponse));
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(tokenResponse));
+            });
         }
     }
 }

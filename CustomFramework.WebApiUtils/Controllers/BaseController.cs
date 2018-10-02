@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks;
-using AutoMapper;
-using CustomFramework.Data;
-using CustomFramework.WebApiUtils.Business;
-using CustomFramework.WebApiUtils.Contracts;
+﻿using AutoMapper;
 using CustomFramework.WebApiUtils.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
+using System.Transactions;
 
 namespace CustomFramework.WebApiUtils.Controllers
 {
@@ -20,6 +19,16 @@ namespace CustomFramework.WebApiUtils.Controllers
             LocalizationService = localizationService;
             Logger = logger;
             Mapper = mapper;
+        }
+
+        protected async Task<T> CommonOperationAsync<T>(Func<Task<T>> func)
+        {
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                var result = await func.Invoke();
+                scope.Complete();
+                return result;
+            }
         }
     }
 }

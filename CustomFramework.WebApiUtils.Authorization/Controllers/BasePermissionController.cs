@@ -24,16 +24,19 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> HasPermission([FromBody] HasPermissionRequest hasPermissionRequest)
+        public Task<IActionResult> HasPermissionAsync([FromBody] HasPermissionRequest hasPermissionRequest)
         {
-            if (!ModelState.IsValid)
+            return CommonOperationAsync<IActionResult>(async () =>
             {
-                throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
-            }
+                if (!ModelState.IsValid)
+                {
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+                }
 
-            var hasPermission = await _permissionManager.HasPermission(hasPermissionRequest);
+                var hasPermission = await _permissionManager.HasPermission(hasPermissionRequest);
 
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(hasPermission));
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(hasPermission));
+            });
         }
     }
 }

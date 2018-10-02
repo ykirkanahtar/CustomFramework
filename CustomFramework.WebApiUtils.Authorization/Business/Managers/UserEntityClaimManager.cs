@@ -30,7 +30,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<UserEntityClaim> CreateAsync(UserEntityClaimRequest request)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = Mapper.Map<UserEntityClaim>(request);
 
@@ -52,7 +52,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<UserEntityClaim> UpdateAsync(int id, EntityClaimRequest request)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 Mapper.Map(request, result);
@@ -65,7 +65,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task DeleteAsync(int id)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 _uow.UserEntityClaims.Delete(result, GetLoggedInUserId());

@@ -21,10 +21,13 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
 
         }
 
-        protected async Task<IActionResult> BaseUpdate(TKey id, [FromBody] TUpdateRequest request)
+        protected Task<IActionResult> BaseUpdateAsync(TKey id, [FromBody] TUpdateRequest request)
         {
-            var result = await Manager.UpdateAsync(id, request);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TEntity, TResponse>(result)));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.UpdateAsync(id, request);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TEntity, TResponse>(result)));
+            });
         }
     }
 }

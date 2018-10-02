@@ -25,7 +25,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<UserUtil> CreateAsync(UserUtilRequest request)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = Mapper.Map<UserUtil>(request);
 
@@ -43,7 +43,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task<UserUtil> UpdateAsync(int id, UserUtilUpdateRequest request)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 Mapper.Map(request, result);
@@ -55,7 +55,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
         public Task DeleteAsync(int id)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 _uow.UserUtils.Delete(result, GetLoggedInUserId());

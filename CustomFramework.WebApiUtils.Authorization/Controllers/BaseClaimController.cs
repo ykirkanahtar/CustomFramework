@@ -26,53 +26,59 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
         [Route("create")]
         [HttpPost]
         [Permission(nameof(Claim), Crud.Create)]
-        public async Task<IActionResult> Create([FromBody] ClaimRequest request)
+        public async Task<IActionResult> CreateAsync([FromBody] ClaimRequest request)
         {
-            return await BaseCreate(request);
+            return await BaseCreateAsync(request);
         }
 
         [Route("{id:int}/update")]
         [HttpPut]
         [Permission(nameof(Claim), Crud.Update)]
-        public async Task<IActionResult> Update(int id, [FromBody] ClaimRequest request)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] ClaimRequest request)
         {
-            return await BaseUpdate(id, request);
+            return await BaseUpdateAsync(id, request);
         }
 
         [Route("delete/{id:int}")]
         [HttpDelete]
         [Permission(nameof(Claim), Crud.Delete)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            return await BaseDelete(id);
+            return await BaseDeleteAsync(id);
         }
 
         [Route("get/id/{id:int}")]
         [HttpGet]
         [Permission(nameof(Claim), Crud.Select)]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetByIdAsync(int id)
         {
-            return await BaseGetById(id);
+            return await BaseGetByIdAsync(id);
         }
 
         [Route("get/customclaim/{customClaim}")]
         [HttpGet]
         [Permission(nameof(Claim), Crud.Select)]
-        public async Task<IActionResult> GetByCustomClaim(string customClaim)
+        public Task<IActionResult> GetByCustomClaimAsync(string customClaim)
         {
-            var result = await Manager.GetByCustomClaimAsync(customClaim);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<Claim, ClaimResponse>(result)));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.GetByCustomClaimAsync(customClaim);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<Claim, ClaimResponse>(result)));
+            });
         }
 
         [Route("getall/pageindex/{pageIndex:int}/pagesize/{pageSize:int}")]
         [HttpGet]
         [Permission(nameof(Claim), Crud.Select)]
-        public async Task<IActionResult> GetAll(int pageIndex, int pageSize)
+        public Task<IActionResult> GetAllAsync(int pageIndex, int pageSize)
         {
-            var result = await Manager.GetAllAsync(pageIndex, pageSize);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result.ResultList),
-                result.Count));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.GetAllAsync(pageIndex, pageSize);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                    Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result.ResultList),
+                    result.Count));
+            });
         }
     }
 }
