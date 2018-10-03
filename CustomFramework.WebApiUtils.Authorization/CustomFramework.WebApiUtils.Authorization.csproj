@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CustomFramework.Authorization\CustomFramework.Authorization.csproj" />
+    <ProjectReference Include="..\CustomFramework.WebApiUtils.Authorization.Contracts\CustomFramework.WebApiUtils.Authorization.Contracts.csproj" />
     <ProjectReference Include="..\CustomFramework.WebApiUtils\CustomFramework.WebApiUtils.csproj" />
   </ItemGroup>
 

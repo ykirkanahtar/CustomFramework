@@ -1,5 +1,5 @@
 ﻿using CustomFramework.WebApiUtils.Authorization.Constants;
-using CustomFramework.WebApiUtils.Authorization.Requests;
+using CustomFramework.WebApiUtils.Authorization.Contracts.Requests;
 using CustomFramework.WebApiUtils.Constants;
 using FluentValidation;
 

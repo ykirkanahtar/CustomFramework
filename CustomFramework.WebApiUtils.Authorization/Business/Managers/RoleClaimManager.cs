@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
+using CustomFramework.WebApiUtils.Authorization.Contracts.Requests;
 using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Models;
-using CustomFramework.WebApiUtils.Authorization.Requests;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Enums;

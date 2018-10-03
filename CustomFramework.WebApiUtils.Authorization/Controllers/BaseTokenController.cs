@@ -2,8 +2,8 @@
 using CustomFramework.Authorization;
 using CustomFramework.Authorization.Utils;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
-using CustomFramework.WebApiUtils.Authorization.Requests;
-using CustomFramework.WebApiUtils.Authorization.Responses;
+using CustomFramework.WebApiUtils.Authorization.Contracts.Requests;
+using CustomFramework.WebApiUtils.Authorization.Contracts.Responses;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Controllers;
 using CustomFramework.WebApiUtils.Resources;
