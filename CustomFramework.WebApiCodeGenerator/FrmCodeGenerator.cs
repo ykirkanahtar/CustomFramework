@@ -1258,26 +1258,26 @@ namespace {nameSpace}{projectName}.Controllers
         [Route('create')]
         [HttpPost]
         [Permission(nameof({className}), Crud.Create)]
-        public async Task<IActionResult> Create([FromBody] {className}Request request)
+        public async Task<IActionResult> CreateAsync([FromBody] {className}Request request)
         {
-            return await BaseCreate(request);
+            return await BaseCreateAsync(request);
         }
 {update}
 
         [Route('delete/{id:{idFieldDataType}}')]
         [HttpDelete]
         [Permission(nameof({className}), Crud.Delete)]
-        public async Task<IActionResult> Delete({idFieldDataType} id)
+        public async Task<IActionResult> DeleteAsync({idFieldDataType} id)
         {
-            return await BaseDelete(id);
+            return await BaseDeleteAsync(id);
         }
 
         [Route('get/id/{id:{idFieldDataType}}')]
         [HttpGet]
         [Permission(nameof({className}), Crud.Select)]
-        public async Task<IActionResult> GetById({idFieldDataType} id)
+        public async Task<IActionResult> GetByIdAsync({idFieldDataType} id)
         {
-            return await BaseGetById(id);
+            return await BaseGetByIdAsync(id);
         }
 {methods}
     }
@@ -1294,9 +1294,9 @@ namespace {nameSpace}{projectName}.Controllers
         [Route('{id:{idFieldDataType}}/update')]
         [HttpPut]
         [Permission(nameof({className}), Crud.Update)]
-        public async Task<IActionResult> Update(int id, [FromBody] {className}Request request)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] {className}Request request)
         {
-                return await BaseUpdate(id, request);
+                return await BaseUpdateAsync(id, request);
         }";
 
             }
@@ -1325,11 +1325,14 @@ namespace {nameSpace}{projectName}.Controllers
         [Route('getall')]
         [HttpGet]
         [Permission(nameof({className}), Crud.Select)]
-        public async Task<IActionResult> GetAll()
+        public Task<IActionResult> GetAllAsync()
         {
-            var result = await Manager.GetAllAsync();
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IEnumerable<{className}>, IEnumerable<{className}Response>>(result.ResultList),result.Count));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.GetAllAsync();
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                    Mapper.Map<IEnumerable<{className}>, IEnumerable<{className}Response>>(result.ResultList),result.Count));
+            });
         }";
             }
 
@@ -1339,11 +1342,14 @@ namespace {nameSpace}{projectName}.Controllers
         [Route('getall/pageindex/{pageIndex:int}/pagesize/{pageSize:int}')]
         [HttpGet]
         [Permission(nameof({className}), Crud.Select)]
-        public async Task<IActionResult> GetAll(int pageIndex, int pageSize)
+        public Task<IActionResult> GetAllAsync(int pageIndex, int pageSize)
         {
-            var result = await Manager.GetAllAsync(pageIndex, pageSize);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IList<{className}>, IList<{className}Response>>(result.ResultList.ToList()), result.Count));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.GetAllAsync(pageIndex, pageSize);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                    Mapper.Map<IList<{className}>, IList<{className}Response>>(result.ResultList.ToList()), result.Count));
+            });
         }";
             }
 
@@ -1615,10 +1621,13 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
         [Route('get/{fieldNameToLower}/{{fieldNameToLower}{fieldDataTypeController}}')]
         [HttpGet]
         [Permission(nameof({className}), Crud.Select)]
-        public async Task<IActionResult> GetBy{fieldName}({fieldDataType} {fieldNameToLower})
+        public Task<IActionResult> GetBy{fieldName}Async({fieldDataType} {fieldNameToLower})
         {
-            var result = await Manager.GetBy{fieldName}Async({fieldNameToLower});
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<{className}, {className}Response>(result)));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.GetBy{fieldName}Async({fieldNameToLower});
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<{className}, {className}Response>(result)));
+            });
         }";
                 }
                 else
@@ -1627,11 +1636,14 @@ namespace {nameSpace}{projectName}.Data.ModelConfigurations
         [Route('getall/{fieldNameToLower}/{{fieldNameToLower}{fieldDataTypeController}}')]
         [HttpGet]
         [Permission(nameof({className}), Crud.Select)]
-        public async Task<IActionResult> GetAllBy{fieldName}({fieldDataType} {fieldNameToLower})
+        public Task<IActionResult> GetAllBy{fieldName}Async({fieldDataType} {fieldNameToLower})
         {
-            var result = await Manager.GetAllBy{fieldName}Async({fieldNameToLower});
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IList<{className}>, IList<{className}Response>>(result.ResultList), result.Count));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await Manager.GetAllBy{fieldName}Async({fieldNameToLower});
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                    Mapper.Map<IList<{className}>, IList<{className}Response>>(result.ResultList), result.Count));
+            });
         }";
                 }
             }
