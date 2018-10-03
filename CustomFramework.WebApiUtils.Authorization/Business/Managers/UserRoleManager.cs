@@ -3,7 +3,7 @@ using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Models;
-using CustomFramework.WebApiUtils.Authorization.Request;
+using CustomFramework.WebApiUtils.Authorization.Requests;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Enums;

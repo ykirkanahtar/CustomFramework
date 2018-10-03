@@ -1,11 +1,10 @@
-﻿using CustomFramework.Authorization;
-using CustomFramework.Authorization.Utils;
+﻿using CustomFramework.Authorization.Utils;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Business.Managers;
 using CustomFramework.WebApiUtils.Authorization.Data;
 using CustomFramework.WebApiUtils.Authorization.Data.Repositories;
 using CustomFramework.WebApiUtils.Authorization.Handlers;
-using CustomFramework.WebApiUtils.Authorization.Request;
+using CustomFramework.WebApiUtils.Authorization.Requests;
 using CustomFramework.WebApiUtils.Authorization.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;

@@ -1,17 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using CustomFramework.Authorization.Attributes;
 using CustomFramework.Authorization.Enums;
 using CustomFramework.WebApiUtils.Authorization.Business.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Models;
-using CustomFramework.WebApiUtils.Authorization.Request;
-using CustomFramework.WebApiUtils.Authorization.Response;
+using CustomFramework.WebApiUtils.Authorization.Requests;
+using CustomFramework.WebApiUtils.Authorization.Responses;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {

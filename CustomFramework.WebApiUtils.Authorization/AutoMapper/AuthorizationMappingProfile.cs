@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CustomFramework.WebApiUtils.Authorization.Models;
-using CustomFramework.WebApiUtils.Authorization.Request;
-using CustomFramework.WebApiUtils.Authorization.Response;
+using CustomFramework.WebApiUtils.Authorization.Requests;
+using CustomFramework.WebApiUtils.Authorization.Responses;
 
 namespace CustomFramework.WebApiUtils.Authorization.AutoMapper
 {

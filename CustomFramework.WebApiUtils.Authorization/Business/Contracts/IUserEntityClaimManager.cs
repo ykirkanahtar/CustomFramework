@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
-using CustomFramework.Authorization.Enums;
+﻿using CustomFramework.Authorization.Enums;
 using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Authorization.Models;
-using CustomFramework.WebApiUtils.Authorization.Request;
+using CustomFramework.WebApiUtils.Authorization.Requests;
 using CustomFramework.WebApiUtils.Business;
+using System.Threading.Tasks;
 
 namespace CustomFramework.WebApiUtils.Authorization.Business.Contracts
 {
