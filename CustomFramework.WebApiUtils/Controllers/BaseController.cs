@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using System.Transactions;
+using CustomFramework.WebApiUtils.Constants;
 
 namespace CustomFramework.WebApiUtils.Controllers
 {
@@ -25,9 +26,17 @@ namespace CustomFramework.WebApiUtils.Controllers
         {
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                var result = await func.Invoke();
-                scope.Complete();
-                return result;
+                try
+                {
+                    var result = await func.Invoke();
+                    scope.Complete();
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
+                    throw;
+                }
             }
         }
     }

@@ -22,13 +22,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             Manager = manager;
         }
 
-        protected Task<IActionResult> BaseCreateAsync([FromBody] TCreateRequest request)
+        protected async Task<IActionResult> BaseCreateAsync([FromBody] TCreateRequest request)
         {
-            return CommonOperationAsync<IActionResult>(async () =>
-            {
-                var result = await Manager.CreateAsync(request);
-                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TEntity, TResponse>(result)));
-            });
+            var result =  await CommonOperationAsync(async () => await Manager.CreateAsync(request));
+
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TEntity, TResponse>(result)));
         }
 
         protected Task<IActionResult> BaseDeleteAsync(TKey id)
