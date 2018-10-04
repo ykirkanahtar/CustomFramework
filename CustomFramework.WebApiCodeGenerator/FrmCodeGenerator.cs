@@ -1049,7 +1049,7 @@ namespace {nameSpace}{projectName}.Business
 
         public Task<{className}> CreateAsync({className}Request request)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = Mapper.Map<{className}>(request);
                 {reference}
@@ -1063,7 +1063,7 @@ namespace {nameSpace}{projectName}.Business
 {update}
         public Task DeleteAsync({idFieldDataType} id)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
 
@@ -1096,7 +1096,7 @@ namespace {nameSpace}{projectName}.Business
                 update += "\t" + @"
         public Task<{className}> UpdateAsync(int id, {className}Request request)
         {
-            return CommonOperationWithTransactionAsync(async () =>
+            return CommonOperationAsync(async () =>
             {
                 var result = await GetByIdAsync(id);
                 Mapper.Map(request, result);
