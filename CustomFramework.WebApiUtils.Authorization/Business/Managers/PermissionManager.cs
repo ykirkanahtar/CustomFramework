@@ -69,7 +69,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             }
             catch (Exception ex)
             {
-                //_logger.LogCritical(ex.Message);
+                _logger.LogCritical(ex.Message);
                 throw;
             }
 

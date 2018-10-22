@@ -1,0 +1,71 @@
+﻿using System;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.Extensions.Logging;
+using System.IO;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using CustomFramework.LogProvider.Business;
+using CustomFramework.LogProvider.Models;
+using Microsoft.AspNetCore.Mvc;
+using Convert = CustomFramework.Utils.Convert;
+
+namespace CustomFramework.WebApiUtils.Middlewares
+{
+    public class RequestResponseLoggingMiddleware
+    {
+        private readonly RequestDelegate _next;
+        private readonly ILogger _logger;
+
+        public RequestResponseLoggingMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)
+        {
+            _next = next;
+            _logger = loggerFactory.CreateLogger<RequestResponseLoggingMiddleware>();
+        }
+
+        public async Task Invoke(HttpContext context, ILogManager logManager)
+        {
+            var userId = Convert.ToNullableInt(context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var requestBodyStream = new MemoryStream();
+            var originalRequestBody = context.Request.Body;
+
+            await context.Request.Body.CopyToAsync(requestBodyStream);
+            requestBodyStream.Seek(0, SeekOrigin.Begin);
+
+            var url = UriHelper.GetDisplayUrl(context.Request);
+            var requestBodyText = new StreamReader(requestBodyStream).ReadToEnd();
+            var requestLogText =
+                $"REQUEST METHOD: {context.Request.Method}, REQUEST BODY: {requestBodyText}, REQUEST URL: {url}";
+
+            var log = new Log
+            {
+                LoggedUserId = userId,
+                Request = requestLogText,
+                RequestTime = DateTime.Now,
+            };
+
+            requestBodyStream.Seek(0, SeekOrigin.Begin);
+            context.Request.Body = requestBodyStream;
+
+            var bodyStream = context.Response.Body;
+
+            var responseBodyStream = new MemoryStream();
+            context.Response.Body = responseBodyStream;
+
+            await _next(context);
+
+            responseBodyStream.Seek(0, SeekOrigin.Begin);
+            var responseBody = new StreamReader(responseBodyStream).ReadToEnd();
+            var responseLogText = $"RESPONSE BODY: {responseBody}";
+            responseBodyStream.Seek(0, SeekOrigin.Begin);
+            await responseBodyStream.CopyToAsync(bodyStream);
+
+            log.Response = responseLogText;
+            log.ResponseTime = DateTime.Now;
+
+            await logManager.CreateAsync(log);
+
+        }
+    }
+}

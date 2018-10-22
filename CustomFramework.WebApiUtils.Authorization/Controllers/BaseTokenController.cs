@@ -29,9 +29,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
         private readonly IUserManager _userManager;
         private readonly IToken _token;
 
-        public BaseTokenController(IApplicationManager applicationManager, IApplicationUserManager applicationUserManager, IClientApplicationManager clientApplicationManager
-            , IUserManager userManager, ILocalizationService localizationService, ILogger<BaseTokenController> logger, IMapper mapper, IToken token)
-        : base(localizationService, logger, mapper)
+        public BaseTokenController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, IApplicationManager applicationManager, IApplicationUserManager applicationUserManager, IClientApplicationManager clientApplicationManager, IUserManager userManager, IToken token)
+            : base(localizationService, logger, mapper)
         {
             _applicationManager = applicationManager;
             _applicationUserManager = applicationUserManager;
@@ -65,6 +64,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
 
                 var claims = new List<Claim>
                 {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(typeof(IApiRequest).Name, JsonConvert.SerializeObject(apiRequest,
                             new JsonSerializerSettings
                             {

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using CustomFramework.WebApiUtils.Controllers;
+using CustomFramework.WebApiUtils.Utils;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
@@ -16,17 +17,19 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
     {
         protected readonly TManager Manager;
 
-        protected BaseControllerWithCrdAuthorization(TManager manager, ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper)
-        : base(localizationService, logger, mapper)
+        protected BaseControllerWithCrdAuthorization(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, TManager manager)
+            : base(localizationService, logger, mapper)
         {
             Manager = manager;
         }
 
-        protected async Task<IActionResult> BaseCreateAsync([FromBody] TCreateRequest request)
+        protected Task<IActionResult> BaseCreateAsync([FromBody] TCreateRequest request)
         {
-            var result =  await CommonOperationAsync(async () => await Manager.CreateAsync(request));
-
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TEntity, TResponse>(result)));
+            return CommonOperationAsync<IActionResult>(async () =>
+            {
+                var result = await CommonOperationAsync(async () => await Manager.CreateAsync(request));
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TEntity, TResponse>(result)));
+            });
         }
 
         protected Task<IActionResult> BaseDeleteAsync(TKey id)

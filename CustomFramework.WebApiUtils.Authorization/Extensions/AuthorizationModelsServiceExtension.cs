@@ -17,7 +17,6 @@ namespace CustomFramework.WebApiUtils.Authorization.Extensions
     {
         public static IServiceCollection AddAuthorizationModels(this IServiceCollection services)
         {
-            services.AddTransient<IUnitOfWorkAuthorization, UnitOfWorkAuthorization>();
             services.AddScoped<DbContext, AuthorizationContext>();
             services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
             services.AddSingleton<IToken, Token>();

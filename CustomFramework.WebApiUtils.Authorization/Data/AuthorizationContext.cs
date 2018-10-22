@@ -6,29 +6,12 @@ namespace CustomFramework.WebApiUtils.Authorization.Data
 {
     public class AuthorizationContext : DbContext
     {
-
-
         public AuthorizationContext(DbContextOptions options)
             : base(options)
         {
 
         }
-
-        public virtual DbSet<Application> Applications { get; set; }
-
-        public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public virtual DbSet<ClientApplication> ClientApplications { get; set; }
-        public virtual DbSet<ClientApplicationUtil> ClientApplicationUtils { get; set; }
-        public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<Role> Roles { get; set; }
-        public virtual DbSet<Claim> Claims { get; set; }
-        public virtual DbSet<RoleClaim> RoleClaims { get; set; }
-        public virtual DbSet<UserClaim> UserClaims { get; set; }
-        public virtual DbSet<UserRole> UserRoles { get; set; }
-        public virtual DbSet<UserUtil> UserUtils { get; set; }
-        public virtual DbSet<RoleEntityClaim> RoleEntityClaims { get; set; }
-        public virtual DbSet<UserEntityClaim> UserEntityClaims { get; set; }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

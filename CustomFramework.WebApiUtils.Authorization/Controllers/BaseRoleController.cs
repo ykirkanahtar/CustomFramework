@@ -17,8 +17,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class BaseRoleController : BaseControllerWithCrudAuthorization<Role, RoleRequest, RoleRequest, RoleResponse, IRoleManager, int>
     {
-        public BaseRoleController(IRoleManager roleManager, ILocalizationService localizationService, ILogger<BaseRoleController> logger, IMapper mapper)
-            : base(roleManager, localizationService, logger, mapper)
+        public BaseRoleController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, IRoleManager manager)
+            : base(localizationService, logger, mapper, manager)
         {
 
         }

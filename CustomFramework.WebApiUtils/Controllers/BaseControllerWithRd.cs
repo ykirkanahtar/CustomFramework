@@ -14,8 +14,9 @@ namespace CustomFramework.WebApiUtils.Controllers
         where TManager : IBusinessManager<TEntity, TKey>
     {
         protected readonly TManager Manager;
-        protected BaseControllerWithRd(TManager manager, ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper)
-        : base(localizationService, logger, mapper)
+
+        protected BaseControllerWithRd(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, TManager manager) 
+            : base(localizationService, logger, mapper)
         {
             Manager = manager;
         }

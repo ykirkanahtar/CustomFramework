@@ -17,8 +17,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class BaseApplicationUserController : BaseControllerWithCrdAuthorization<ApplicationUser, ApplicationUserRequest, ApplicationUserResponse, IApplicationUserManager, int>
     {
-        public BaseApplicationUserController(IApplicationUserManager applicationUserManager, ILocalizationService localizationService, ILogger<BaseApplicationUserController> logger, IMapper mapper)
-            : base(applicationUserManager, localizationService, logger, mapper)
+        public BaseApplicationUserController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, IApplicationUserManager manager)
+            : base(localizationService, logger, mapper, manager)
         {
 
         }
@@ -58,7 +58,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
                 return Ok(new ApiResponse(LocalizationService, Logger).Ok(
                     Mapper.Map<IList<User>, IList<UserResponse>>(result.ResultList),
                     result.Count));
-            });
+            }, applicationId);
         }
 
         [Route("get/application/userid/{userid:int}")]
@@ -72,7 +72,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
                 return Ok(new ApiResponse(LocalizationService, Logger).Ok(
                     Mapper.Map<IList<Application>, IList<ApplicationResponse>>(result.ResultList),
                     result.Count));
-            });
+            }, userId);
         }
 
     }

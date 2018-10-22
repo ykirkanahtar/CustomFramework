@@ -17,8 +17,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class BaseUserRoleController : BaseControllerWithCrdAuthorization<UserRole, UserRoleRequest, UserRoleResponse, IUserRoleManager, int>
     {
-        public BaseUserRoleController(IUserRoleManager userRoleManager, ILocalizationService localizationService, ILogger<BaseUserRoleController> logger, IMapper mapper)
-            : base(userRoleManager, localizationService, logger, mapper)
+        public BaseUserRoleController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, IUserRoleManager manager) 
+            : base(localizationService, logger, mapper, manager)
         {
 
         }

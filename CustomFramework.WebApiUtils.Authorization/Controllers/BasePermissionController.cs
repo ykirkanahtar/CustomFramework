@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using CustomFramework.WebApiUtils.Utils;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
@@ -17,8 +18,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
     {
         private readonly IPermissionManager _permissionManager;
 
-        public BasePermissionController(IPermissionManager permissionManager, ILocalizationService localizationService, ILogger<BasePermissionController> logger, IMapper mapper)
-        : base(localizationService, logger, mapper)
+        public BasePermissionController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, IPermissionManager permissionManager) 
+            : base(localizationService, logger, mapper)
         {
             _permissionManager = permissionManager;
         }

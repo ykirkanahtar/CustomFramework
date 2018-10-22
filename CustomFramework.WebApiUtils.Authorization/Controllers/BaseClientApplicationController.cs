@@ -18,9 +18,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
     public class BaseClientApplicationController
         : BaseControllerWithCrdAuthorization<ClientApplication, ClientApplicationRequest, ClientApplicationResponse, IClientApplicationManager, int>
     {
-
-        public BaseClientApplicationController(IClientApplicationManager clientApplicationManager, ILocalizationService localizationService, ILogger<BaseClientApplicationController> logger, IMapper mapper)
-            : base(clientApplicationManager, localizationService, logger, mapper)
+        public BaseClientApplicationController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, IClientApplicationManager manager) 
+            : base(localizationService, logger, mapper, manager)
         {
 
         }

@@ -14,9 +14,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
         where TEntity : BaseModel<TKey>
         where TManager : IBusinessManager<TEntity, TCreateRequest, TKey>, IBusinessManagerUpdate<TEntity, TUpdateRequest, TKey>
     {
-
-        protected BaseControllerWithCrudAuthorization(TManager manager, ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper)
-        : base(manager, localizationService, logger, mapper)
+        protected BaseControllerWithCrudAuthorization(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, TManager manager) 
+            : base(localizationService, logger, mapper, manager)
         {
 
         }

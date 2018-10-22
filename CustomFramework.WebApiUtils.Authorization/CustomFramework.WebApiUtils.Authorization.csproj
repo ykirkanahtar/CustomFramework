@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\UnitOfWorkAuthorization.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.0.100" />
   </ItemGroup>
 
@@ -12,10 +16,6 @@
     <ProjectReference Include="..\CustomFramework.Authorization\CustomFramework.Authorization.csproj" />
     <ProjectReference Include="..\CustomFramework.WebApiUtils.Authorization.Contracts\CustomFramework.WebApiUtils.Authorization.Contracts.csproj" />
     <ProjectReference Include="..\CustomFramework.WebApiUtils\CustomFramework.WebApiUtils.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Utils\" />
   </ItemGroup>
 
 </Project>

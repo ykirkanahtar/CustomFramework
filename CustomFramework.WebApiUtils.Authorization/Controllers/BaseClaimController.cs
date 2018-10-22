@@ -17,8 +17,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class BaseClaimController : BaseControllerWithCrudAuthorization<Claim, ClaimRequest, ClaimRequest, ClaimResponse, IClaimManager, int>
     {
-        public BaseClaimController(IClaimManager claimManager, ILocalizationService localizationService, ILogger<BaseClaimController> logger, IMapper mapper)
-            : base(claimManager, localizationService, logger, mapper)
+        public BaseClaimController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, IClaimManager manager)
+            : base(localizationService, logger, mapper, manager)
         {
 
         }
@@ -64,7 +64,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             {
                 var result = await Manager.GetByCustomClaimAsync(customClaim);
                 return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<Claim, ClaimResponse>(result)));
-            });
+            }, customClaim);
         }
 
         [Route("getall/pageindex/{pageIndex:int}/pagesize/{pageSize:int}")]
@@ -78,7 +78,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
                 return Ok(new ApiResponse(LocalizationService, Logger).Ok(
                     Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result.ResultList),
                     result.Count));
-            });
+            }, new List<object> { pageIndex, pageSize });
         }
     }
 }

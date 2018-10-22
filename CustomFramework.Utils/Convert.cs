@@ -25,5 +25,11 @@ namespace CustomFramework.Utils
             return Regex.Replace(maskedString, ".{4}", "$0 ");
         }
 
+        public static int? ToNullableInt(this string value)
+        {
+            if (int.TryParse(value, out var i)) return i;
+            return null;
+        }
+
     }
 }

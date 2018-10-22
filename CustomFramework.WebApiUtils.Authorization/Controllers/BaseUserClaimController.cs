@@ -17,8 +17,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class BaseUserClaimController : BaseControllerWithCrdAuthorization<UserClaim, UserClaimRequest, UserClaimResponse, IUserClaimManager, int>
     {
-        public BaseUserClaimController(IUserClaimManager userClaimManager, ILocalizationService localizationService, ILogger<BaseUserClaimController> logger, IMapper mapper)
-            : base(userClaimManager, localizationService, logger, mapper)
+        public BaseUserClaimController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, IUserClaimManager manager) 
+            : base(localizationService, logger, mapper, manager)
         {
 
         }

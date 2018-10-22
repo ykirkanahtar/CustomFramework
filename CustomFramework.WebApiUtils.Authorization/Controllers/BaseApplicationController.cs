@@ -17,8 +17,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class BaseApplicationController : BaseControllerWithCrudAuthorization<Application, ApplicationRequest, ApplicationRequest, ApplicationResponse, IApplicationManager, int>
     {
-        public BaseApplicationController(IApplicationManager applicationManager, ILocalizationService localizationService, ILogger<BaseApplicationController> logger, IMapper mapper)
-            : base(applicationManager, localizationService, logger, mapper)
+        public BaseApplicationController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, IApplicationManager manager) 
+            : base(localizationService, logger, mapper, manager)
         {
 
         }
@@ -64,7 +64,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
             {
                 var result = await Manager.GetByNameAsync(name);
                 return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<Application, ApplicationResponse>(result)));
-            });
+            }, name);
         }
 
         [Route("getall")]
@@ -78,7 +78,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
                 return Ok(new ApiResponse(LocalizationService, Logger).Ok(
                     Mapper.Map<IEnumerable<Application>, IEnumerable<ApplicationResponse>>(result.ResultList),
                     result.Count));
-            });
+            }, null);
         }
     }
 }

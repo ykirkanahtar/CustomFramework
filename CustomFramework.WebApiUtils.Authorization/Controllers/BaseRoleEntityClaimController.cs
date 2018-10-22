@@ -18,8 +18,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
     public class BaseRoleEntityClaimController
         : BaseControllerWithCrudAuthorization<RoleEntityClaim, RoleEntityClaimRequest, EntityClaimRequest, RoleEntityClaimResponse, IRoleEntityClaimManager, int>
     {
-        public BaseRoleEntityClaimController(IRoleEntityClaimManager roleEntityClaimManager, ILocalizationService localizationService, ILogger<BaseRoleEntityClaimController> logger, IMapper mapper)
-            : base(roleEntityClaimManager, localizationService, logger, mapper)
+        public BaseRoleEntityClaimController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, IRoleEntityClaimManager manager) 
+            : base(localizationService, logger, mapper, manager)
         {
 
         }

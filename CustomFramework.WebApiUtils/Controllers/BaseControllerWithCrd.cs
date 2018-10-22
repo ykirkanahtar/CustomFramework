@@ -15,8 +15,8 @@ namespace CustomFramework.WebApiUtils.Controllers
     {
         protected readonly TManager Manager;
 
-        protected BaseControllerWithCrd(TManager manager, ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper)
-        : base(localizationService, logger, mapper)
+        protected BaseControllerWithCrd(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, TManager manager) 
+            : base(localizationService, logger, mapper)
         {
             Manager = manager;
         }

@@ -2,11 +2,11 @@
 using CustomFramework.Data.Models;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Contracts;
+using CustomFramework.WebApiUtils.Controllers;
 using CustomFramework.WebApiUtils.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using CustomFramework.WebApiUtils.Controllers;
 
 namespace CustomFramework.WebApiUtils.Authorization.Controllers
 {
@@ -16,8 +16,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
     {
         protected readonly TManager Manager;
 
-        protected BaseControllerWithRdAuthorization(TManager manager, ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper)
-        : base(localizationService, logger, mapper)
+        protected BaseControllerWithRdAuthorization(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, TManager manager) 
+            : base(localizationService, logger, mapper)
         {
             Manager = manager;
         }

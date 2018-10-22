@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
+using CustomFramework.WebApiUtils.Constants;
 using CustomFramework.WebApiUtils.Enums;
 using CustomFramework.WebApiUtils.Utils;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using System.Transactions;
-using CustomFramework.WebApiUtils.Constants;
 
 namespace CustomFramework.WebApiUtils.Business
 {

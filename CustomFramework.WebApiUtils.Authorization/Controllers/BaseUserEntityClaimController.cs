@@ -17,8 +17,8 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class BaseUserEntityClaimController : BaseControllerWithCrudAuthorization<UserEntityClaim, UserEntityClaimRequest, EntityClaimRequest, UserEntityClaimResponse, IUserEntityClaimManager, int>
     {
-        public BaseUserEntityClaimController(IUserEntityClaimManager userEntityClaimManager, ILocalizationService localizationService, ILogger<BaseUserEntityClaimController> logger, IMapper mapper)
-            : base(userEntityClaimManager, localizationService, logger, mapper)
+        public BaseUserEntityClaimController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, IUserEntityClaimManager manager) 
+            : base(localizationService, logger, mapper, manager)
         {
 
         }

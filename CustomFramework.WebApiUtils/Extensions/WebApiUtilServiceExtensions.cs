@@ -1,4 +1,5 @@
-﻿using CustomFramework.WebApiUtils.Contracts;
+﻿using CustomFramework.LogProvider.Extensions;
+using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
