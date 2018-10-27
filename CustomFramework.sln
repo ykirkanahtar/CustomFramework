@@ -21,8 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomFramework.EmailProvid
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomFramework.FtpClient", "CustomFramework.FtpClient\CustomFramework.FtpClient.csproj", "{F943867F-CA90-4969-86F3-ED8E36827E42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{E333051A-F0ED-48B5-8739-9F4B3CC2E655}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomFramework.WebApiUtils.Authorization.Contracts", "CustomFramework.WebApiUtils.Authorization.Contracts\CustomFramework.WebApiUtils.Authorization.Contracts.csproj", "{A1D0F121-E239-4060-A5C0-D26D08D60B2E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomFramework.LogProvider", "CustomFramework.LogProvider\CustomFramework.LogProvider.csproj", "{2D1BFAEE-08CD-4BA9-A728-6E94E20B2D39}"
@@ -69,10 +67,6 @@ Global
 		{F943867F-CA90-4969-86F3-ED8E36827E42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F943867F-CA90-4969-86F3-ED8E36827E42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F943867F-CA90-4969-86F3-ED8E36827E42}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E333051A-F0ED-48B5-8739-9F4B3CC2E655}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E333051A-F0ED-48B5-8739-9F4B3CC2E655}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E333051A-F0ED-48B5-8739-9F4B3CC2E655}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E333051A-F0ED-48B5-8739-9F4B3CC2E655}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A1D0F121-E239-4060-A5C0-D26D08D60B2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A1D0F121-E239-4060-A5C0-D26D08D60B2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1D0F121-E239-4060-A5C0-D26D08D60B2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
