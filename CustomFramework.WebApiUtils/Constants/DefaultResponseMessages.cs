@@ -12,5 +12,6 @@
         public static readonly string ModelStateErrors = "ModelStateErrors";
         public static readonly string RecordExistsError = "RecordExistsError";
         public static readonly string ArgumentExceptionError = "ArgumentExceptionError";
+        public static readonly string DbConnectionError = "DbConnectionError";
     }
 }

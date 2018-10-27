@@ -9,6 +9,7 @@ using CustomFramework.WebApiUtils.Utils.Exceptions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace CustomFramework.WebApiUtils.Contracts
 {
@@ -21,6 +22,14 @@ namespace CustomFramework.WebApiUtils.Contracts
         {
             _localizationService = localizationService;
             _logger = logger;
+        }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
         }
 
         [JsonConstructor]

@@ -10,9 +10,11 @@ namespace CustomFramework.LogProvider.Data.ModelConfigurations
         {
             base.Configure(builder);
 
-            builder.Property(p => p.Request).IsRequired().HasMaxLength(2500);
+            builder.Property(p => p.RequestBody).IsRequired().HasMaxLength(2500);
+            builder.Property(p => p.RequestMethod).HasMaxLength(20);
+            builder.Property(p => p.RequestUrl).IsRequired().HasMaxLength(250);
             builder.Property(p => p.RequestTime).IsRequired();
-            builder.Property(p => p.Response).IsRequired().HasMaxLength(5000);
+            builder.Property(p => p.ResponseBody).IsRequired().HasMaxLength(5000);
             builder.Property(p => p.ResponseTime).IsRequired();
             builder.Property(p => p.LoggedUserId);
         }

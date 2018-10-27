@@ -35,13 +35,13 @@ namespace CustomFramework.WebApiUtils.Middlewares
 
             var url = UriHelper.GetDisplayUrl(context.Request);
             var requestBodyText = new StreamReader(requestBodyStream).ReadToEnd();
-            var requestLogText =
-                $"REQUEST METHOD: {context.Request.Method}, REQUEST BODY: {requestBodyText}, REQUEST URL: {url}";
 
             var log = new Log
             {
                 LoggedUserId = userId,
-                Request = requestLogText,
+                RequestBody =  requestBodyText,
+                RequestMethod = context.Request.Method,
+                RequestUrl = url,
                 RequestTime = DateTime.Now,
             };
 
@@ -61,7 +61,7 @@ namespace CustomFramework.WebApiUtils.Middlewares
             responseBodyStream.Seek(0, SeekOrigin.Begin);
             await responseBodyStream.CopyToAsync(bodyStream);
 
-            log.Response = responseLogText;
+            log.ResponseBody = responseLogText;
             log.ResponseTime = DateTime.Now;
 
             await logManager.CreateAsync(log);

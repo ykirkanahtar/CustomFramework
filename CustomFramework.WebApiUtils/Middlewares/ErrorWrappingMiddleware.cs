@@ -8,6 +8,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using CustomFramework.WebApiUtils.Constants;
 
 namespace CustomFramework.WebApiUtils.Middlewares
 {
@@ -39,7 +40,13 @@ namespace CustomFramework.WebApiUtils.Middlewares
                 }
 
                 var errorMessage = ex.Message;
+
                 if (ex.InnerException != null) errorMessage += $"-- {ex.InnerException.Message}";
+
+                //if (ex.Source.StartsWith("Npgsql.EntityFrameworkCore") && ex.InnerException is TimeoutException)
+                //{
+                //    errorMessage = DefaultResponseMessages.DbConnectionError;
+                //}
 
                 context.Response.StatusCode = (int)ex.ExceptionToStatusCode();
                 context.Response.ContentType = "application/json";
@@ -48,12 +55,7 @@ namespace CustomFramework.WebApiUtils.Middlewares
 
                 _logger.LogError(0, ex, errorMessage);
 
-                var json = JsonConvert.SerializeObject(apiResponse, new JsonSerializerSettings
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                });
-                
-                await context.Response.WriteAsync(json);
+                await context.Response.WriteAsync(apiResponse.ToString());
             }
         }
     }
