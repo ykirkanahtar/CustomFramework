@@ -5,12 +5,12 @@ namespace CustomFramework.Data.Extensions
 {
     public static class SqlServerServiceExtension
     {
-        public static IServiceCollection AddSqlServer<TContext>(this IServiceCollection services, string connectionString) where TContext : DbContext
+        public static IServiceCollection AddSqlServer<TContext>(this IServiceCollection services, string connectionString, bool lazyLoading = false) where TContext : DbContext
         {
             services.AddDbContext<TContext>(options =>
                 {
                     options.UseSqlServer(connectionString);
-                    options.UseLazyLoadingProxies();
+                    options.UseLazyLoadingProxies(lazyLoading);
                 }
             );
 

@@ -5,12 +5,12 @@ namespace CustomFramework.Data.Extensions
 {
     public static class PostgreSqlServerServiceExtension
     {
-        public static IServiceCollection AddPostgreSqlServer<TContext>(this IServiceCollection services, string connectionString) where TContext : DbContext
+        public static IServiceCollection AddPostgreSqlServer<TContext>(this IServiceCollection services, string connectionString, bool lazyLoading = false) where TContext : DbContext
         {
             services.AddDbContext<TContext>(options =>
                 {
                     options.UseNpgsql(connectionString);
-                    options.UseLazyLoadingProxies();
+                    options.UseLazyLoadingProxies(lazyLoading);
                 }
             );
 
