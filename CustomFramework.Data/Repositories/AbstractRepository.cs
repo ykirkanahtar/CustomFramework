@@ -42,7 +42,6 @@ namespace CustomFramework.Data.Repositories
             return DbSet.Where(PredicateBuild(predicate));
         }
 
-
         //OrderBy kullanımı örneği : GetAll(orderBy: q => q.OrderByDescending(s => s.CreateDateTime), take: 10)
         public IQueryable<TEntity> GetAll(
             Expression<Func<TEntity, bool>> predicate = null
