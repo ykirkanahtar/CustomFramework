@@ -21,13 +21,13 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
 
         public async Task<ICustomList<User>> GetUsersByApplicationIdAsync(int applicationId)
         {
-            return await GetAll(p => p.ApplicationId == applicationId).IncludeMultiple(p => p.User).Select(p => p.User)
+            return await GetAll(p => p.ApplicationId == applicationId).Include(p => p.User).Select(p => p.User)
                 .ToCustomList();
         }
 
         public async Task<ICustomList<Application>> GetApplicationsByUserIdAsync(int userId)
         {
-            return await GetAll(p => p.UserId == userId).IncludeMultiple(p => p.Application).Select(p => p.Application)
+            return await GetAll(p => p.UserId == userId).Include(p => p.Application).Select(p => p.Application)
                 .ToCustomList();
         }
     }

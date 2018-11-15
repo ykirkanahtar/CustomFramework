@@ -21,13 +21,13 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
 
         public async Task<ICustomList<User>> GetUsersByRoleIdAsync(int roleId)
         {
-            return await GetAll(p => p.RoleId == roleId).IncludeMultiple(p => p.User).Select(p => p.User)
+            return await GetAll(p => p.RoleId == roleId).Include(p => p.User).Select(p => p.User)
                 .ToCustomList();
         }
 
         public async Task<ICustomList<Role>> GetRolesByUserIdAsync(int userId)
         {
-            return await GetAll(p => p.UserId == userId).IncludeMultiple(p => p.Role).Select(p => p.Role)
+            return await GetAll(p => p.UserId == userId).Include(p => p.Role).Select(p => p.Role)
                 .ToCustomList();
         }
     }
