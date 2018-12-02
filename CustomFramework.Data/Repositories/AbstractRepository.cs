@@ -16,8 +16,22 @@ namespace CustomFramework.Data.Repositories
         protected readonly DbContext DbContext;
         protected readonly DbSet<TEntity> DbSet;
         private bool _disposed;
+        private readonly Expression<Func<TEntity, object>>[] _includeProperties = { };
 
         protected AbstractRepository(DbContext dbContext)
+        {
+            DbContext = dbContext;
+            DbSet = DbContext.Set<TEntity>();
+        }
+
+        protected AbstractRepository(DbContext dbContext, Expression<Func<TEntity, object>>[] includeProperties)
+        {
+            DbContext = dbContext;
+            DbSet = DbContext.Set<TEntity>();
+            _includeProperties = includeProperties;
+        }
+
+        protected AbstractRepository(DbContext dbContext, bool eager)
         {
             DbContext = dbContext;
             DbSet = DbContext.Set<TEntity>();
@@ -27,14 +41,20 @@ namespace CustomFramework.Data.Repositories
 
         public async Task<TEntity> GetByIdAsync(TKey id)
         {
-            var entity = await DbContext.Set<TEntity>().FindAsync(id);
-            return entity?.Status == Status.Active ? entity : null;
+            var query = DbContext.Set<TEntity>().Where(p => p.Id.Equals(id)).Where(p => p.Status == Status.Active);
+
+            query = _includeProperties.Aggregate(query, (current, includedProperty) => current.Include(includedProperty));
+
+            return await query.FirstOrDefaultAsync();
         }
 
         public TEntity GetById(TKey id)
         {
-            var entity = DbContext.Set<TEntity>().Find(id);
-            return entity?.Status == Status.Active ? entity : null;
+            var query = DbContext.Set<TEntity>().Where(p => p.Id.Equals(id)).Where(p => p.Status == Status.Active);
+
+            query = _includeProperties.Aggregate(query, (current, includedProperty) => current.Include(includedProperty));
+
+            return query.FirstOrDefault();
         }
 
         public IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> predicate)
@@ -52,6 +72,7 @@ namespace CustomFramework.Data.Repositories
             IQueryable<TEntity> query = DbSet;
 
             query = query.Where(predicate != null ? PredicateBuild(predicate) : PredicateBuild());
+            query = _includeProperties.Aggregate(query, (current, includedProperty) => current.Include(includedProperty));
 
             if (orderBy != null)
             {
@@ -77,6 +98,8 @@ namespace CustomFramework.Data.Repositories
             query = query.Where(predicate != null ? PredicateBuild(predicate) : PredicateBuild());
 
             var rowCount = await query.CountAsync();
+            query = _includeProperties.Aggregate(query, (current, includedProperty) => current.Include(includedProperty));
+
 
             if (orderBy != null)
             {
@@ -88,7 +111,7 @@ namespace CustomFramework.Data.Repositories
             return new CustomQueryable<TEntity>
             {
                 Result = query,
-                Count = rowCount,
+                Count = rowCount
             };
         }
 
@@ -103,6 +126,7 @@ namespace CustomFramework.Data.Repositories
             query = query.Where(predicate != null ? PredicateBuild(predicate) : PredicateBuild());
 
             var rowCount = query.Count();
+            query = _includeProperties.Aggregate(query, (current, includedProperty) => current.Include(includedProperty));
 
             if (orderBy != null)
             {
@@ -114,7 +138,7 @@ namespace CustomFramework.Data.Repositories
             return new CustomQueryable<TEntity>
             {
                 Result = query,
-                Count = rowCount,
+                Count = rowCount
             };
         }
 

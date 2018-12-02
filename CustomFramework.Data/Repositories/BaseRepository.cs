@@ -1,6 +1,7 @@
 ﻿using CustomFramework.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq.Expressions;
 using CustomFramework.Data.Models;
 
 namespace CustomFramework.Data.Repositories
@@ -10,6 +11,11 @@ namespace CustomFramework.Data.Repositories
 
     {
         public BaseRepository(DbContext dbContext) : base(dbContext)
+        {
+
+        }
+
+        public BaseRepository(DbContext dbContext, Expression<Func<TEntity, object>>[] includeProperties) : base(dbContext, includeProperties)
         {
 
         }
