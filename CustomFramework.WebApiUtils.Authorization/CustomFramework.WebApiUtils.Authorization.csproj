@@ -9,9 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CustomFramework.Authorization" Version="0.1.1-preview1" />
-    <PackageReference Include="CustomFramework.WebApiUtils" Version="0.1.1-preview1" />
-    <PackageReference Include="CustomFramework.WebApiUtils.Authorization.Contracts" Version="0.1.0-preview1" />
+    <PackageReference Include="CustomFramework.Authorization" Version="0.2.0-preview1" />
+    <PackageReference Include="CustomFramework.WebApiUtils" Version="0.2.0-preview1" />
+    <PackageReference Include="CustomFramework.WebApiUtils.Authorization.Contracts" Version="1.0.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.0.100" />
   </ItemGroup>
 
