@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CustomFramework.Data.Utils;
 
 namespace CustomFramework.Data.Repositories
 {
@@ -41,7 +42,11 @@ namespace CustomFramework.Data.Repositories
 
         public async Task<TEntity> GetByIdAsync(TKey id)
         {
-            var query = DbContext.Set<TEntity>().Where(p => p.Id.Equals(id)).Where(p => p.Status == Status.Active);
+            var query = from p in DbContext.Set<TEntity>()
+                        where p.Id.Equals(id) && p.Status == Status.Active
+                        select p;
+
+            //var s = query.ToSql();
 
             query = _includeProperties.Aggregate(query, (current, includedProperty) => current.Include(includedProperty));
 
@@ -50,7 +55,9 @@ namespace CustomFramework.Data.Repositories
 
         public TEntity GetById(TKey id)
         {
-            var query = DbContext.Set<TEntity>().Where(p => p.Id.Equals(id)).Where(p => p.Status == Status.Active);
+            var query = from p in DbContext.Set<TEntity>()
+                where p.Id.Equals(id) && p.Status == Status.Active
+                select p;
 
             query = _includeProperties.Aggregate(query, (current, includedProperty) => current.Include(includedProperty));
 
