@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace CustomFramework.Utils
 {
-    public static class Convert
+    public static class ConvertFunctions
     {
         public static string ToSnakeCase(this string input)
         {
