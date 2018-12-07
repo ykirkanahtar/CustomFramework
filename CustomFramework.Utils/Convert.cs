@@ -31,5 +31,9 @@ namespace CustomFramework.Utils
             return null;
         }
 
+        public static decimal RoundValue(this decimal value)
+        {
+            return Math.Round(value, 2, MidpointRounding.ToEven);
+        }
     }
 }
