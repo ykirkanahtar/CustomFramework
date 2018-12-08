@@ -1,14 +1,13 @@
-﻿using System;
+﻿using CustomFramework.LogProvider.Business;
+using CustomFramework.LogProvider.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using CustomFramework.LogProvider.Business;
-using CustomFramework.LogProvider.Models;
-using Microsoft.AspNetCore.Mvc;
-using Convert = CustomFramework.Utils.Convert;
+using CustomFramework.Utils;
 
 namespace CustomFramework.WebApiUtils.Middlewares
 {
@@ -25,7 +24,7 @@ namespace CustomFramework.WebApiUtils.Middlewares
 
         public async Task Invoke(HttpContext context, ILogManager logManager)
         {
-            var userId = Convert.ToNullableInt(context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var userId = (context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value).ToNullableInt();
 
             var requestBodyStream = new MemoryStream();
             var originalRequestBody = context.Request.Body;
@@ -39,7 +38,7 @@ namespace CustomFramework.WebApiUtils.Middlewares
             var log = new Log
             {
                 LoggedUserId = userId,
-                RequestBody =  requestBodyText,
+                RequestBody = requestBodyText,
                 RequestMethod = context.Request.Method,
                 RequestUrl = url,
                 RequestTime = DateTime.Now,
