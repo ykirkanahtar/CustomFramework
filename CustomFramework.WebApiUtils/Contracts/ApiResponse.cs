@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Net;
-using CustomFramework.WebApiUtils.Constants;
+﻿using CustomFramework.WebApiUtils.Constants;
 using CustomFramework.WebApiUtils.Resources;
 using CustomFramework.WebApiUtils.Utils.Exceptions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace CustomFramework.WebApiUtils.Contracts
 {
-    public class ApiResponse : IApiResponse
+    public class ApiResponse : WebApiResponse, IApiResponse
     {
         private readonly ILocalizationService _localizationService;
         private readonly ILogger _logger;
@@ -42,16 +41,7 @@ namespace CustomFramework.WebApiUtils.Contracts
             ErrorResponse = errorResponse;
         }
 
-        public HttpStatusCode StatusCode { get; private set; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string Message { get; private set; }
-
-        public object Result { get; private set; }
-
-        public int TotalCount { get; private set; }
-
-        public ErrorResponse ErrorResponse { get; set; }
 
         public ApiResponse Ok(object result)
         {

@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomFramework.WebApiUtils
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomFramework.LogProvider", "CustomFramework.LogProvider\CustomFramework.LogProvider.csproj", "{2D1BFAEE-08CD-4BA9-A728-6E94E20B2D39}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomFramework.WebApiUtils.Contracts", "CustomFramework.WebApiUtils.Contracts\CustomFramework.WebApiUtils.Contracts.csproj", "{E229F682-C6AB-4D19-B759-5E429C734113}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{2D1BFAEE-08CD-4BA9-A728-6E94E20B2D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D1BFAEE-08CD-4BA9-A728-6E94E20B2D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D1BFAEE-08CD-4BA9-A728-6E94E20B2D39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E229F682-C6AB-4D19-B759-5E429C734113}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E229F682-C6AB-4D19-B759-5E429C734113}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E229F682-C6AB-4D19-B759-5E429C734113}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E229F682-C6AB-4D19-B759-5E429C734113}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
