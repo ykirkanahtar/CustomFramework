@@ -5,14 +5,14 @@ namespace CustomFramework.WebApiUtils.Contracts
 {
     public class WebApiResponse
     {
-        public HttpStatusCode StatusCode { get; protected set; }
+        public HttpStatusCode StatusCode { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string Message { get; protected set; }
+        public string Message { get; set; }
 
-        public object Result { get; protected set; }
+        public object Result { get; set; }
 
-        public int TotalCount { get; protected set; }
+        public int TotalCount { get; set; }
 
         public ErrorResponse ErrorResponse { get; set; }
     }
