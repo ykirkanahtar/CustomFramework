@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>CustomFramework.Data</id>
+    <version>1.0.0</version>
+    <authors>YEK</authors>
+    <owners>CuteSafe Tech.</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Veritabanı işlemler için kullanılır</description>
+    <releaseNotes>Nuget paketleri güncellendi</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>CustomFramework, Data, Database, Linq, SqlServer, Postgresql</tags>
+    <dependencies>
+      <dependency id="CustomFramework.Utils" version="1.2.2" />
+      <dependency id="LinqKit.Microsoft.EntityFrameworkCore" version="1.1.15" />
+      <dependency id="Microsoft.EntityFrameworkCore.Proxies" version="2.2.0" />
+      <dependency id="Microsoft.EntityFrameworkCore.SqlServer" version="2.2.0" />
+      <dependency id="Npgsql.EntityFrameworkCore.PostgreSQL" version="2.2.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\bin\Debug\netstandard2.0\CustomFramework.Data.dll" target="lib\netstandard2.0"></file>
+  </files>
+</package>

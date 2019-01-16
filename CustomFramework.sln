@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27520.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28407.52
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomFramework.Data", "CustomFramework.Data\CustomFramework.Data.csproj", "{BBDB3E65-723B-4B6C-B14A-A36BA126D654}"
 EndProject
@@ -10,8 +10,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomFramework.WebApiUtils", "CustomFramework.WebApiUtils\CustomFramework.WebApiUtils.csproj", "{1FAB9A5A-6E73-47BD-8BA1-8CE6DCD805EE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomFramework.WebApiUtils.Authorization", "CustomFramework.WebApiUtils.Authorization\CustomFramework.WebApiUtils.Authorization.csproj", "{9022F5E3-2A25-485A-8D74-26694FF30AAB}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomFramework.SampleWebApi", "CustomFramework.SampleWebApi\CustomFramework.SampleWebApi.csproj", "{12B9B58E-2C1F-49A1-8B0D-5E6AAAD0086C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomFramework.Utils", "CustomFramework.Utils\CustomFramework.Utils.csproj", "{4503935E-AB31-45E8-B95A-C825B80CEB17}"
 EndProject
@@ -25,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomFramework.WebApiUtils
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomFramework.LogProvider", "CustomFramework.LogProvider\CustomFramework.LogProvider.csproj", "{2D1BFAEE-08CD-4BA9-A728-6E94E20B2D39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomFramework.WebApiUtils.Contracts", "CustomFramework.WebApiUtils.Contracts\CustomFramework.WebApiUtils.Contracts.csproj", "{E229F682-C6AB-4D19-B759-5E429C734113}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomFramework.WebApiUtils.Contracts", "CustomFramework.WebApiUtils.Contracts\CustomFramework.WebApiUtils.Contracts.csproj", "{E229F682-C6AB-4D19-B759-5E429C734113}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,10 +47,6 @@ Global
 		{9022F5E3-2A25-485A-8D74-26694FF30AAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9022F5E3-2A25-485A-8D74-26694FF30AAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9022F5E3-2A25-485A-8D74-26694FF30AAB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{12B9B58E-2C1F-49A1-8B0D-5E6AAAD0086C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{12B9B58E-2C1F-49A1-8B0D-5E6AAAD0086C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{12B9B58E-2C1F-49A1-8B0D-5E6AAAD0086C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{12B9B58E-2C1F-49A1-8B0D-5E6AAAD0086C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4503935E-AB31-45E8-B95A-C825B80CEB17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4503935E-AB31-45E8-B95A-C825B80CEB17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4503935E-AB31-45E8-B95A-C825B80CEB17}.Release|Any CPU.ActiveCfg = Release|Any CPU
