@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>CustomFramework.WebApiUtils.Authorization</id>
-    <version>1.0.4</version>
+    <version>1.0.6</version>
     <authors>YEK</authors>
     <owners>CuteSafe Tech.</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,10 +11,10 @@
     <copyright>Copyright 2018</copyright>
     <tags>CustomFramework, WebApi, Authorization Framework</tags>
     <dependencies>
-      <dependency id="CustomFramework.Authorization" version="1.0.0" />
-      <dependency id="CustomFramework.WebApiUtils" version="1.0.2" />
+      <dependency id="CustomFramework.Authorization" version="1.0.1" />
+      <dependency id="CustomFramework.WebApiUtils" version="1.0.3" />
       <dependency id="CustomFramework.WebApiUtils.Authorization.Contracts" version="1.0.0" />
-      <dependency id="FluentValidation.AspNetCore" version="8.1.2" />
+      <dependency id="FluentValidation.AspNetCore" version="8.1.3" />
     </dependencies>
   </metadata>
   <files>

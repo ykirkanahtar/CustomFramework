@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CustomFramework.Data.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +26,15 @@ namespace CustomFramework.Data.Utils
             {
                 Count = list.Count,
                 ResultList = list
+            };
+        }
+
+        public static ICustomList<T> ToCustomList<T>(this IList<T> result) where T:class
+        {
+            return new CustomList<T>
+            {
+                Count = result.Count,
+                ResultList = result
             };
         }
     }
