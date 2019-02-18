@@ -56,7 +56,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Controllers
                     await _clientApplicationManager.LoginAsync(login.ClientApplicationCode,
                         login.ClientApplicationPassword);
 
-                var user = await _userManager.LoginAsync(login.UserName, login.UserPassword);
+                var user = await _userManager.LoginAsync(login.Email, login.UserPassword);
 
                 await _applicationUserManager.GetByApplicationIdAndUserIdAsync(application.Id, user.Id);
 

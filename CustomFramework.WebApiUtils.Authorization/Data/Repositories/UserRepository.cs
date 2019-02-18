@@ -26,9 +26,9 @@ namespace CustomFramework.WebApiUtils.Authorization.Data.Repositories
             return await Get(p => p.Email == email).FirstOrDefaultAsync();
         }
 
-        public async Task<User> GetByUserNameAndPasswordAsync(string userName, string password)
+        public async Task<User> GetByEmailAndPasswordAsync(string email, string password)
         {
-            return await Get(p => p.UserName == userName && p.Password == password).FirstOrDefaultAsync();
+            return await Get(p => p.Email == email && p.Password == password).FirstOrDefaultAsync();
         }
 
         public async Task<ICustomList<User>> GetAllByKeywordAsync(string keyword, int pageIndex, int pageSize)

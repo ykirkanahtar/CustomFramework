@@ -136,11 +136,11 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
-        public Task<User> LoginAsync(string userName, string password)
+        public Task<User> LoginAsync(string email, string password)
         {
             return CommonOperationAsync(async () =>
             {
-                var user = await _uow.Users.GetByUserNameAsync(userName);
+                var user = await _uow.Users.GetByEmailAsync(email);
                 if (user == null) throw new AuthenticationException();
 
                 /** Hash password **/
@@ -150,7 +150,7 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
                 password = hashed;
                 /*******************/
 
-                var result = await _uow.Users.GetByUserNameAndPasswordAsync(userName, password);
+                var result = await _uow.Users.GetByEmailAndPasswordAsync(email, password);
                 if (result == null) throw new AuthenticationException();
 
                 return result;
