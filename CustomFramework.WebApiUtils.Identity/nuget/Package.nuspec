@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>CustomFramework.WebApiUtils.Identity</id>
+    <version>1.0.0</version>
+    <authors>YEK</authors>
+    <owners>CuteSafe Tech.</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Kimlik işlemleri için kullanılan sınıf</description>
+    <releaseNotes>İlk yükleme</releaseNotes>
+    <copyright>Copyright 2019</copyright>
+    <tags>CustomFramework, Identity, Authorization</tags>
+    <dependencies>
+      <dependency id="CS.Common.EmailProvider" version="1.1.0" />
+      <dependency id="CustomFramework.Authorization" version="1.0.1" />
+      <dependency id="CustomFramework.WebApiUtils" version="1.0.3" />
+      <dependency id="CustomFramework.WebApiUtils.Identity.Contracts" version="1.0.0" />
+      <dependency id="Microsoft.AspNetCore.Identity" version="2.2.0" />
+      <dependency id="Microsoft.AspNetCore.Identity.EntityFrameworkCore" version="2.2.0" />
+      <dependency id="Microsoft.Extensions.Identity.Stores" version="2.2.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\bin\Debug\netstandard2.0\CustomFramework.WebApiUtils.Identity.dll" target="lib\netstandard2.0"></file>
+  </files>
+</package>

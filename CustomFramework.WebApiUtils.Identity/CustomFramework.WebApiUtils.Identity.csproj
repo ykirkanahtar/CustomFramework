@@ -5,17 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CS.Common.EmailProvider" Version="1.1.0" />
     <PackageReference Include="CustomFramework.Authorization" Version="1.0.1" />
     <PackageReference Include="CustomFramework.WebApiUtils" Version="1.0.3" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="8.1.3" />
+    <PackageReference Include="CustomFramework.WebApiUtils.Identity.Contracts" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="2.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\EmailProvider\CS.Common.EmailProvider\CS.Common.EmailProvider.csproj" />
-    <ProjectReference Include="..\CustomFramework.WebApiUtils.Identity.Contracts\CustomFramework.WebApiUtils.Identity.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
