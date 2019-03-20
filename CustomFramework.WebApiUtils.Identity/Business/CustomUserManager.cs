@@ -12,137 +12,138 @@ using Microsoft.Extensions.Options;
 
 namespace CustomFramework.WebApiUtils.Identity.Business
 {
-    public class CustomUserManager : UserManager<User>, ICustomUserManager
+    public class CustomUserManager : ICustomUserManager
     {
-        public CustomUserManager(IUserStore<User> store, IOptions<IdentityOptions> optionsAccessor, IPasswordHasher<User> passwordHasher, IEnumerable<IUserValidator<User>> userValidators, IEnumerable<IPasswordValidator<User>> passwordValidators, ILookupNormalizer keyNormalizer, IdentityErrorDescriber errors, IServiceProvider services, ILogger<UserManager<User>> logger) : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger)
+        private readonly UserManager<User> _userManager;
+        public CustomUserManager(UserManager<User> userManager)
         {
-
+            _userManager = userManager;
         }
 
-        public override async Task<IdentityResult> AddClaimsAsync(User user, IEnumerable<Claim> claims)
-        {
-            await GetByIdAsync(user.Id);
-            return await base.AddClaimsAsync(user, claims);
-        }
-
-        public override async Task<IdentityResult> AddLoginAsync(User user, UserLoginInfo login)
+        public async Task<IdentityResult> AddClaimsAsync(User user, IEnumerable<Claim> claims)
         {
             await GetByIdAsync(user.Id);
-            return await base.AddLoginAsync(user, login);
+            return await _userManager.AddClaimsAsync(user, claims);
         }
 
-        public override async Task<IdentityResult> AddPasswordAsync(User user, string password)
+        public async Task<IdentityResult> AddLoginAsync(User user, UserLoginInfo login)
         {
             await GetByIdAsync(user.Id);
-            return await base.AddPasswordAsync(user, password);
+            return await _userManager.AddLoginAsync(user, login);
         }
 
-        public override async Task<IdentityResult> AddToRoleAsync(User user, string role)
+        public async Task<IdentityResult> AddPasswordAsync(User user, string password)
         {
             await GetByIdAsync(user.Id);
-            return await base.AddToRoleAsync(user, role);
+            return await _userManager.AddPasswordAsync(user, password);
         }
 
-        public override async Task<IdentityResult> AddToRolesAsync(User user, IEnumerable<string> roles)
+        public async Task<IdentityResult> AddToRoleAsync(User user, string role)
         {
             await GetByIdAsync(user.Id);
-            return await base.AddToRolesAsync(user, roles);
+            return await _userManager.AddToRoleAsync(user, role);
         }
-        public override async Task<IdentityResult> ChangeEmailAsync(User user, string newEmail, string token)
+
+        public async Task<IdentityResult> AddToRolesAsync(User user, IEnumerable<string> roles)
         {
             await GetByIdAsync(user.Id);
-            return await base.ChangeEmailAsync(user, newEmail, token);
+            return await _userManager.AddToRolesAsync(user, roles);
         }
-
-        public override async Task<IdentityResult> ChangePasswordAsync(User user, string currentPassword, string newPassword)
+        public async Task<IdentityResult> ChangeEmailAsync(User user, string newEmail, string token)
         {
             await GetByIdAsync(user.Id);
-            return await base.ChangePasswordAsync(user, currentPassword, newPassword);
+            return await _userManager.ChangeEmailAsync(user, newEmail, token);
         }
 
-        public override async Task<IdentityResult> ChangePhoneNumberAsync(User user, string phoneNumber, string token)
+        public async Task<IdentityResult> ChangePasswordAsync(User user, string currentPassword, string newPassword)
         {
             await GetByIdAsync(user.Id);
-            return await base.ChangePhoneNumberAsync(user, phoneNumber, token);
+            return await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
         }
 
-        public override async Task<bool> CheckPasswordAsync(User user, string password)
+        public async Task<IdentityResult> ChangePhoneNumberAsync(User user, string phoneNumber, string token)
         {
             await GetByIdAsync(user.Id);
-            return await base.CheckPasswordAsync(user, password);
+            return await _userManager.ChangePhoneNumberAsync(user, phoneNumber, token);
         }
 
-        public override async Task<IdentityResult> ConfirmEmailAsync(User user, string token)
+        public async Task<bool> CheckPasswordAsync(User user, string password)
         {
-            return await base.ConfirmEmailAsync(user, token);
+            await GetByIdAsync(user.Id);
+            return await _userManager.CheckPasswordAsync(user, password);
         }
 
-        public override async Task<IdentityResult> CreateAsync(User user, string password)
+        public async Task<IdentityResult> ConfirmEmailAsync(User user, string token)
+        {
+            return await _userManager.ConfirmEmailAsync(user, token);
+        }
+
+        public async Task<IdentityResult> CreateAsync(User user, string password)
         {
             user.Status = Status.Active;
-            return await base.CreateAsync(user, password);
+            return await _userManager.CreateAsync(user, password);
         }
 
         public async Task<IdentityResult> DeleteAsync(int id)
         {
             var user = await GetByIdAsync(id);
             user.Status = Status.Deleted;
-            return await base.UpdateAsync(user);
+            return await _userManager.UpdateAsync(user);
         }
 
         public async Task<User> GetByEmailAsync(string email)
         {
-            var user = await base.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null || user.Status != Status.Active) throw new KeyNotFoundException(nameof(User));
             return user;
         }
 
         public async Task<User> GetByNameAsync(string userName)
         {
-            var user = await base.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(userName);
             if (user == null || user.Status != Status.Active) throw new KeyNotFoundException(nameof(User));
             return user;
         }
 
-        public override async Task<string> GenerateEmailConfirmationTokenAsync(User user)
+        public async Task<string> GenerateEmailConfirmationTokenAsync(User user)
         {
-            return await base.GenerateEmailConfirmationTokenAsync(user);
+            return await _userManager.GenerateEmailConfirmationTokenAsync(user);
         }
 
-        public override async Task<string> GeneratePasswordResetTokenAsync(User user)
+        public async Task<string> GeneratePasswordResetTokenAsync(User user)
         {
             await GetByIdAsync(user.Id);
-            return await base.GeneratePasswordResetTokenAsync(user);
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
         }
 
-        public override async Task<User> FindByIdAsync(string id)
+        public async Task<User> FindByIdAsync(string id)
         {
-            return await base.FindByIdAsync(id);
+            return await _userManager.FindByIdAsync(id);
         }
 
         public async Task<User> GetByIdAsync(int id)
         {
-            var user = await base.FindByIdAsync(id.ToString());
+            var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null || user.Status != Status.Active) throw new KeyNotFoundException(nameof(User));
             return user;
         }
 
-        public override async Task<bool> IsEmailConfirmedAsync(User user)
+        public async Task<bool> IsEmailConfirmedAsync(User user)
         {
             await GetByIdAsync(user.Id);
-            return await base.IsEmailConfirmedAsync(user);
+            return await _userManager.IsEmailConfirmedAsync(user);
         }
 
-        public override async Task<IdentityResult> ResetPasswordAsync(User user, string token, string newPassword)
+        public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string newPassword)
         {
             await GetByIdAsync(user.Id);
-            return await base.ResetPasswordAsync(user, token, newPassword);
+            return await _userManager.ResetPasswordAsync(user, token, newPassword);
         }
 
-        public override async Task<IdentityResult> UpdateAsync(User user)
+        public async Task<IdentityResult> UpdateAsync(User user)
         {
             await GetByIdAsync(user.Id);
-            return await base.UpdateAsync(user);
+            return await _userManager.UpdateAsync(user);
         }
     }
 }

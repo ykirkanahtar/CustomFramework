@@ -2,12 +2,12 @@
 <package >
   <metadata>
     <id>CustomFramework.WebApiUtils.Identity</id>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <authors>YEK</authors>
     <owners>CuteSafe Tech.</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Kimlik işlemleri için kullanılan sınıf</description>
-    <releaseNotes>İlk yükleme</releaseNotes>
+    <releaseNotes>Rol sınıfı eklendi</releaseNotes>
     <copyright>Copyright 2019</copyright>
     <tags>CustomFramework, Identity, Authorization</tags>
     <dependencies>

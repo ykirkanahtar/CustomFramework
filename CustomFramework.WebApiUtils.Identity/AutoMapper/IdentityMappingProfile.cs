@@ -15,6 +15,9 @@ namespace CustomFramework.WebApiUtils.Identity.AutoMapper
 
             CreateMap<ClientApplication, ClientApplicationResponse>();
             CreateMap<ClientApplicationRequest, ClientApplication>();
+
+            CreateMap<Role, RoleResponse>();
+            CreateMap<RoleRequest, Role>();
         }
     }
 }

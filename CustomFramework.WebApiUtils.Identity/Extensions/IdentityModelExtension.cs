@@ -28,6 +28,7 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
             services.AddTransient<IClientApplicationRepository, ClientApplicationRepository>();
 
             services.AddTransient<ICustomUserManager, CustomUserManager>();
+            services.AddTransient<ICustomRoleManager, CustomRoleManager>();
             services.AddTransient<IClientApplicationManager, ClientApplicationManager>();
 
             services.AddIdentity<User, Role>(config =>
