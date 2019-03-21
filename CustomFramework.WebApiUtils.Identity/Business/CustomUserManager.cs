@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Enums;
+using CustomFramework.Data.Utils;
 using CustomFramework.WebApiUtils.Identity.Data;
 using CustomFramework.WebApiUtils.Identity.Data.Repositories;
 using CustomFramework.WebApiUtils.Identity.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -144,6 +148,11 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         {
             await GetByIdAsync(user.Id);
             return await _userManager.UpdateAsync(user);
+        }
+
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            return await _userManager.Users.AsQueryable().Where(p=>p.Status == Status.Active).ToListAsync();
         }
     }
 }

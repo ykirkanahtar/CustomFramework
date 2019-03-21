@@ -9,6 +9,7 @@ using AutoMapper;
 using CS.Common.EmailProvider;
 using CustomFramework.Authorization;
 using CustomFramework.Authorization.Utils;
+using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Controllers;
 using CustomFramework.WebApiUtils.Identity.Business;
@@ -81,6 +82,16 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             if (user == null)
                 throw new ArgumentException("Kullanıcı bulunamadı");
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<User, UserResponse>(user)));
+        }
+
+        [Route("getall")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var users = await _userManager.GetAllUsersAsync();
+            if (users == null)
+                throw new ArgumentException("Kullanıcı bulunamadı");
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<List<User>, List<UserResponse>>(users)));
         }
     }
 }

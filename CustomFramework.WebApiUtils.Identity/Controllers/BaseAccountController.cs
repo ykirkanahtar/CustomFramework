@@ -46,6 +46,14 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             _emailSender = emailSender;
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("CheckService")]
+        public IActionResult CheckService()
+        {
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+        }
+
         protected async Task<IActionResult> BaseRegisterAsync([FromBody] UserRegisterRequest request)
         {
             if (!ModelState.IsValid)

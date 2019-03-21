@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 
@@ -27,5 +28,6 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         Task<bool> IsEmailConfirmedAsync(User user);
         Task<IdentityResult> ResetPasswordAsync(User user, string token, string newPassword);
         Task<IdentityResult> UpdateAsync(User user);
+        Task<List<User>> GetAllUsersAsync();
     }
 }
