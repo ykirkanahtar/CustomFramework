@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CustomFramework.WebApiUtils.Identity.Contracts.Requests
 {
-    public class RoleRequest
+    public class CustomRoleRequest
     {
         [Required]
         [DataType(DataType.Text)]

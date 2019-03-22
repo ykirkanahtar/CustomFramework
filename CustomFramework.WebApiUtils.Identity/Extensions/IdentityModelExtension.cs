@@ -12,14 +12,16 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Identity.Extensions
 {
-    public static class IdentityModelExtension
+    public static class IdentityModelExtension<TUser, TRole> 
+        where TUser : CustomUser
+        where TRole : CustomRole
     {
         public static IdentityModel IdentityConfig { get; set; }
-        public static IServiceCollection AddIdentityModel(this IServiceCollection services, IdentityModel identityModel)
+        public static IServiceCollection AddIdentityModel(IServiceCollection services, IdentityModel identityModel) 
         {
             IdentityConfig = identityModel;
 
-            services.AddScoped<DbContext, IdentityContext>();
+            services.AddScoped<DbContext, IdentityContext<TUser, TRole>>();
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddSingleton<IToken, Token>(p => IdentityConfig.Token);
@@ -27,15 +29,15 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
 
             services.AddTransient<IClientApplicationRepository, ClientApplicationRepository>();
 
-            services.AddTransient<ICustomUserManager, CustomUserManager>();
-            services.AddTransient<ICustomRoleManager, CustomRoleManager>();
+            services.AddTransient<ICustomUserManager<TUser>, CustomUserManager<TUser>>();
+            services.AddTransient<ICustomRoleManager<TRole>, CustomRoleManager<TRole>>();
             services.AddTransient<IClientApplicationManager, ClientApplicationManager>();
 
-            services.AddIdentity<User, Role>(config =>
+            services.AddIdentity<TUser, TRole>(config =>
                 {
                     config.SignIn.RequireConfirmedEmail = IdentityConfig.SendConfirmationEmail;
                 })
-                .AddEntityFrameworkStores<IdentityContext>()
+                .AddEntityFrameworkStores<IdentityContext<TUser, TRole>>()
                 .AddDefaultTokenProviders();
 
             return services;

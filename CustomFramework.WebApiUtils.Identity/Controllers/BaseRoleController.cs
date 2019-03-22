@@ -27,22 +27,25 @@ using Newtonsoft.Json;
 namespace CustomFramework.WebApiUtils.Identity.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class BaseRoleController : BaseController
+    public class BaseRoleController<TRole, TRoleRequest, TRoleResponse> : BaseController
+        where TRole : CustomRole
+        where TRoleRequest : CustomRoleRequest
+        where TRoleResponse : CustomRoleResponse
     {
-        private readonly ICustomRoleManager _roleManager;
-        public BaseRoleController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, ICustomRoleManager roleManager) : base(localizationService, logger, mapper)
+        private readonly ICustomRoleManager<TRole> _roleManager;
+        public BaseRoleController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, ICustomRoleManager<TRole> roleManager) : base(localizationService, logger, mapper)
         {
             _roleManager = roleManager;
         }
 
         [Route("create")]
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] RoleRequest request)
+        public async Task<IActionResult> CreateAsync([FromBody] TRoleRequest request)
         {
             if (!ModelState.IsValid)
                 throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
 
-            var role = Mapper.Map<Role>(request);
+            var role = Mapper.Map<TRole>(request);
 
             var result = await _roleManager.CreateAsync(role);
             if (!result.Succeeded)
@@ -54,12 +57,12 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
             }
 
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<Role, RoleResponse>(role)));
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
         }
 
         [Route("{id:int}/update")]
         [HttpPut]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] RoleRequest request)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] TRoleRequest request)
         {
             if (!ModelState.IsValid)
                 throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
@@ -77,7 +80,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
             }
 
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<Role, RoleResponse>(role)));
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
         }
 
         [Route("delete/{id:int}")]
@@ -93,7 +96,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
         public async Task<IActionResult> GetByIdAsync(int id)
         {
             var role = await _roleManager.GetByIdAsync(id);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<Role, RoleResponse>(role)));
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
         }
 
         [Route("get/name/{name}")]
@@ -101,7 +104,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
         public async Task<IActionResult> GetByNameAsync(string name)
         {
             var role = await _roleManager.GetByNameAsync(name);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<Role, RoleResponse>(role)));
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
         }
     }
 }

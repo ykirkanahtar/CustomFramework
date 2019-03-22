@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CustomFramework.WebApiUtils.Identity.Models
 {
-    public class User : IdentityUser<int>
+    public class CustomUser : IdentityUser<int>
     {
         public string FirstName { get; set; }
         public string Surname { get; set; }

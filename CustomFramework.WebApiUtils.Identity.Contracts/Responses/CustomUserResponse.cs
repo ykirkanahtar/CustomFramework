@@ -2,7 +2,7 @@ using System;
 
 namespace CustomFramework.WebApiUtils.Identity.Contracts.Responses
 {
-    public class UserResponse
+    public class CustomUserResponse
     {
         public int Id { get; set; }
         public string FirstName { get; set; }

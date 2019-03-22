@@ -12,16 +12,17 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Identity.Business
 {
-    public class CustomRoleManager : BaseBusinessManagerWithApiRequest<ApiRequest>, ICustomRoleManager
+    public class CustomRoleManager<TRole> : BaseBusinessManagerWithApiRequest<ApiRequest>, ICustomRoleManager<TRole>
+        where TRole : CustomRole
     {
-        private readonly RoleManager<Role> _roleManager;
-        public CustomRoleManager(RoleManager<Role> roleManager, ILogger<CustomRoleManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
+        private readonly RoleManager<TRole> _roleManager;
+        public CustomRoleManager(RoleManager<TRole> roleManager, ILogger<CustomRoleManager<TRole>> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
             : base(logger, mapper, apiRequestAccessor)
         {
             _roleManager = roleManager;
         }
 
-        public async Task<IdentityResult> CreateAsync(Role role)
+        public async Task<IdentityResult> CreateAsync(TRole role)
         {
             role.Status = Status.Active;
             return await _roleManager.CreateAsync(role);
@@ -34,31 +35,31 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _roleManager.UpdateAsync(role);
         }
 
-        public async Task<Role> FindByIdAsync(string id)
+        public async Task<TRole> FindByIdAsync(string id)
         {
             return await _roleManager.FindByIdAsync(id);
         }
 
-        public async Task<Role> FindByNameAsync(string name)
+        public async Task<TRole> FindByNameAsync(string name)
         {
             return await _roleManager.FindByNameAsync(name);
         }
 
-        public async Task<Role> GetByIdAsync(int id)
+        public async Task<TRole> GetByIdAsync(int id)
         {
             var role = await _roleManager.FindByIdAsync(id.ToString());
-            if(role == null || role.Status != Status.Active) throw new KeyNotFoundException(nameof(Role));
+            if(role == null || role.Status != Status.Active) throw new KeyNotFoundException("Role");
             return role;
         }
 
-        public async Task<Role> GetByNameAsync(string name)
+        public async Task<TRole> GetByNameAsync(string name)
         {
             var role = await _roleManager.FindByNameAsync(name);
-            if(role == null || role.Status != Status.Active) throw new KeyNotFoundException(nameof(Role));
+            if(role == null || role.Status != Status.Active) throw new KeyNotFoundException("Role");
             return role;
         }
 
-        public async Task<IdentityResult> UpdateAsync(int id, Role role)
+        public async Task<IdentityResult> UpdateAsync(int id, TRole role)
         {
             return await _roleManager.UpdateAsync(role);
         }

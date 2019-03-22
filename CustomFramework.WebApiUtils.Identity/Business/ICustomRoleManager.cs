@@ -5,14 +5,14 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CustomFramework.WebApiUtils.Identity.Business
 {
-    public interface ICustomRoleManager
+    public interface ICustomRoleManager<TRole> where TRole : CustomRole
     {
-        Task<Role> FindByIdAsync(string id);
-        Task<Role> FindByNameAsync(string name);
-        Task<IdentityResult> CreateAsync(Role role);
-        Task<IdentityResult> UpdateAsync(int id, Role role);
+        Task<TRole> FindByIdAsync(string id);
+        Task<TRole> FindByNameAsync(string name);
+        Task<IdentityResult> CreateAsync(TRole role);
+        Task<IdentityResult> UpdateAsync(int id, TRole role);
         Task<IdentityResult> DeleteAsync(int id);
-        Task<Role> GetByIdAsync(int id);
-        Task<Role> GetByNameAsync(string name);
+        Task<TRole> GetByIdAsync(int id);
+        Task<TRole> GetByNameAsync(string name);
     }
 }

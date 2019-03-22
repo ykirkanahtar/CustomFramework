@@ -29,15 +29,19 @@ using Newtonsoft.Json;
 namespace CustomFramework.WebApiUtils.Identity.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class BaseAccountController : BaseController
+    public class BaseAccountController<TUser, TUserRequest, TUserResponse, TRole> : BaseController 
+        where TUser : CustomUser
+        where TUserRequest : CustomUserRegisterRequest 
+        where TUserResponse : CustomUserResponse
+        where TRole : CustomRole
     {
-        private readonly SignInManager<User> _signInManager;
-        private readonly ICustomUserManager _userManager;
+        private readonly SignInManager<TUser> _signInManager;
+        private readonly ICustomUserManager<TUser> _userManager;
         private readonly IClientApplicationManager _clientApplicationManager;
         private readonly IEmailSender _emailSender;
         private readonly IToken _token;
 
-        public BaseAccountController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, SignInManager<User> signInManager, ICustomUserManager userManager, IClientApplicationManager clientApplicationManager, IToken token, IEmailSender emailSender) : base(localizationService, logger, mapper)
+        public BaseAccountController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, SignInManager<TUser> signInManager, ICustomUserManager<TUser> userManager, IClientApplicationManager clientApplicationManager, IToken token, IEmailSender emailSender) : base(localizationService, logger, mapper)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -46,12 +50,12 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             _emailSender = emailSender;
         }
 
-        protected async Task<IActionResult> BaseRegisterAsync([FromBody] UserRegisterRequest request)
+        protected async Task<IActionResult> BaseRegisterAsync([FromBody] TUserRequest request)
         {
             if (!ModelState.IsValid)
                 throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
 
-            var user = Mapper.Map<User>(request);
+            var user = Mapper.Map<TUser>(request);
             user.UserName = user.Email;
 
             var result = await _userManager.CreateAsync(user, request.Password);
@@ -66,7 +70,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
 
             await ConfirmationEmailSenderAsync(user, "Confirm Your Account", "Please confirm your email by clicking here", request.CallBackUrl);
 
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<User, UserResponse>(user)));
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TUser, TUserResponse>(user)));
         }
 
         [AllowAnonymous]
@@ -144,7 +148,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 throw new ArgumentException("Kullanıcı bulunamadı."); //User not found.
             }
 
-            if (IdentityModelExtension.IdentityConfig.SendConfirmationEmail)
+            if (IdentityModelExtension<TUser, TRole>.IdentityConfig.SendConfirmationEmail)
             {
                 if (!await _userManager.IsEmailConfirmedAsync(user))
                 {
@@ -194,12 +198,12 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             receiverList.Add(request.Email);
 
             await _emailSender.SendEmailAsync(
-                IdentityModelExtension.IdentityConfig.SenderEmailAddress, receiverList, $"{IdentityModelExtension.IdentityConfig.AppName} - Parolanız değiştirildi", $"Parolanız değiştirildi.Eğer bu işlemi siz yapmadıysanız lütfen site yöneticisi ile iletişim geçiniz.");
+                IdentityModelExtension<TUser, TRole>.IdentityConfig.SenderEmailAddress, receiverList, $"{IdentityModelExtension<TUser, TRole>.IdentityConfig.AppName} - Parolanız değiştirildi", $"Parolanız değiştirildi.Eğer bu işlemi siz yapmadıysanız lütfen site yöneticisi ile iletişim geçiniz.");
 
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
         }
 
-        private async Task ResetPasswordEmailSenderAsync(User user, string title, string text, string callbackUrl = "")
+        private async Task ResetPasswordEmailSenderAsync(TUser user, string title, string text, string callbackUrl = "")
         {
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
             var codeBytes = Encoding.UTF8.GetBytes(code);
@@ -223,12 +227,12 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             }
 
             await _emailSender.SendEmailAsync(
-                IdentityModelExtension.IdentityConfig.SenderEmailAddress, receiverList, $"{IdentityModelExtension.IdentityConfig.AppName} - {title}", $"{text}. - {callbackUrl} ya da kodu ilgili forma giriniz. {codeEncoded}"); //Please reset your password by clicking here
+                IdentityModelExtension<TUser, TRole>.IdentityConfig.SenderEmailAddress, receiverList, $"{IdentityModelExtension<TUser, TRole>.IdentityConfig.AppName} - {title}", $"{text}. - {callbackUrl} ya da kodu ilgili forma giriniz. {codeEncoded}"); //Please reset your password by clicking here
         }
 
-        private async Task ConfirmationEmailSenderAsync(User user, string title, string text, string callbackUrl = "")
+        private async Task ConfirmationEmailSenderAsync(TUser user, string title, string text, string callbackUrl = "")
         {
-            if (IdentityModelExtension.IdentityConfig.SendConfirmationEmail)
+            if (IdentityModelExtension<TUser, TRole>.IdentityConfig.SendConfirmationEmail)
             {
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var codeBytes = Encoding.UTF8.GetBytes(code);
@@ -253,7 +257,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 }
 
                 await _emailSender.SendEmailAsync(
-                    IdentityModelExtension.IdentityConfig.SenderEmailAddress, receiverList, $"{IdentityModelExtension.IdentityConfig.AppName} - {title}", $"{text}. - {callbackUrl}");
+                    IdentityModelExtension<TUser, TRole>.IdentityConfig.SenderEmailAddress, receiverList, $"{IdentityModelExtension<TUser, TRole>.IdentityConfig.AppName} - {title}", $"{text}. - {callbackUrl}");
             }
         }
 

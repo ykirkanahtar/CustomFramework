@@ -6,7 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CustomFramework.WebApiUtils.Identity.Data
 {
-    public class IdentityContext : IdentityDbContext<User, Role, int>
+    public class IdentityContext<TUser, TRole> : IdentityDbContext<TUser, TRole, int> 
+        where TUser : CustomUser
+        where TRole : CustomRole
     {
         public IdentityContext(DbContextOptions options) : base(options)
         {
@@ -17,8 +19,8 @@ namespace CustomFramework.WebApiUtils.Identity.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<User>().ToTable("users");
-            builder.Entity<Role>().ToTable("roles");
+            builder.Entity<TUser>().ToTable("users");
+            builder.Entity<TRole>().ToTable("roles");
             builder.Entity<IdentityRoleClaim<int>>().ToTable("role_claims");
             builder.Entity<IdentityUserClaim<int>>().ToTable("user_claims");
             builder.Entity<IdentityUserLogin<int>>().ToTable("user_logins");

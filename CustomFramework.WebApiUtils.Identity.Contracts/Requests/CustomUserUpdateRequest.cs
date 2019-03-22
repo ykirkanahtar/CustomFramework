@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CustomFramework.WebApiUtils.Identity.Contracts.Requests
 {
-    public class UserUpdateRequest
+    public class CustomUserUpdateRequest
     {
         [Required]
         [DataType(DataType.Text)]

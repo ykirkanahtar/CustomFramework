@@ -28,11 +28,14 @@ using Newtonsoft.Json;
 namespace CustomFramework.WebApiUtils.Identity.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class BaseUserController : BaseController
+    public class BaseUserController<TUser, TUserUpdateRequest, TUserResponse> : BaseController 
+        where TUser : CustomUser
+        where TUserUpdateRequest : CustomUserUpdateRequest
+        where TUserResponse : CustomUserResponse
     {
-        private readonly ICustomUserManager _userManager;
+        private readonly ICustomUserManager<TUser> _userManager;
         private readonly IEmailSender _emailSender;
-        public BaseUserController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, ICustomUserManager userManager, IEmailSender emailSender) : base(localizationService, logger, mapper)
+        public BaseUserController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, ICustomUserManager<TUser> userManager, IEmailSender emailSender) : base(localizationService, logger, mapper)
         {
             _userManager = userManager;
             _emailSender = emailSender;
@@ -40,7 +43,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
 
         [Route("{id:int}/update")]
         [HttpPut]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] UserUpdateRequest request)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] TUserUpdateRequest request)
         {
             if (!ModelState.IsValid)
                 throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
@@ -63,7 +66,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
             }
 
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<User, UserResponse>(user)));
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TUser, TUserResponse>(user)));
         }
 
         [Route("delete/{id:int}")]
@@ -81,7 +84,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             var user = await _userManager.GetByIdAsync(id);
             if (user == null)
                 throw new ArgumentException("Kullanıcı bulunamadı");
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<User, UserResponse>(user)));
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TUser, TUserResponse>(user)));
         }
 
         [Route("getall")]
@@ -91,7 +94,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             var users = await _userManager.GetAllUsersAsync();
             if (users == null)
                 throw new ArgumentException("Kullanıcı bulunamadı");
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<List<User>, List<UserResponse>>(users)));
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<List<TUser>, List<TUserResponse>>(users)));
         }
     }
 }
