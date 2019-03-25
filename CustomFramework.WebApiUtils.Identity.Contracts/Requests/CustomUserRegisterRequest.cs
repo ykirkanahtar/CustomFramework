@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace CustomFramework.WebApiUtils.Identity.Contracts.Requests
@@ -31,5 +32,7 @@ namespace CustomFramework.WebApiUtils.Identity.Contracts.Requests
         public string ConfirmPassword { get; set; }
 
         public string CallBackUrl { get; set; }
+
+        public List<string> Roles { get; set; }
     }
 }
