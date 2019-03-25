@@ -29,29 +29,37 @@ using Newtonsoft.Json;
 namespace CustomFramework.WebApiUtils.Identity.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class BaseAccountController<TUser, TUserRequest, TUserResponse, TRole> : BaseController 
-        where TUser : CustomUser
-        where TUserRequest : CustomUserRegisterRequest 
-        where TUserResponse : CustomUserResponse
-        where TRole : CustomRole
+    public class BaseAccountController<TUser, TUserRequest, TUserResponse, TRole> : BaseController
+    where TUser : CustomUser
+    where TUserRequest : CustomUserRegisterRequest
+    where TUserResponse : CustomUserResponse
+    where TRole : CustomRole
     {
         private readonly SignInManager<TUser> _signInManager;
         protected readonly ICustomUserManager<TUser> CustomUserManager;
         private readonly IClientApplicationManager _clientApplicationManager;
         private readonly IEmailSender _emailSender;
-        private readonly IToken _token;
+        private readonly IdentityModel _identityModel;
 
-        public BaseAccountController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, SignInManager<TUser> signInManager, ICustomUserManager<TUser> customUserManager, IClientApplicationManager clientApplicationManager, IToken token, IEmailSender emailSender) : base(localizationService, logger, mapper)
+        public BaseAccountController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, SignInManager<TUser> signInManager, ICustomUserManager<TUser> customUserManager, IClientApplicationManager clientApplicationManager, IEmailSender emailSender) : base(localizationService, logger, mapper)
         {
             _signInManager = signInManager;
             CustomUserManager = customUserManager;
             _clientApplicationManager = clientApplicationManager;
-            _token = token;
             _emailSender = emailSender;
+            _identityModel = IdentityModelExtension<TUser, TRole>.IdentityConfig;
         }
 
-        protected async Task<IActionResult> BaseRegisterAsync([FromBody] TUserRequest request, Func<Task> func)
+        protected async Task<IActionResult> BaseRegisterAsync([FromBody] TUserRequest request, Func<Task> func, bool generatePassword = false)
         {
+            if (generatePassword)
+            {
+                var passwordLength = _identityModel.GeneratedPasswordLength < 6 ? 6 : _identityModel.GeneratedPasswordLength;
+                var passwordGenerated = Password.Generate(passwordLength, 1); 
+                request.Password = passwordGenerated;
+                request.ConfirmPassword = passwordGenerated;
+            }
+
             if (!ModelState.IsValid)
                 throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
 
@@ -68,7 +76,19 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
             }
 
-            await ConfirmationEmailSenderAsync(user, "Confirm Your Account", "Please confirm your email by clicking here", request.CallBackUrl);
+            if (generatePassword && _identityModel.SendConfirmationEmail == false)
+            {
+                await _emailSender.SendEmailAsync(
+                    _identityModel.SenderEmailAddress, user.Email, $"{_identityModel.AppName} - Parola Bilginiz", $"Sistem tarafından oluşturulan yeni parolanız: {request.Password}");
+            }
+            else if (generatePassword == false && _identityModel.SendConfirmationEmail)
+            {
+                await ConfirmationEmailSenderAsync(user, "Hesabınızı onaylayınız", "Lütfen hesabınızı bağlantıya tıklayarak onaylayınız.", request.CallBackUrl);
+            }
+            else if (generatePassword == true && _identityModel.SendConfirmationEmail == true)
+            {
+                await ConfirmationEmailSenderAsync(user, "Bilgilendirme", "Sistem tarafından oluşturulan yeni parolanız: {request.Password} Lütfen hesabınızı bağlantıya tıklayarak onaylayınız.", request.CallBackUrl);
+            }
 
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TUser, TUserResponse>(user)));
         }
@@ -148,7 +168,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 throw new ArgumentException("Kullanıcı bulunamadı."); //User not found.
             }
 
-            if (IdentityModelExtension<TUser, TRole>.IdentityConfig.SendConfirmationEmail)
+            if (_identityModel.SendConfirmationEmail)
             {
                 if (!await CustomUserManager.IsEmailConfirmedAsync(user))
                 {
@@ -198,7 +218,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             receiverList.Add(request.Email);
 
             await _emailSender.SendEmailAsync(
-                IdentityModelExtension<TUser, TRole>.IdentityConfig.SenderEmailAddress, receiverList, $"{IdentityModelExtension<TUser, TRole>.IdentityConfig.AppName} - Parolanız değiştirildi", $"Parolanız değiştirildi.Eğer bu işlemi siz yapmadıysanız lütfen site yöneticisi ile iletişim geçiniz.");
+                _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - Parolanız değiştirildi", $"Parolanız değiştirildi.Eğer bu işlemi siz yapmadıysanız lütfen site yöneticisi ile iletişim geçiniz.");
 
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
         }
@@ -227,38 +247,35 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             }
 
             await _emailSender.SendEmailAsync(
-                IdentityModelExtension<TUser, TRole>.IdentityConfig.SenderEmailAddress, receiverList, $"{IdentityModelExtension<TUser, TRole>.IdentityConfig.AppName} - {title}", $"{text}. - {callbackUrl} ya da kodu ilgili forma giriniz. {codeEncoded}"); //Please reset your password by clicking here
+                _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{text}. - {callbackUrl} ya da kodu ilgili forma giriniz. {codeEncoded}"); //Please reset your password by clicking here
         }
 
         private async Task ConfirmationEmailSenderAsync(TUser user, string title, string text, string callbackUrl = "")
         {
-            if (IdentityModelExtension<TUser, TRole>.IdentityConfig.SendConfirmationEmail)
+            var code = await CustomUserManager.GenerateEmailConfirmationTokenAsync(user);
+            var codeBytes = Encoding.UTF8.GetBytes(code);
+            var codeEncoded = WebEncoders.Base64UrlEncode(codeBytes);
+
+            var receiverList = new List<string>();
+            receiverList.Add(user.Email);
+
+            if (String.IsNullOrEmpty(callbackUrl))
             {
-                var code = await CustomUserManager.GenerateEmailConfirmationTokenAsync(user);
-                var codeBytes = Encoding.UTF8.GetBytes(code);
-                var codeEncoded = WebEncoders.Base64UrlEncode(codeBytes);
+                callbackUrl = Url.Action(
+                    action: "ConfirmEmailAsync",
+                    controller: "Account",
+                    values : new { userId = user.Id, code = codeEncoded },
+                    protocol : Request.Scheme);
 
-                var receiverList = new List<string>();
-                receiverList.Add(user.Email);
-
-                if (String.IsNullOrEmpty(callbackUrl))
-                {
-                    callbackUrl = Url.Action(
-                        action: "ConfirmEmailAsync",
-                        controller: "Account",
-                        values : new { userId = user.Id, code = codeEncoded },
-                        protocol : Request.Scheme);
-
-                }
-                else
-                {
-                    callbackUrl = callbackUrl.Replace("ReplaceUserIdValue", user.Id.ToString());
-                    callbackUrl = callbackUrl.Replace("ReplaceCodeValue", codeEncoded);
-                }
-
-                await _emailSender.SendEmailAsync(
-                    IdentityModelExtension<TUser, TRole>.IdentityConfig.SenderEmailAddress, receiverList, $"{IdentityModelExtension<TUser, TRole>.IdentityConfig.AppName} - {title}", $"{text}. - {callbackUrl}");
             }
+            else
+            {
+                callbackUrl = callbackUrl.Replace("ReplaceUserIdValue", user.Id.ToString());
+                callbackUrl = callbackUrl.Replace("ReplaceCodeValue", codeEncoded);
+            }
+
+            await _emailSender.SendEmailAsync(
+                _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{text}. - {callbackUrl}");
         }
 
         private TokenResponse GenerateJwtToken(int userId, IApiRequest apiRequest)
@@ -278,10 +295,10 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
-            var key = _token.Key;
-            var issuer = _token.Issuer;
-            var audience = _token.Audience;
-            var expireInMinutes = _token.ExpireInMinutes;
+            var key = _identityModel.Token.Key;
+            var issuer = _identityModel.Token.Issuer;
+            var audience = _identityModel.Token.Audience;
+            var expireInMinutes = _identityModel.Token.ExpireInMinutes;
 
             var token = JwtManager.GenerateToken(claims, key, issuer, audience, out var expireDateTime,
                 expireInMinutes);
