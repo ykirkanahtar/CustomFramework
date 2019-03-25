@@ -36,21 +36,21 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
         where TRole : CustomRole
     {
         private readonly SignInManager<TUser> _signInManager;
-        private readonly ICustomUserManager<TUser> _userManager;
+        protected readonly ICustomUserManager<TUser> CustomUserManager;
         private readonly IClientApplicationManager _clientApplicationManager;
         private readonly IEmailSender _emailSender;
         private readonly IToken _token;
 
-        public BaseAccountController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, SignInManager<TUser> signInManager, ICustomUserManager<TUser> userManager, IClientApplicationManager clientApplicationManager, IToken token, IEmailSender emailSender) : base(localizationService, logger, mapper)
+        public BaseAccountController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, SignInManager<TUser> signInManager, ICustomUserManager<TUser> customUserManager, IClientApplicationManager clientApplicationManager, IToken token, IEmailSender emailSender) : base(localizationService, logger, mapper)
         {
             _signInManager = signInManager;
-            _userManager = userManager;
+            CustomUserManager = customUserManager;
             _clientApplicationManager = clientApplicationManager;
             _token = token;
             _emailSender = emailSender;
         }
 
-        protected async Task<IActionResult> BaseRegisterAsync([FromBody] TUserRequest request)
+        protected async Task<IActionResult> BaseRegisterAsync([FromBody] TUserRequest request, Func<Task> func)
         {
             if (!ModelState.IsValid)
                 throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
@@ -58,7 +58,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             var user = Mapper.Map<TUser>(request);
             user.UserName = user.Email;
 
-            var result = await _userManager.CreateAsync(user, request.Password);
+            var result = await CustomUserManager.CreateAsync(user, request.Password, func);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -87,7 +87,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 throw new AuthenticationException();
             }
 
-            var user = await _userManager.GetByEmailAsync(login.Email);
+            var user = await CustomUserManager.GetByEmailAsync(login.Email);
             if (user == null)
                 throw new Exception("Unknown error");
 
@@ -117,7 +117,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 throw new ArgumentException($"Hatalı bağlantı"); //Invalid link
             }
 
-            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+            var user = await CustomUserManager.FindByIdAsync(request.UserId.ToString());
             if (user == null)
             {
                 return NotFound($"Bu id değerine ait kullanıcı bulunamadı."); //Unable to load user with Id '{userId}'.
@@ -126,7 +126,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             var codeDecodedBytes = WebEncoders.Base64UrlDecode(request.Code);
             var codeDecoded = Encoding.UTF8.GetString(codeDecodedBytes);
 
-            var result = await _userManager.ConfirmEmailAsync(user, codeDecoded);
+            var result = await CustomUserManager.ConfirmEmailAsync(user, codeDecoded);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -142,7 +142,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
 
         protected async Task<IActionResult> BaseForgotPasswordAsync(ForgotPasswordRequest request)
         {
-            var user = await _userManager.GetByEmailAsync(request.EmailAddress);
+            var user = await CustomUserManager.GetByEmailAsync(request.EmailAddress);
             if (user == null)
             {
                 throw new ArgumentException("Kullanıcı bulunamadı."); //User not found.
@@ -150,7 +150,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
 
             if (IdentityModelExtension<TUser, TRole>.IdentityConfig.SendConfirmationEmail)
             {
-                if (!await _userManager.IsEmailConfirmedAsync(user))
+                if (!await CustomUserManager.IsEmailConfirmedAsync(user))
                 {
                     throw new ArgumentException("Lütfen kaydınızı onaylayınız."); //Please confirm your registration.
                 }
@@ -174,7 +174,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 throw new ArgumentException("Parola yenilemek için kod gerekmektedir."); //A code must be supplied for password reset.
             }
 
-            var user = await _userManager.GetByEmailAsync(request.Email);
+            var user = await CustomUserManager.GetByEmailAsync(request.Email);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
@@ -184,7 +184,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             var codeDecodedBytes = WebEncoders.Base64UrlDecode(request.Code);
             var codeDecoded = Encoding.UTF8.GetString(codeDecodedBytes);
 
-            var result = await _userManager.ResetPasswordAsync(user, codeDecoded, request.Password);
+            var result = await CustomUserManager.ResetPasswordAsync(user, codeDecoded, request.Password);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -205,7 +205,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
 
         private async Task ResetPasswordEmailSenderAsync(TUser user, string title, string text, string callbackUrl = "")
         {
-            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var code = await CustomUserManager.GeneratePasswordResetTokenAsync(user);
             var codeBytes = Encoding.UTF8.GetBytes(code);
             var codeEncoded = WebEncoders.Base64UrlEncode(codeBytes);
 
@@ -234,7 +234,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
         {
             if (IdentityModelExtension<TUser, TRole>.IdentityConfig.SendConfirmationEmail)
             {
-                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var code = await CustomUserManager.GenerateEmailConfirmationTokenAsync(user);
                 var codeBytes = Encoding.UTF8.GetBytes(code);
                 var codeEncoded = WebEncoders.Base64UrlEncode(codeBytes);
 

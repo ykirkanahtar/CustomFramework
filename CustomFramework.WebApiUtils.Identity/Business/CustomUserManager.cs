@@ -82,9 +82,10 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _userManager.ConfirmEmailAsync(user, token);
         }
 
-        public async Task<IdentityResult> CreateAsync(TUser user, string password)
+        public async Task<IdentityResult> CreateAsync(TUser user, string password, Func<Task> func)
         {
             user.Status = Status.Active;
+            await func.Invoke();
             return await _userManager.CreateAsync(user, password);
         }
 

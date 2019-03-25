@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         Task<IdentityResult> ChangeEmailAsync(TUser user, string newEmail, string token);
         Task<IdentityResult> ChangePasswordAsync(TUser user, string currentPassword, string newPassword);
         Task<IdentityResult> ConfirmEmailAsync(TUser user, string token);
-        Task<IdentityResult> CreateAsync(TUser user, string password);
+        Task<IdentityResult> CreateAsync(TUser user, string password, Func<Task> func);
         Task<IdentityResult> DeleteAsync(int id);
         Task<TUser> FindByIdAsync(string id);
         Task<TUser> GetByEmailAsync(string email);
