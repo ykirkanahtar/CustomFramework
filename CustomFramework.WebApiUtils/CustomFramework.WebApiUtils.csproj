@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.0.0" />
-    <PackageReference Include="CustomFramework.LogProvider" Version="1.1.0" />
+    <PackageReference Include="CustomFramework.LogProvider" Version="1.1.1" />
     <PackageReference Include="CustomFramework.WebApiUtils.Contracts" Version="1.0.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
