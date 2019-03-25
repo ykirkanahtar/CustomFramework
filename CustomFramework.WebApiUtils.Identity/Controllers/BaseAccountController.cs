@@ -10,6 +10,7 @@ using AutoMapper;
 using CS.Common.EmailProvider;
 using CustomFramework.Authorization;
 using CustomFramework.Authorization.Utils;
+using CustomFramework.Utils;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Controllers;
 using CustomFramework.WebApiUtils.Identity.Business;
@@ -55,7 +56,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             if (generatePassword)
             {
                 var passwordLength = _identityModel.GeneratedPasswordLength < 6 ? 6 : _identityModel.GeneratedPasswordLength;
-                var passwordGenerated = Password.Generate(passwordLength, 1); 
+                var passwordGenerated = Password.Generate(passwordLength, 1);
                 request.Password = passwordGenerated;
                 request.ConfirmPassword = passwordGenerated;
             }
@@ -76,19 +77,10 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
             }
 
-            if (generatePassword && _identityModel.SendConfirmationEmail == false)
-            {
-                await _emailSender.SendEmailAsync(
-                    _identityModel.SenderEmailAddress, user.Email, $"{_identityModel.AppName} - Parola Bilginiz", $"Sistem tarafından oluşturulan yeni parolanız: {request.Password}");
-            }
-            else if (generatePassword == false && _identityModel.SendConfirmationEmail)
-            {
-                await ConfirmationEmailSenderAsync(user, "Hesabınızı onaylayınız", "Lütfen hesabınızı bağlantıya tıklayarak onaylayınız.", request.CallBackUrl);
-            }
-            else if (generatePassword == true && _identityModel.SendConfirmationEmail == true)
-            {
-                await ConfirmationEmailSenderAsync(user, "Bilgilendirme", "Sistem tarafından oluşturulan yeni parolanız: {request.Password} Lütfen hesabınızı bağlantıya tıklayarak onaylayınız.", request.CallBackUrl);
-            }
+            var text = string.Empty;
+            if (generatePassword) text = $"Sistem tarafından oluşturulan yeni parolanız: {request.Password}";
+
+            await ConfirmationEmailSenderAsync(user, $"{_identityModel.AppName} - Hesap Kaydınız", text, request.CallBackUrl);
 
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TUser, TUserResponse>(user)));
         }
@@ -168,12 +160,9 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 throw new ArgumentException("Kullanıcı bulunamadı."); //User not found.
             }
 
-            if (_identityModel.SendConfirmationEmail)
+            if (!await CustomUserManager.IsEmailConfirmedAsync(user))
             {
-                if (!await CustomUserManager.IsEmailConfirmedAsync(user))
-                {
-                    throw new ArgumentException("Lütfen kaydınızı onaylayınız."); //Please confirm your registration.
-                }
+                throw new ArgumentException("Lütfen kaydınızı onaylayınız."); //Please confirm your registration.
             }
 
             // For more information on how to enable account confirmation and password reset please 
@@ -250,6 +239,26 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{text}. - {callbackUrl} ya da kodu ilgili forma giriniz. {codeEncoded}"); //Please reset your password by clicking here
         }
 
+        private string ConfirmationEmailUrlCreator(int userId, string codeEncoded, string emailText, string callbackUrl = "")
+        {
+            if (String.IsNullOrEmpty(callbackUrl))
+            {
+                callbackUrl = Url.Action(
+                    action: "ConfirmEmailAsync",
+                    controller: "Account",
+                    values : new { userId = userId, code = codeEncoded },
+                    protocol : Request.Scheme);
+
+            }
+            else
+            {
+                callbackUrl = callbackUrl.Replace("ReplaceUserIdValue", userId.ToString());
+                callbackUrl = callbackUrl.Replace("ReplaceCodeValue", codeEncoded);
+            }
+
+            return $"{emailText} Hesabınızı onaylamak için lütfen bağlantıya tıklayınız - {callbackUrl}";
+        }
+
         private async Task ConfirmationEmailSenderAsync(TUser user, string title, string text, string callbackUrl = "")
         {
             var code = await CustomUserManager.GenerateEmailConfirmationTokenAsync(user);
@@ -259,23 +268,13 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             var receiverList = new List<string>();
             receiverList.Add(user.Email);
 
-            if (String.IsNullOrEmpty(callbackUrl))
-            {
-                callbackUrl = Url.Action(
-                    action: "ConfirmEmailAsync",
-                    controller: "Account",
-                    values : new { userId = user.Id, code = codeEncoded },
-                    protocol : Request.Scheme);
+            var emailBody = string.Empty;
 
-            }
-            else
-            {
-                callbackUrl = callbackUrl.Replace("ReplaceUserIdValue", user.Id.ToString());
-                callbackUrl = callbackUrl.Replace("ReplaceCodeValue", codeEncoded);
-            }
+            if (_identityModel.EmailConfirmationViaUrl) emailBody = $"{text} ConfirmationEmailUrlCreator(user.Id, codeEncoded, text, callbackUrl)";
+            else emailBody = $"{text} Hesap onay kodunuz : {codeEncoded}";
 
             await _emailSender.SendEmailAsync(
-                _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{text}. - {callbackUrl}");
+                _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{emailBody}");
         }
 
         private TokenResponse GenerateJwtToken(int userId, IApiRequest apiRequest)

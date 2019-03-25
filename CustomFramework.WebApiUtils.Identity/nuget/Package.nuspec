@@ -12,8 +12,8 @@
     <tags>CustomFramework, Identity, Authorization</tags>
     <dependencies>
       <dependency id="CS.Common.EmailProvider" version="1.1.0" />
-      <dependency id="CustomFramework.Authorization" version="1.0.1" />
-      <dependency id="CustomFramework.WebApiUtils" version="1.0.3" />
+      <dependency id="CustomFramework.Authorization" version="1.1.1" />
+      <dependency id="CustomFramework.WebApiUtils" version="1.1.1" />
       <dependency id="CustomFramework.WebApiUtils.Identity.Contracts" version="1.0.1" />
       <dependency id="Microsoft.AspNetCore.Identity" version="2.2.0" />
       <dependency id="Microsoft.AspNetCore.Identity.EntityFrameworkCore" version="2.2.0" />

@@ -11,7 +11,7 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
             EmailConfig = new EmailConfig();
         }
 
-        public bool SendConfirmationEmail { get; set; }
+        public bool EmailConfirmationViaUrl { get; set; }
         public string SenderEmailAddress { get; set; }
         public string AppName { get; set; }
         public Token Token { get; set; }

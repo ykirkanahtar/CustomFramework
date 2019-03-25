@@ -35,7 +35,7 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
 
             services.AddIdentity<TUser, TRole>(config =>
                 {
-                    config.SignIn.RequireConfirmedEmail = IdentityConfig.SendConfirmationEmail;
+                    config.SignIn.RequireConfirmedEmail = true;
                 })
                 .AddEntityFrameworkStores<IdentityContext<TUser, TRole>>()
                 .AddDefaultTokenProviders();
