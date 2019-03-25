@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>CustomFramework.Authorization</id>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
     <authors>YEK</authors>
     <owners>CuteSafe Tech.</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,9 +11,9 @@
     <copyright>Copyright 2018</copyright>
     <tags>CustomFramework, Authorization</tags>
     <dependencies>
-      <dependency id="CustomFramework.Data" version="1.0.1" />
+      <dependency id="CustomFramework.Data" version="1.1.0" />
       <dependency id="Microsoft.AspNetCore.Authentication.JwtBearer" version="2.2.0" />
-      <dependency id="Microsoft.AspNetCore.Mvc.Core" version="2.2.0" />
+      <dependency id="Microsoft.AspNetCore.Mvc.Core" version="2.2.2" />
       <dependency id="System.IdentityModel.Tokens.Jwt" version="5.4.0" />
     </dependencies>
   </metadata>
