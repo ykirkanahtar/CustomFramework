@@ -2,12 +2,12 @@
 <package >
   <metadata>
     <id>CustomFramework.WebApiUtils.Identity.Contracts</id>
-    <version>1.0.2</version>
+    <version>1.0.4</version>
     <authors>YEK</authors>
     <owners>CuteSafe Tech.</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Kimlik işlemleri için kullanılan sözleşme sınıfı</description>
-    <releaseNotes>Kullanıcı kayıt sınıfına Roles alanı eklendi</releaseNotes>
+    <releaseNotes>Parola değiştirme sınıfı eklendi</releaseNotes>
     <copyright>Copyright 2019</copyright>
     <tags>CustomFramework, Identity, Authorization, Contracts</tags>
     <dependencies>
