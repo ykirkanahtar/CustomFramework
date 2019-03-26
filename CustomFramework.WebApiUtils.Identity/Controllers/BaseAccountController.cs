@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using System.Transactions;
 using AutoMapper;
 using CS.Common.EmailProvider;
 using CustomFramework.Authorization;
@@ -67,20 +68,35 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             var user = Mapper.Map<TUser>(request);
             user.UserName = user.Email;
 
-            var result = await CustomUserManager.CreateAsync(user, request.Password, func);
-            if (!result.Succeeded)
+            using(TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                foreach (var error in result.Errors)
+                var result = await CustomUserManager.CreateAsync(user, request.Password, func);
+                if (!result.Succeeded)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
                 }
-                throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+
+                var addToRoleResult = await CustomUserManager.AddToRolesAsync(user, request.Roles);
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+                }
+
+                var text = string.Empty;
+                if (generatePassword) text = $"Sistem tarafından oluşturulan yeni parolanız: {request.Password}";
+
+                await ConfirmationEmailSenderAsync(user, $"{_identityModel.AppName} - Hesap Kaydınız", text, request.CallBackUrl);
+
+                scope.Complete();
             }
-
-            var text = string.Empty;
-            if (generatePassword) text = $"Sistem tarafından oluşturulan yeni parolanız: {request.Password}";
-
-            await ConfirmationEmailSenderAsync(user, $"{_identityModel.AppName} - Hesap Kaydınız", text, request.CallBackUrl);
 
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TUser, TUserResponse>(user)));
         }
@@ -119,6 +135,33 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
         [Route("CheckService")]
         public IActionResult CheckService()
         {
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+        }
+
+        protected async Task<IActionResult> BaseChangePasswordAsync(ChangePasswordRequest request)
+        {
+            var user = await CustomUserManager.GetByEmailAsync(request.Email);
+            if (user == null)
+            {
+                return NotFound($"Kullanıcı bulunamadı.");
+            }
+
+            if (request.OldPassword == request.NewPassword)
+            {
+                throw new ArgumentException($"Eski parola yeni parola ile aynı olamaz.");
+            }
+
+            var result = await CustomUserManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+
+                throw new ArgumentException($"Parola yenileme sırasında hata oluştu : {ModelState.ModelStateToString(LocalizationService)}"); //Error confirming email for user with ID '{userId}':
+            }
+
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
         }
 
