@@ -1,12 +1,12 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using AutoMapper;
 using CustomFramework.WebApiUtils.Constants;
 using CustomFramework.WebApiUtils.Enums;
 using CustomFramework.WebApiUtils.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace CustomFramework.WebApiUtils.Business
 {
@@ -14,7 +14,7 @@ namespace CustomFramework.WebApiUtils.Business
     {
         private readonly ILogger<BaseBusinessManager> _logger;
         protected readonly IMapper Mapper;
-        protected readonly int UserId;
+        private readonly int _userId;
 
         protected BaseBusinessManager(ILogger<BaseBusinessManager> logger, IMapper mapper)
         {
@@ -26,7 +26,9 @@ namespace CustomFramework.WebApiUtils.Business
         {
             _logger = logger;
             Mapper = mapper;
-            UserId = Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            if (httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) != null)
+                _userId = Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
 
         protected async Task<T> CommonOperationAsync<T>(Func<Task<T>> func, BusinessBaseRequest businessBaseRequest)
@@ -43,10 +45,7 @@ namespace CustomFramework.WebApiUtils.Business
             }
         }
 
-        protected async Task<T> CommonOperationAsync<T>(Func<Task<T>> func
-                                                        , BusinessBaseRequest businessBaseRequest
-                                                        , BusinessUtilMethod businessUtilMethod
-                                                        , string additionalInfo)
+        protected async Task<T> CommonOperationAsync<T>(Func<Task<T>> func, BusinessBaseRequest businessBaseRequest, BusinessUtilMethod businessUtilMethod, string additionalInfo)
         {
             try
             {
@@ -75,10 +74,7 @@ namespace CustomFramework.WebApiUtils.Business
             }
         }
 
-        protected T CommonOperation<T>(Func<T> func
-            , BusinessBaseRequest businessBaseRequest
-            , BusinessUtilMethod businessUtilMethod
-            , string additionalInfo)
+        protected T CommonOperation<T>(Func<T> func, BusinessBaseRequest businessBaseRequest, BusinessUtilMethod businessUtilMethod, string additionalInfo)
         {
             try
             {
@@ -106,6 +102,12 @@ namespace CustomFramework.WebApiUtils.Business
                 _logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
                 throw;
             }
+        }
+
+        protected int GetUserId()
+        {
+            if(_userId == 0) throw new Exception($"{DefaultResponseMessages.AnErrorHasOccured} - UserId is null");
+            return _userId;
         }
     }
 }
