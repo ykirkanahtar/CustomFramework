@@ -12,12 +12,12 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Identity.Business
 {
-    public class CustomRoleManager<TRole> : BaseBusinessManagerWithApiRequest<ApiRequest>, ICustomRoleManager<TRole>
+    public class CustomRoleManager<TRole> : BaseBusinessManager, ICustomRoleManager<TRole>
         where TRole : CustomRole
     {
         private readonly RoleManager<TRole> _roleManager;
-        public CustomRoleManager(RoleManager<TRole> roleManager, ILogger<CustomRoleManager<TRole>> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor)
-            : base(logger, mapper, apiRequestAccessor)
+        public CustomRoleManager(RoleManager<TRole> roleManager, ILogger<CustomRoleManager<TRole>> logger, IMapper mapper)
+            : base(logger, mapper)
         {
             _roleManager = roleManager;
         }

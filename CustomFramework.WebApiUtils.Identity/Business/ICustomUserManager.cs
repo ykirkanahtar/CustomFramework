@@ -27,6 +27,8 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         Task<string> GeneratePasswordResetTokenAsync(TUser user);
         Task<TUser> GetByIdAsync(int id);
         Task<bool> IsEmailConfirmedAsync(TUser user);
+        Task<IdentityResult> RemoveFromRoleAsync(TUser user, string role);
+        Task<IdentityResult> RemoveFromRolesAsync(TUser user, IEnumerable<string> roles);
         Task<IdentityResult> ResetPasswordAsync(TUser user, string token, string newPassword);
         Task<IdentityResult> UpdateAsync(TUser user);
         Task<List<TUser>> GetAllUsersAsync();

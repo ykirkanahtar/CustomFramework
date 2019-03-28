@@ -13,15 +13,16 @@ using CustomFramework.WebApiUtils.Identity.Contracts.Requests;
 using CustomFramework.WebApiUtils.Identity.Data;
 using CustomFramework.WebApiUtils.Identity.Models;
 using CustomFramework.WebApiUtils.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Identity.Business
 {
-    public class ClientApplicationManager : BaseBusinessManagerWithApiRequest<ApiRequest>, IClientApplicationManager
+    public class ClientApplicationManager : BaseBusinessManager, IClientApplicationManager
     {
         private readonly IUnitOfWorkIdentity _uow;
 
-        public ClientApplicationManager(IUnitOfWorkIdentity uow, ILogger<ClientApplicationManager> logger, IMapper mapper, IApiRequestAccessor apiRequestAccessor) : base(logger, mapper, apiRequestAccessor)
+        public ClientApplicationManager(IUnitOfWorkIdentity uow, ILogger<ClientApplicationManager> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(logger, mapper, httpContextAccessor)
         {
             _uow = uow;
         }
@@ -45,7 +46,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                 result.ClientApplicationPassword = hashPassword;
                 result.SecurityStamp = salt;
 
-                _uow.ClientApplications.Add(result, GetLoggedInUserId());
+                _uow.ClientApplications.Add(result, GetUserId());
 
                 await _uow.SaveChangesAsync();
                 return result;
@@ -65,7 +66,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                 tempResult = await _uow.ClientApplications.GetByCodeAsync(result.ClientApplicationCode);
                 tempResult.CheckUniqueValueForUpdate(id, IdentityConstants.ClientApplicationCode);
 
-                _uow.ClientApplications.Update(result, GetLoggedInUserId());
+                _uow.ClientApplications.Update(result, GetUserId());
 
                 await _uow.SaveChangesAsync();
                 return result;
@@ -86,7 +87,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                 result.SecurityStamp = salt;
                 result.ClientApplicationPassword = hashPassword;
 
-                _uow.ClientApplications.Update(result, GetLoggedInUserId());
+                _uow.ClientApplications.Update(result, GetUserId());
 
                 await _uow.SaveChangesAsync();
                 return result;
@@ -99,7 +100,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             {
                 var result = await GetByIdAsync(id);
 
-                _uow.ClientApplications.Delete(result, GetLoggedInUserId());
+                _uow.ClientApplications.Delete(result, GetUserId());
 
                 await _uow.SaveChangesAsync();
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });

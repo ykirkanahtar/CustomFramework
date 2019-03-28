@@ -28,10 +28,10 @@ using Newtonsoft.Json;
 namespace CustomFramework.WebApiUtils.Identity.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class BaseUserController<TUser, TUserUpdateRequest, TUserResponse> : BaseController 
-        where TUser : CustomUser
-        where TUserUpdateRequest : CustomUserUpdateRequest
-        where TUserResponse : CustomUserResponse
+    public class BaseUserController<TUser, TUserUpdateRequest, TUserResponse> : BaseController
+    where TUser : CustomUser
+    where TUserUpdateRequest : CustomUserUpdateRequest
+    where TUserResponse : CustomUserResponse
     {
         private readonly ICustomUserManager<TUser> _userManager;
         private readonly IEmailSender _emailSender;
@@ -95,6 +95,48 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             if (users == null)
                 throw new ArgumentException("Kullanıcı bulunamadı");
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<List<TUser>, List<TUserResponse>>(users)));
+        }
+
+        [Route("addtoroles")]
+        [HttpPost]
+        public async Task<IActionResult> AddToRoles([FromBody] UserAddToRolesRequest request)
+        {
+            var user = await _userManager.GetByIdAsync(request.UserId);
+            if (user == null)
+                throw new ArgumentException("Kullanıcı bulunamadı");
+
+            var result = await _userManager.AddToRolesAsync(user, request.Roles);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+            }
+
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+        }
+
+        [Route("removefromroles")]
+        [HttpPost]
+        public async Task<IActionResult> RemoveFromRoles([FromBody] UserRemoveFromRolesRequest request)
+        {
+            var user = await _userManager.GetByIdAsync(request.UserId);
+            if (user == null)
+                throw new ArgumentException("Kullanıcı bulunamadı");
+
+            var result = await _userManager.RemoveFromRolesAsync(user, request.Roles);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+            }
+
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
         }
     }
 }

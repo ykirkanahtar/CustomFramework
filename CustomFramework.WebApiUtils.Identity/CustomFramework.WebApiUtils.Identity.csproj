@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="CS.Common.EmailProvider" Version="1.1.0" />
     <PackageReference Include="CustomFramework.Authorization" Version="1.1.1" />
-    <PackageReference Include="CustomFramework.WebApiUtils" Version="1.1.1" />
+    <PackageReference Include="CustomFramework.WebApiUtils.Identity.Contracts" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="2.2.0" />
@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CustomFramework.WebApiUtils.Identity.Contracts\CustomFramework.WebApiUtils.Identity.Contracts.csproj" />
+    <ProjectReference Include="..\CustomFramework.WebApiUtils\CustomFramework.WebApiUtils.csproj" />
   </ItemGroup>
 
 </Project>

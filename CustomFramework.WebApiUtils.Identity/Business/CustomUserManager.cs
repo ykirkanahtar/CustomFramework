@@ -16,12 +16,17 @@ using Microsoft.Extensions.Options;
 
 namespace CustomFramework.WebApiUtils.Identity.Business
 {
-    public class CustomUserManager<TUser> : ICustomUserManager<TUser> where TUser : CustomUser
+    public class CustomUserManager<TUser, TRole> : ICustomUserManager<TUser>
+        where TUser : CustomUser
+    where TRole : CustomRole
     {
         private readonly UserManager<TUser> _userManager;
-        public CustomUserManager(UserManager<TUser> userManager)
+        private readonly ICustomRoleManager<TRole> _roleManager;
+
+        public CustomUserManager(UserManager<TUser> userManager, ICustomRoleManager<TRole> roleManager)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public async Task<IdentityResult> AddClaimsAsync(TUser user, IEnumerable<Claim> claims)
@@ -45,12 +50,17 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         public async Task<IdentityResult> AddToRoleAsync(TUser user, string role)
         {
             await GetByIdAsync(user.Id);
+            await _roleManager.GetByNameAsync(role);
             return await _userManager.AddToRoleAsync(user, role);
         }
 
         public async Task<IdentityResult> AddToRolesAsync(TUser user, IEnumerable<string> roles)
         {
             await GetByIdAsync(user.Id);
+            foreach (var role in roles)
+            {
+                await _roleManager.GetByNameAsync(role);
+            }
             return await _userManager.AddToRolesAsync(user, roles);
         }
         public async Task<IdentityResult> ChangeEmailAsync(TUser user, string newEmail, string token)
@@ -139,6 +149,23 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _userManager.IsEmailConfirmedAsync(user);
         }
 
+        public async Task<IdentityResult> RemoveFromRoleAsync(TUser user, string role)
+        {
+            await GetByIdAsync(user.Id);
+            await _roleManager.GetByNameAsync(role);
+            return await _userManager.RemoveFromRoleAsync(user, role);
+        }
+
+        public async Task<IdentityResult> RemoveFromRolesAsync(TUser user, IEnumerable<string> roles)
+        {
+            await GetByIdAsync(user.Id);
+            foreach (var role in roles)
+            {
+                await _roleManager.GetByNameAsync(role);
+            }
+            return await _userManager.RemoveFromRolesAsync(user, roles);
+        }
+
         public async Task<IdentityResult> ResetPasswordAsync(TUser user, string token, string newPassword)
         {
             await GetByIdAsync(user.Id);
@@ -153,7 +180,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
 
         public async Task<List<TUser>> GetAllUsersAsync()
         {
-            return await _userManager.Users.AsQueryable().Where(p=>p.Status == Status.Active).ToListAsync();
+            return await _userManager.Users.AsQueryable().Where(p => p.Status == Status.Active).ToListAsync();
         }
     }
 }
