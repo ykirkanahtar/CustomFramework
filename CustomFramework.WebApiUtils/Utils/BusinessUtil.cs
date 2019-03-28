@@ -70,6 +70,12 @@ namespace CustomFramework.WebApiUtils.Utils
                 throw new DuplicateNameException(additionalInfo.RemoveManagerString());
         }
 
+        public static void CheckSubFieldIsExistForDelete<T>(this T result, string additionalInfo)
+        {
+            if (result.GenericTypeIsNullOrEmpty()) return;
+            throw new AccessViolationException(additionalInfo.RemoveManagerString());
+        }
+
         private static bool GenericTypeIsNullOrEmpty<T>(this T value)
         {
             return value.GetGenericTypeCount() <= 0;

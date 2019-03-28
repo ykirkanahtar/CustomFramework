@@ -31,6 +31,9 @@ namespace CustomFramework.WebApiUtils.Utils.Exceptions
         {
             switch (_exception)
             {
+                case AccessViolationException _:
+                    _exceptionStrategy = new AccessViolationError();
+                    break;
                 case DuplicateNameException _:
                     _exceptionStrategy = new DuplicateNameError();
                     break;
