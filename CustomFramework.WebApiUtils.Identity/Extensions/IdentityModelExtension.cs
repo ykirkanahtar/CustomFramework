@@ -30,7 +30,7 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
             services.AddTransient<IClientApplicationRepository, ClientApplicationRepository>();
 
             services.AddTransient<ICustomUserManager<TUser>, CustomUserManager<TUser, TRole>>();
-            services.AddTransient<ICustomRoleManager<TRole>, CustomRoleManager<TRole>>();
+            services.AddTransient<ICustomRoleManager<TRole>, CustomRoleManager<TUser, TRole>>();
             services.AddTransient<IClientApplicationManager, ClientApplicationManager>();
 
             services.AddIdentity<TUser, TRole>(config =>

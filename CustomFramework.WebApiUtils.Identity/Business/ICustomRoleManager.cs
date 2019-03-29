@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CustomFramework.WebApiUtils.Identity.Contracts.Requests;
 using CustomFramework.WebApiUtils.Identity.Models;
@@ -14,5 +15,6 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         Task<IdentityResult> DeleteAsync(int id);
         Task<TRole> GetByIdAsync(int id);
         Task<TRole> GetByNameAsync(string name);
+        Task<IList<TRole>> GetAllAsync();
     }
 }

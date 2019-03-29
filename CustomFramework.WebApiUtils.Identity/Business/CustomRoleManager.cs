@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Data.Enums;
@@ -8,18 +9,22 @@ using CustomFramework.WebApiUtils.Identity.Contracts.Requests;
 using CustomFramework.WebApiUtils.Identity.Models;
 using CustomFramework.WebApiUtils.Utils;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CustomFramework.WebApiUtils.Identity.Business
 {
-    public class CustomRoleManager<TRole> : BaseBusinessManager, ICustomRoleManager<TRole>
+    public class CustomRoleManager<TUser, TRole> : BaseBusinessManager, ICustomRoleManager<TRole>
+        where TUser : CustomUser
         where TRole : CustomRole
     {
         private readonly RoleManager<TRole> _roleManager;
-        public CustomRoleManager(RoleManager<TRole> roleManager, ILogger<CustomRoleManager<TRole>> logger, IMapper mapper)
+        private readonly ICustomUserManager<TUser> _userManager;
+        public CustomRoleManager(RoleManager<TRole> roleManager, ICustomUserManager<TUser> userManager, ILogger<CustomRoleManager<TUser, TRole>> logger, IMapper mapper)
             : base(logger, mapper)
         {
             _roleManager = roleManager;
+            _userManager = userManager;
         }
 
         public async Task<IdentityResult> CreateAsync(TRole role)
@@ -31,6 +36,9 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         public async Task<IdentityResult> DeleteAsync(int id)
         {
             var role = await GetByIdAsync(id);
+
+            (await _userManager.GetUsersInRoleAsync(role.Name)).CheckSubFieldIsExistForDelete("User");
+
             role.Status = Status.Deleted;
             return await _roleManager.UpdateAsync(role);
         }
@@ -62,6 +70,11 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         public async Task<IdentityResult> UpdateAsync(int id, TRole role)
         {
             return await _roleManager.UpdateAsync(role);
+        }
+
+        public async Task<IList<TRole>> GetAllAsync()
+        {
+            return await _roleManager.Roles.AsQueryable().Where(p => p.Status == Status.Active).ToListAsync();
         }
     }
 }

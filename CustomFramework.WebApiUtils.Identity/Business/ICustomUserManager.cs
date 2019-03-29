@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CustomFramework.WebApiUtils.Identity.Business
 {
-    public interface ICustomUserManager<TUser> where TUser : CustomUser
+    public interface ICustomUserManager<TUser>
+        where TUser : CustomUser
     {
         Task<IdentityResult> AddClaimsAsync(TUser user, IEnumerable<Claim> claims);
         Task<IdentityResult> AddLoginAsync(TUser user, UserLoginInfo login);
@@ -23,6 +24,8 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         Task<TUser> FindByIdAsync(string id);
         Task<TUser> GetByEmailAsync(string email);
         Task<TUser> GetByNameAsync(string userName);
+        Task<IList<TUser>> GetUsersInRoleAsync(string roleName);
+        Task<IList<string>> GetRolesAsync(int id);
         Task<string> GenerateEmailConfirmationTokenAsync(TUser user);
         Task<string> GeneratePasswordResetTokenAsync(TUser user);
         Task<TUser> GetByIdAsync(int id);
@@ -31,6 +34,6 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         Task<IdentityResult> RemoveFromRolesAsync(TUser user, IEnumerable<string> roles);
         Task<IdentityResult> ResetPasswordAsync(TUser user, string token, string newPassword);
         Task<IdentityResult> UpdateAsync(TUser user);
-        Task<List<TUser>> GetAllUsersAsync();
+        Task<IList<TUser>> GetAllAsync();
     }
 }

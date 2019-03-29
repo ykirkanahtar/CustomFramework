@@ -28,9 +28,9 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     public class BaseRoleController<TRole, TRoleRequest, TRoleResponse> : BaseController
-        where TRole : CustomRole
-        where TRoleRequest : CustomRoleRequest
-        where TRoleResponse : CustomRoleResponse
+    where TRole : CustomRole
+    where TRoleRequest : CustomRoleRequest
+    where TRoleResponse : CustomRoleResponse
     {
         private readonly ICustomRoleManager<TRole> _roleManager;
         public BaseRoleController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, ICustomRoleManager<TRole> roleManager) : base(localizationService, logger, mapper)
@@ -106,5 +106,16 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             var role = await _roleManager.GetByNameAsync(name);
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
         }
+
+        [Route("getall")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var roles = await _roleManager.GetAllAsync();
+            if (roles == null)
+                throw new ArgumentException("Rolbulunamadı");
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok<TRoleResponse>(Mapper.Map<IList<TRole>, IList<TRoleResponse>>(roles), roles.Count));
+        }
+
     }
 }

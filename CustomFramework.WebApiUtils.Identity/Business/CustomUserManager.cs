@@ -9,6 +9,7 @@ using CustomFramework.Data.Utils;
 using CustomFramework.WebApiUtils.Identity.Data;
 using CustomFramework.WebApiUtils.Identity.Data.Repositories;
 using CustomFramework.WebApiUtils.Identity.Models;
+using CustomFramework.WebApiUtils.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -102,6 +103,9 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         public async Task<IdentityResult> DeleteAsync(int id)
         {
             var user = await GetByIdAsync(id);
+
+            (await GetRolesAsync(id)).CheckSubFieldIsExistForDelete("Role");
+
             user.Status = Status.Deleted;
             return await _userManager.UpdateAsync(user);
         }
@@ -131,6 +135,12 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _userManager.GeneratePasswordResetTokenAsync(user);
         }
 
+        public async Task<IList<string>> GetRolesAsync(int id)
+        {
+            var user = await GetByIdAsync(id);
+            return await _userManager.GetRolesAsync(user);
+        }
+
         public async Task<TUser> FindByIdAsync(string id)
         {
             return await _userManager.FindByIdAsync(id);
@@ -141,6 +151,12 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null || user.Status != Status.Active) throw new KeyNotFoundException("User");
             return user;
+        }
+
+        public async Task<IList<TUser>> GetUsersInRoleAsync(string roleName)
+        {
+            var users = await _userManager.GetUsersInRoleAsync(roleName);
+            return users.Where(p => p.Status == Status.Active).ToList();
         }
 
         public async Task<bool> IsEmailConfirmedAsync(TUser user)
@@ -178,9 +194,10 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _userManager.UpdateAsync(user);
         }
 
-        public async Task<List<TUser>> GetAllUsersAsync()
+        public async Task<IList<TUser>> GetAllAsync()
         {
             return await _userManager.Users.AsQueryable().Where(p => p.Status == Status.Active).ToListAsync();
         }
+
     }
 }

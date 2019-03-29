@@ -91,10 +91,10 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var users = await _userManager.GetAllUsersAsync();
+            var users = await _userManager.GetAllAsync();
             if (users == null)
                 throw new ArgumentException("Kullanıcı bulunamadı");
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<List<TUser>, List<TUserResponse>>(users)));
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<IList<TUser>, IList<TUserResponse>>(users), users.Count));
         }
 
         [Route("addtoroles")]
