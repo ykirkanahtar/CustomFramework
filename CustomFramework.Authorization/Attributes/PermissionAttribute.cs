@@ -30,7 +30,7 @@ namespace CustomFramework.Authorization.Attributes
             Crud = crud;
         }
 
-        public PermissionAttribute(string claimType, string claimValue)
+        public PermissionAttribute(string claimType, string claimValue) : base("Permission")
         {
             ClaimType = claimType;
             ClaimValue = claimValue;
