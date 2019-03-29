@@ -14,6 +14,10 @@ namespace CustomFramework.Authorization.Attributes
 
         public Crud? Crud { get; set; }
 
+        public string ClaimType { get; set; }
+
+        public string ClaimValue { get; set; }
+
         public PermissionAttribute(string customClaim) : base("Permission")
         {
             CustomClaim = customClaim;
@@ -24,6 +28,12 @@ namespace CustomFramework.Authorization.Attributes
         {
             Entity = entity;
             Crud = crud;
+        }
+
+        public PermissionAttribute(string claimType, string claimValue)
+        {
+            ClaimType = claimType;
+            ClaimValue = claimValue;
         }
     }
 }
