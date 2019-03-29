@@ -5,6 +5,6 @@ namespace CustomFramework.WebApiUtils.Identity.Contracts.Responses
     public class ClaimResponse
     {
         public string Type { get; set; }
-        public bool Value { get; set; }
+        public string Value { get; set; }
     }
 }
