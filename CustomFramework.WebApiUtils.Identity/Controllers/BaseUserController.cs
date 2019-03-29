@@ -97,6 +97,17 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<IList<TUser>, IList<TUserResponse>>(users), users.Count));
         }
 
+        [Route("getallwithroles")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllWithRolesAsync()
+        {
+            var users = await _userManager.GetAllWithRolesAsync();
+            if (users == null)
+                throw new ArgumentException("Kullanıcı bulunamadı");
+
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<IList<TUser>, IList<TUserResponse>>(users), users.Count));
+        }
+
         [Route("addtoroles")]
         [HttpPost]
         public async Task<IActionResult> AddToRoles([FromBody] UserAddToRolesRequest request)

@@ -199,5 +199,16 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _userManager.Users.AsQueryable().Where(p => p.Status == Status.Active).ToListAsync();
         }
 
+        public async Task<IList<CustomUserWithRoles>> GetAllWithRolesAsync()
+        {
+            var result = new List<CustomUserWithRoles>();
+            var users = await GetAllAsync();
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                result.Add(new CustomUserWithRoles(user, roles));
+            }
+            return result;
+        }
     }
 }

@@ -16,12 +16,11 @@ namespace CustomFramework.WebApiUtils.Identity.Business
 {
     public class CustomRoleManager<TUser, TRole> : BaseBusinessManager, ICustomRoleManager<TRole>
         where TUser : CustomUser
-        where TRole : CustomRole
+    where TRole : CustomRole
     {
         private readonly RoleManager<TRole> _roleManager;
-        private readonly ICustomUserManager<TUser> _userManager;
-        public CustomRoleManager(RoleManager<TRole> roleManager, ICustomUserManager<TUser> userManager, ILogger<CustomRoleManager<TUser, TRole>> logger, IMapper mapper)
-            : base(logger, mapper)
+        private readonly UserManager<TUser> _userManager;
+        public CustomRoleManager(RoleManager<TRole> roleManager, UserManager<TUser> userManager, ILogger<CustomRoleManager<TUser, TRole>> logger, IMapper mapper) : base(logger, mapper)
         {
             _roleManager = roleManager;
             _userManager = userManager;
@@ -37,7 +36,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         {
             var role = await GetByIdAsync(id);
 
-            (await _userManager.GetUsersInRoleAsync(role.Name)).CheckSubFieldIsExistForDelete("User");
+            (await _userManager.GetUsersInRoleAsync(role.Name)).Where(p => p.Status == Status.Active).CheckSubFieldIsExistForDelete("User");
 
             role.Status = Status.Deleted;
             return await _roleManager.UpdateAsync(role);
@@ -56,14 +55,14 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         public async Task<TRole> GetByIdAsync(int id)
         {
             var role = await _roleManager.FindByIdAsync(id.ToString());
-            if(role == null || role.Status != Status.Active) throw new KeyNotFoundException("Role");
+            if (role == null || role.Status != Status.Active) throw new KeyNotFoundException("Role");
             return role;
         }
 
         public async Task<TRole> GetByNameAsync(string name)
         {
             var role = await _roleManager.FindByNameAsync(name);
-            if(role == null || role.Status != Status.Active) throw new KeyNotFoundException("Role");
+            if (role == null || role.Status != Status.Active) throw new KeyNotFoundException("Role");
             return role;
         }
 

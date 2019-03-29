@@ -35,5 +35,6 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         Task<IdentityResult> ResetPasswordAsync(TUser user, string token, string newPassword);
         Task<IdentityResult> UpdateAsync(TUser user);
         Task<IList<TUser>> GetAllAsync();
+        Task<IList<CustomUserWithRoles>> GetAllWithRolesAsync();
     }
 }
