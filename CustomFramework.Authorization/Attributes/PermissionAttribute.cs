@@ -10,17 +10,15 @@ namespace CustomFramework.Authorization.Attributes
     {
         public string Entity { get; set; }
 
-        public string CustomClaim { get; set; }
-
         public Crud? Crud { get; set; }
 
         public string ClaimType { get; set; }
 
         public string ClaimValue { get; set; }
 
-        public PermissionAttribute(string customClaim) : base("Permission")
+        public PermissionAttribute(string claimType) : base("Permission")
         {
-            CustomClaim = customClaim;
+            ClaimType = claimType;
         }
 
         [JsonConstructor]

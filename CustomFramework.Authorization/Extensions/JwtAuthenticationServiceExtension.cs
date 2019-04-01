@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,23 +13,22 @@ namespace CustomFramework.Authorization.Extensions
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, string validAudience, string validIssuer, string issuerSigningKey)
         {
             services.AddAuthentication(options =>
-                    {
-                        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    }
-                )
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateAudience = true,
-                        ValidAudience = validAudience,
-                        ValidateIssuer = true,
-                        ValidIssuer = validIssuer,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(issuerSigningKey))
+                    ValidateAudience = true,
+                    ValidAudience = validAudience,
+                    ValidateIssuer = true,
+                    ValidIssuer = validIssuer,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(issuerSigningKey))
                     };
 
                     options.SaveToken = true;
@@ -36,14 +36,13 @@ namespace CustomFramework.Authorization.Extensions
                     options.Events = new JwtBearerEvents
                     {
                         OnTokenValidated = ctx => Task.CompletedTask,
-                        OnAuthenticationFailed = ctx =>
-                        {
-                            Console.WriteLine(@"Exception:{0}", ctx.Exception.Message);
-                            return Task.CompletedTask;
-                        }
+                            OnChallenge = context =>
+                            {
+                                context.Response.StatusCode = 401;
+                                return Task.CompletedTask;
+                            }
                     };
                 });
-
 
             return services;
         }
