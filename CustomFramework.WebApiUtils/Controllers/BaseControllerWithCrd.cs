@@ -21,25 +21,19 @@ namespace CustomFramework.WebApiUtils.Controllers
             Manager = manager;
         }
 
-        [Route("create")]
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TCreateRequest request)
+        public async virtual Task<IActionResult> Create([FromBody] TCreateRequest request)
         {
             var result = await Manager.CreateAsync(request);
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TEntity, TResponse>(result)));
         }
 
-        [Route("delete/{id:int}")]
-        [HttpDelete]
-        public async Task<IActionResult> Delete(TKey id)
+        public async virtual Task<IActionResult> Delete(TKey id)
         {
             await Manager.DeleteAsync(id);
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
         }
 
-        [Route("get/id/{id:int}")]
-        [HttpGet]
-        public async Task<IActionResult> GetById(TKey id)
+        public async virtual Task<IActionResult> GetById(TKey id)
         {
             var result = await Manager.GetByIdAsync(id);
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TEntity, TResponse>(result)));

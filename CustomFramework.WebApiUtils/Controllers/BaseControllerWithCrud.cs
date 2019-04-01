@@ -20,9 +20,7 @@ namespace CustomFramework.WebApiUtils.Controllers
 
         }
 
-        [Route("{id:int}/update")]
-        [HttpPut]
-        public async Task<IActionResult> Update(TKey id, [FromBody] TUpdateRequest request)
+        public async virtual Task<IActionResult> Update(TKey id, [FromBody] TUpdateRequest request)
         {
             var result = await Manager.UpdateAsync(id, request);
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TEntity, TResponse>(result)));
