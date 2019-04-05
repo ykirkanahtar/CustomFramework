@@ -26,7 +26,7 @@ namespace CustomFramework.WebApiUtils.Identity.Data
             builder.Entity<IdentityUserLogin<int>>().ToTable("user_logins");
             builder.Entity<IdentityUserRole<int>>().ToTable("user_roles");
             builder.Entity<IdentityUserToken<int>>().ToTable("user_tokens");
-
+            
             builder.ApplyConfiguration(new ClientApplicationModelConfiguration<ClientApplication>());
         }
 

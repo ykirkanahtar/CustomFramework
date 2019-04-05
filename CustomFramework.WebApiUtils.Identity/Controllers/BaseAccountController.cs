@@ -80,7 +80,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                     throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
                 }
 
-                var addToRoleResult = await CustomUserManager.AddToRolesAsync(user, request.Roles);
+                var addToRoleResult = await CustomUserManager.AddToRolesAsync(user.Id, request.Roles);
                 if (!result.Succeeded)
                 {
                     foreach (var error in result.Errors)
@@ -151,7 +151,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 throw new ArgumentException($"Eski parola yeni parola ile aynı olamaz.");
             }
 
-            var result = await CustomUserManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+            var result = await CustomUserManager.ChangePasswordAsync(user.Id, request.OldPassword, request.NewPassword);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)

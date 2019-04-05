@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -70,9 +71,9 @@ namespace CustomFramework.WebApiUtils.Utils
                 throw new DuplicateNameException(additionalInfo.RemoveManagerString());
         }
 
-        public static void CheckSubFieldIsExistForDelete<T>(this T result, string additionalInfo)
+        public static void CheckSubFieldIsExistForDelete(this IEnumerable result, string additionalInfo)
         {
-            if (result.GenericTypeIsNullOrEmpty()) return;
+            if (result.GetEnumerableCount() == 0) return;
             throw new AccessViolationException(additionalInfo.RemoveManagerString());
         }
 
@@ -81,8 +82,14 @@ namespace CustomFramework.WebApiUtils.Utils
             return value.GetGenericTypeCount() <= 0;
         }
 
+        private static int GetEnumerableCount(this IEnumerable Enumerable)
+        {
+            return (from object Item in Enumerable select Item).Count();
+        }
+
         private static int GetGenericTypeCount<T>(this T value)
         {
+            //Eski kod. Sorun çıkmazsa silinebilir. 03.04.2019
             if (value == null) return 0;
             var pi = value.GetType().GetProperty("Count");
             if (pi != null)

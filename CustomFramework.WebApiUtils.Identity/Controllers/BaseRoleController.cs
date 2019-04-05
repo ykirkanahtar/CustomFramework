@@ -38,84 +38,182 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             _roleManager = roleManager;
         }
 
-        [Route("create")]
-        [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] TRoleRequest request)
+        public virtual Task<IActionResult> CreateAsync([FromBody] TRoleRequest request)
         {
-            if (!ModelState.IsValid)
-                throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
-
-            var role = Mapper.Map<TRole>(request);
-
-            var result = await _roleManager.CreateAsync(role);
-            if (!result.Succeeded)
+            return CommonOperationAsync<IActionResult>(async() =>
             {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-                throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
-            }
+                if (!ModelState.IsValid)
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
 
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
+                var role = Mapper.Map<TRole>(request);
+
+                var result = await _roleManager.CreateAsync(role);
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+                }
+
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
+            });
         }
 
-        [Route("{id:int}/update")]
-        [HttpPut]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] TRoleRequest request)
+        public virtual Task<IActionResult> UpdateAsync(int id, [FromBody] TRoleRequest request)
         {
-            if (!ModelState.IsValid)
-                throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
-
-            var role = await _roleManager.GetByIdAsync(id);
-            Mapper.Map(request, role);
-
-            var result = await _roleManager.UpdateAsync(id, role);
-            if (!result.Succeeded)
+            return CommonOperationAsync<IActionResult>(async() =>
             {
-                foreach (var error in result.Errors)
+                if (!ModelState.IsValid)
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+
+                var role = await _roleManager.GetByIdAsync(id);
+                Mapper.Map(request, role);
+
+                var result = await _roleManager.UpdateAsync(id, role);
+                if (!result.Succeeded)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
                 }
-                throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
-            }
 
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
+            });
         }
 
-        [Route("delete/{id:int}")]
-        [HttpDelete]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public virtual Task<IActionResult> DeleteAsync(int id)
         {
-            await _roleManager.DeleteAsync(id);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                await _roleManager.DeleteAsync(id);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+            });
         }
 
-        [Route("get/{id}")]
-        [HttpGet]
-        public async Task<IActionResult> GetByIdAsync(int id)
+        public virtual Task<IActionResult> GetByIdAsync(int id)
         {
-            var role = await _roleManager.GetByIdAsync(id);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                var role = await _roleManager.GetByIdAsync(id);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
+            });
         }
 
-        [Route("get/name/{name}")]
-        [HttpGet]
-        public async Task<IActionResult> GetByNameAsync(string name)
+        public virtual Task<IActionResult> GetByNameAsync(string name)
         {
-            var role = await _roleManager.GetByNameAsync(name);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                var role = await _roleManager.GetByNameAsync(name);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
+            });
         }
 
-        [Route("getall")]
-        [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public virtual Task<IActionResult> GetAllAsync()
         {
-            var roles = await _roleManager.GetAllAsync();
-            if (roles == null)
-                throw new ArgumentException("Rolbulunamadı");
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok<TRoleResponse>(Mapper.Map<IList<TRole>, IList<TRoleResponse>>(roles), roles.Count));
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                var roles = await _roleManager.GetAllAsync();
+                if (roles == null || roles.Count == 0)
+                    throw new ArgumentException("Rolbulunamadı");
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok<TRoleResponse>(Mapper.Map<IList<TRole>, IList<TRoleResponse>>(roles), roles.Count));
+            });
         }
 
+        [NonAction]
+        public Task<IActionResult> BaseAddClaimsAsync(int id, IList<ClaimRequest> claimsRequest, IList<ClaimRequest> existingClaimsRequest)
+        {
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                var claims = Mapper.Map<IList<Claim>>(claimsRequest);
+                var existingClaims = Mapper.Map<IList<Claim>>(existingClaimsRequest);
+
+                var addedClaims = await _roleManager.AddClaimsAsync(id, claims, existingClaims);
+                var claimsResponse = new List<ClaimResponse>();
+                foreach (var claim in addedClaims)
+                {
+                    claimsResponse.Add(new ClaimResponse
+                    {
+                        Type = claim.Type,
+                            Value = claim.Value
+                    });
+                }
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(claimsResponse));
+            });
+        }
+
+        [NonAction]
+        public Task<IActionResult> BaseAddClaimAsync(int id, ClaimRequest claimRequest, IList<ClaimRequest> existingClaimsRequest)
+        {
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                var claim = Mapper.Map<Claim>(claimRequest);
+                var existingClaims = Mapper.Map<IList<Claim>>(existingClaimsRequest);
+
+                var result = await _roleManager.AddClaimAsync(id, claim, existingClaims);
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+                }
+
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+            });
+        }
+
+        public virtual Task<IActionResult> GetClaimsAsync(string roleName)
+        {
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                var claims = await _roleManager.GetClaimsAsync(roleName);
+                if (claims == null || claims.Count == 0)
+                    throw new KeyNotFoundException("Yetki bulunamadı");
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<IList<Claim>, IList<ClaimResponse>>(claims), claims.Count));
+            });
+        }
+
+        public virtual Task<IActionResult> RemoveClaimsAsync(int id, [FromBody] List<ClaimRequest> claimsRequest)
+        {
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                var claims = Mapper.Map<IList<Claim>>(claimsRequest);
+
+                var removedClaims = await _roleManager.RemoveClaimsAsync(id, claims);
+                var claimsResponse = new List<ClaimResponse>();
+                foreach (var claim in removedClaims)
+                {
+                    claimsResponse.Add(new ClaimResponse
+                    {
+                        Type = claim.Type,
+                            Value = claim.Value
+                    });
+                }
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(claimsResponse));
+            });
+        }
+
+        public virtual Task<IActionResult> RemoveClaimAsync(int id, [FromBody] ClaimRequest claimRequest)
+        {
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                var claim = Mapper.Map<Claim>(claimRequest);
+                var result = await _roleManager.RemoveClaimAsync(id, claim);
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+                }
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+            });
+        }
     }
 }

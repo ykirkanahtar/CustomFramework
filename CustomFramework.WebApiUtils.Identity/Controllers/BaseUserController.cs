@@ -41,102 +41,146 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             _emailSender = emailSender;
         }
 
-        [Route("{id:int}/update")]
-        [HttpPut]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] TUserUpdateRequest request)
+        public virtual Task<IActionResult> UpdateAsync(int id, [FromBody] TUserUpdateRequest request)
         {
-            if (!ModelState.IsValid)
-                throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
-
-            var user = await _userManager.GetByIdAsync(id);
-            if (user == null)
-                throw new ArgumentException("Kullanıcı bulunamadı");
-
-            user.BirthDate = request.BirthDate;
-            user.FirstName = request.FirstName;
-            user.Surname = request.Surname;
-
-            var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
+            return CommonOperationAsync<IActionResult>(async() =>
             {
-                foreach (var error in result.Errors)
+                if (!ModelState.IsValid)
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+
+                var user = await _userManager.GetByIdAsync(id);
+                if (user == null)
+                    throw new ArgumentException("Kullanıcı bulunamadı");
+
+                user.BirthDate = request.BirthDate;
+                user.FirstName = request.FirstName;
+                user.Surname = request.Surname;
+
+                var result = await _userManager.UpdateAsync(user);
+                if (!result.Succeeded)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
                 }
-                throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
-            }
 
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TUser, TUserResponse>(user)));
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TUser, TUserResponse>(user)));
+            });
         }
 
-        [Route("delete/{id:int}")]
-        [HttpDelete]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public virtual Task<IActionResult> DeleteAsync(int id)
         {
-            await _userManager.DeleteAsync(id);
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
-        }
-
-        [Route("get/{id}")]
-        [HttpGet]
-        public async Task<IActionResult> GetByIdAsync(int id)
-        {
-            var user = await _userManager.GetByIdAsync(id);
-            if (user == null)
-                throw new ArgumentException("Kullanıcı bulunamadı");
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TUser, TUserResponse>(user)));
-        }
-
-        [Route("getall")]
-        [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
-        {
-            var users = await _userManager.GetAllAsync();
-            if (users == null)
-                throw new ArgumentException("Kullanıcı bulunamadı");
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<IList<TUser>, IList<TUserResponse>>(users), users.Count));
-        }
-
-        [Route("addtoroles")]
-        [HttpPost]
-        public async Task<IActionResult> AddToRoles([FromBody] UserAddToRolesRequest request)
-        {
-            var user = await _userManager.GetByIdAsync(request.UserId);
-            if (user == null)
-                throw new ArgumentException("Kullanıcı bulunamadı");
-
-            var result = await _userManager.AddToRolesAsync(user, request.Roles);
-            if (!result.Succeeded)
+            return CommonOperationAsync<IActionResult>(async() =>
             {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-                throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
-            }
-
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+                await _userManager.DeleteAsync(id);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+            });
         }
 
-        [Route("removefromroles")]
-        [HttpPost]
-        public async Task<IActionResult> RemoveFromRoles([FromBody] UserRemoveFromRolesRequest request)
+        public virtual Task<IActionResult> GetByIdAsync(int id)
         {
-            var user = await _userManager.GetByIdAsync(request.UserId);
-            if (user == null)
-                throw new ArgumentException("Kullanıcı bulunamadı");
-
-            var result = await _userManager.RemoveFromRolesAsync(user, request.Roles);
-            if (!result.Succeeded)
+            return CommonOperationAsync<IActionResult>(async() =>
             {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-                throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
-            }
+                var user = await _userManager.GetByIdAsync(id);
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TUser, TUserResponse>(user)));
+            });
+        }
 
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+        public virtual Task<IActionResult> GetAllAsync()
+        {
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                var users = await _userManager.GetAllAsync();
+                if (users == null || users.Count == 0)
+                    throw new ArgumentException("Kullanıcı bulunamadı");
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<IList<TUser>, IList<TUserResponse>>(users), users.Count));
+            });
+        }
+
+        public virtual Task<IActionResult> AddToRolesAsync([FromBody] UserAddToRolesRequest request)
+        {
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                var result = await _userManager.AddToRolesAsync(request.UserId, request.Roles);
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+                }
+
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+            });
+        }
+
+        public virtual Task<IActionResult> RemoveFromRolesAsync([FromBody] UserRemoveFromRolesRequest request)
+        {
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                var result = await _userManager.RemoveFromRolesAsync(request.UserId, request.Roles);
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+                }
+
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+            });
+        }
+
+        public virtual Task<IActionResult> AddClaimAsync(int id, [FromBody] ClaimRequest claimRequest)
+        {
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                var claim = Mapper.Map<Claim>(claimRequest);
+                var result = await _userManager.AddClaimAsync(id, claim);
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+                }
+
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+            });
+        }
+
+        public virtual Task<IActionResult> GetClaimsAsync(int id)
+        {
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                var claims = await _userManager.GetClaimsAsync(id);
+                if (claims == null || claims.Count == 0)
+                    throw new KeyNotFoundException("Yetki bulunamadı");
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<IList<Claim>, IList<ClaimResponse>>(claims), claims.Count));
+            });
+        }
+
+        public virtual Task<IActionResult> RemoveClaimAsync(int id, [FromBody] ClaimRequest claimRequest)
+        {
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                var claim = Mapper.Map<Claim>(claimRequest);
+                var result = await _userManager.RemoveClaimAsync(id, claim);
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+                }
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+            });
         }
     }
 }

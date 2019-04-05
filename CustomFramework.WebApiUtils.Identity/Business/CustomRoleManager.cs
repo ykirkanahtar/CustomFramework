@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Data.Enums;
@@ -26,6 +29,50 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             _userManager = userManager;
         }
 
+        public async Task<IdentityResult> AddClaimAsync(int id, Claim claim, IList<Claim> existingClaims)
+        {
+            var role = await GetByIdAsync(id);
+            var claims = await GetClaimsAsync(role.Name);
+
+            var claimIsExist = (from p in existingClaims where p.Type == claim.Type &&
+                p.Value == claim.Value select p).Count() > 0;
+
+            if(!claimIsExist) throw new KeyNotFoundException(nameof(Claim));
+
+            var claimHasAlreadyAssigned = (from p in claims where p.Type == claim.Type &&
+                p.Value == claim.Value select p).Count() > 0;
+
+            if (claimHasAlreadyAssigned) throw new DuplicateNameException(nameof(Claim));
+
+            return await _roleManager.AddClaimAsync(role, claim);
+        }
+
+        public async Task<IList<Claim>> AddClaimsAsync(int id, IList<Claim> claims, IList<Claim> existingClaims)
+        {
+            var addedClaims = new List<Claim>();
+            var role = await GetByIdAsync(id);
+            var claimsInRole = await GetClaimsAsync(role.Name);
+
+            foreach (var claim in claims)
+            {
+                var claimIsExist = (from p in existingClaims where p.Type == claim.Type &&
+                    p.Value == claim.Value select p).Count() > 0;
+
+                if (claimIsExist)
+                {
+                    var claimHasAlreadyAssigned = (from p in claimsInRole where p.Type == claim.Type &&
+                        p.Value == claim.Value select p).Count() > 0;
+
+                    if (!claimHasAlreadyAssigned)
+                    {
+                        await _roleManager.AddClaimAsync(role, claim);
+                        addedClaims.Add(claim);
+                    }
+                }
+            }
+            return addedClaims;
+        }
+
         public async Task<IdentityResult> CreateAsync(TRole role)
         {
             role.Status = Status.Active;
@@ -37,6 +84,17 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             var role = await GetByIdAsync(id);
 
             (await _userManager.GetUsersInRoleAsync(role.Name)).Where(p => p.Status == Status.Active).CheckSubFieldIsExistForDelete("User");
+
+            var claims = await GetClaimsAsync(role.Name);
+            foreach (var claim in claims)
+            {
+                await _roleManager.RemoveClaimAsync(role, claim);
+            }
+
+            var uniqueValue = DateTime.UtcNow.ToString();
+
+            role.Name = $"deleted_{uniqueValue}_{role.Name}"; //Identity'de silinen bir veriye ait unique alan tekrar kaydedilmek istendiğinde duplicate key hatası veriyordu. Buna önlem olarak silinen kaydın unique key alanına unique değerler getirildi
+            role.NormalizedName = role.Name.ToUpper();
 
             role.Status = Status.Deleted;
             return await _roleManager.UpdateAsync(role);
@@ -74,6 +132,38 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         public async Task<IList<TRole>> GetAllAsync()
         {
             return await _roleManager.Roles.AsQueryable().Where(p => p.Status == Status.Active).ToListAsync();
+        }
+
+        public async Task<IList<Claim>> GetClaimsAsync(string name)
+        {
+            var role = await GetByNameAsync(name);
+            return await _roleManager.GetClaimsAsync(role);
+        }
+
+        public async Task<IdentityResult> RemoveClaimAsync(int id, Claim claim)
+        {
+            var role = await GetByIdAsync(id);
+            return await _roleManager.RemoveClaimAsync(role, claim);
+        }
+
+        public async Task<IList<Claim>> RemoveClaimsAsync(int id, IList<Claim> claims)
+        {
+            var removedClaims = new List<Claim>();
+            var role = await GetByIdAsync(id);
+            var claimsInRole = await GetClaimsAsync(role.Name);
+
+            foreach (var claim in claims)
+            {
+                var claimIsExist = (from p in claimsInRole where p.Type == claim.Type &&
+                    p.Value == claim.Value select p).Count() > 0;
+
+                if (claimIsExist)
+                {
+                    await _roleManager.RemoveClaimAsync(role, claim);
+                    removedClaims.Add(claim);
+                }
+            }
+            return removedClaims;
         }
     }
 }

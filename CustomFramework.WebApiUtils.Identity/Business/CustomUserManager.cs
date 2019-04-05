@@ -30,61 +30,49 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             _roleManager = roleManager;
         }
 
-        public async Task<IdentityResult> AddClaimsAsync(TUser user, IEnumerable<Claim> claims)
+        public async Task<IdentityResult> AddClaimAsync(int id, Claim claim)
         {
-            await GetByIdAsync(user.Id);
+            var user = await GetByIdAsync(id);
+            return await _userManager.AddClaimAsync(user, claim);
+        }
+
+        public async Task<IdentityResult> AddClaimsAsync(int id, IEnumerable<Claim> claims)
+        {
+            var user = await GetByIdAsync(id);
             return await _userManager.AddClaimsAsync(user, claims);
         }
 
-        public async Task<IdentityResult> AddLoginAsync(TUser user, UserLoginInfo login)
+        public async Task<IdentityResult> AddToRoleAsync(int id, string role)
         {
-            await GetByIdAsync(user.Id);
-            return await _userManager.AddLoginAsync(user, login);
-        }
-
-        public async Task<IdentityResult> AddPasswordAsync(TUser user, string password)
-        {
-            await GetByIdAsync(user.Id);
-            return await _userManager.AddPasswordAsync(user, password);
-        }
-
-        public async Task<IdentityResult> AddToRoleAsync(TUser user, string role)
-        {
-            await GetByIdAsync(user.Id);
+            var user = await GetByIdAsync(id);
             await _roleManager.GetByNameAsync(role);
             return await _userManager.AddToRoleAsync(user, role);
         }
 
-        public async Task<IdentityResult> AddToRolesAsync(TUser user, IEnumerable<string> roles)
+        public async Task<IdentityResult> AddToRolesAsync(int id, IEnumerable<string> roles)
         {
-            await GetByIdAsync(user.Id);
+            var user = await GetByIdAsync(id);
             foreach (var role in roles)
             {
                 await _roleManager.GetByNameAsync(role);
             }
             return await _userManager.AddToRolesAsync(user, roles);
         }
-        public async Task<IdentityResult> ChangeEmailAsync(TUser user, string newEmail, string token)
+        public async Task<IdentityResult> ChangeEmailAsync(int id, string newEmail, string token)
         {
-            await GetByIdAsync(user.Id);
+            var user = await GetByIdAsync(id);
             return await _userManager.ChangeEmailAsync(user, newEmail, token);
         }
 
-        public async Task<IdentityResult> ChangePasswordAsync(TUser user, string currentPassword, string newPassword)
+        public async Task<IdentityResult> ChangePasswordAsync(int id, string currentPassword, string newPassword)
         {
-            await GetByIdAsync(user.Id);
+            var user = await GetByIdAsync(id);
             return await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
         }
 
-        public async Task<IdentityResult> ChangePhoneNumberAsync(TUser user, string phoneNumber, string token)
+        public async Task<bool> CheckPasswordAsync(int id, string password)
         {
-            await GetByIdAsync(user.Id);
-            return await _userManager.ChangePhoneNumberAsync(user, phoneNumber, token);
-        }
-
-        public async Task<bool> CheckPasswordAsync(TUser user, string password)
-        {
-            await GetByIdAsync(user.Id);
+            var user = await GetByIdAsync(id);
             return await _userManager.CheckPasswordAsync(user, password);
         }
 
@@ -104,7 +92,20 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         {
             var user = await GetByIdAsync(id);
 
+            var roles = await _userManager.GetRolesAsync(user);
+
+            await _userManager.RemoveFromRolesAsync(user, roles);
+
             (await GetRolesAsync(id)).CheckSubFieldIsExistForDelete("Role");
+
+            var uniqueValue = DateTime.UtcNow.ToString();
+            var emailValue = $"deleted_{uniqueValue}_{user.Email}";
+            var userNameValue = $"{DateTime.UtcNow.ToString("yyMMdd")}_{Guid.NewGuid().ToString().Substring(0, 6)}";
+
+            user.Email = emailValue; //Identity'de silinen bir veriye ait unique alan tekrar kaydedilmek istendiğinde duplicate key hatası veriyordu. Buna önlem olarak silinen kaydın unique key alanına unique değerler getirildi
+            user.NormalizedEmail = emailValue.ToUpper();
+
+            user.UserName = userNameValue; //user.Email ile aynı değeri alınca hata vermiyor fakat entity'i de güncellemiyordu. Bu yüzden kısa bir değer seçildi
 
             user.Status = Status.Deleted;
             return await _userManager.UpdateAsync(user);
@@ -146,11 +147,22 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _userManager.FindByIdAsync(id);
         }
 
+        public async Task<IList<TUser>> GetAllAsync()
+        {
+            return await _userManager.Users.AsQueryable().Where(p => p.Status == Status.Active).OrderBy(p => p.FirstName).ToListAsync();
+        }
+
         public async Task<TUser> GetByIdAsync(int id)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null || user.Status != Status.Active) throw new KeyNotFoundException("User");
             return user;
+        }
+
+        public async Task<IList<Claim>> GetClaimsAsync(int id)
+        {
+            var user = await GetByIdAsync(id);
+            return await _userManager.GetClaimsAsync(user);
         }
 
         public async Task<IList<TUser>> GetUsersInRoleAsync(string roleName)
@@ -165,16 +177,22 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _userManager.IsEmailConfirmedAsync(user);
         }
 
-        public async Task<IdentityResult> RemoveFromRoleAsync(TUser user, string role)
+        public async Task<IdentityResult> RemoveClaimAsync(int id, Claim claim)
         {
-            await GetByIdAsync(user.Id);
+            var user = await GetByIdAsync(id);
+            return await _userManager.RemoveClaimAsync(user, claim);
+        }
+
+        public async Task<IdentityResult> RemoveFromRoleAsync(int id, string role)
+        {
+            var user = await GetByIdAsync(id);
             await _roleManager.GetByNameAsync(role);
             return await _userManager.RemoveFromRoleAsync(user, role);
         }
 
-        public async Task<IdentityResult> RemoveFromRolesAsync(TUser user, IEnumerable<string> roles)
+        public async Task<IdentityResult> RemoveFromRolesAsync(int id, IEnumerable<string> roles)
         {
-            await GetByIdAsync(user.Id);
+            var user = await GetByIdAsync(id);
             foreach (var role in roles)
             {
                 await _roleManager.GetByNameAsync(role);
@@ -192,11 +210,6 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         {
             await GetByIdAsync(user.Id);
             return await _userManager.UpdateAsync(user);
-        }
-
-        public async Task<IList<TUser>> GetAllAsync()
-        {
-            return await _userManager.Users.AsQueryable().Where(p => p.Status == Status.Active).ToListAsync();
         }
     }
 }
