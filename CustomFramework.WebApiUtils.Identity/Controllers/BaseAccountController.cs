@@ -351,6 +351,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                     ExpireInMinutes = expireInMinutes,
                     RequestUtcDateTime = DateTime.UtcNow,
                     ExpireUtcDateTime = expireDateTime,
+                    UserId = userId
             };
         }
 
