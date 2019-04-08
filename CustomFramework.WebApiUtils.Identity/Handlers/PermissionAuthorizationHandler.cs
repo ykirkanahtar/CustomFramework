@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using CustomFramework.Authorization.Attributes;
 using CustomFramework.Authorization.Handlers;

@@ -1,11 +1,16 @@
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using System.Threading.Tasks;
 using CS.Common.EmailProvider;
+using CustomFramework.Authorization.Attributes;
 using CustomFramework.Authorization.Utils;
 using CustomFramework.WebApiUtils.Identity.Business;
 using CustomFramework.WebApiUtils.Identity.Data;
 using CustomFramework.WebApiUtils.Identity.Data.Repositories;
 using CustomFramework.WebApiUtils.Identity.Handlers;
 using CustomFramework.WebApiUtils.Identity.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +18,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CustomFramework.WebApiUtils.Identity.Extensions
 {
@@ -21,7 +27,7 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
     where TRole : CustomRole
     {
         public static IdentityModel IdentityConfig { get; set; }
-        public static IServiceCollection AddIdentityModel(IServiceCollection services, IdentityModel identityModel)
+        public static IServiceCollection AddIdentityModel(IServiceCollection services, IdentityModel identityModel, Token token)
         {
             IdentityConfig = identityModel;
 
@@ -46,22 +52,32 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
                 .AddEntityFrameworkStores<IdentityContext<TUser, TRole>>()
                 .AddDefaultTokenProviders();
 
-            // ===== Configure Identity =======
-            services.ConfigureApplicationCookie(options =>
-            {
-                //options.Cookie.Name = "auth_cookie";
-                //options.Cookie.SameSite = SameSiteMode.None;
-                //options.LoginPath = new PathString("/api/contests");
-                //options.AccessDeniedPath = new PathString("/api/contests");
-
-                // Not creating a new object since ASP.NET Identity has created
-                // one already and hooked to the OnValidatePrincipal event.
-                // See https://github.com/aspnet/AspNetCore/blob/5a64688d8e192cacffda9440e8725c1ed41a30cf/src/Identity/src/Identity/IdentityServiceCollectionExtensions.cs#L56
-                options.Events.OnRedirectToLogin = context =>
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
+            services
+                .AddAuthentication(options =>
                 {
-                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    return Task.CompletedTask;
-                };
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+                })
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.RequireHttpsMetadata = false;
+                    cfg.SaveToken = true;
+                    cfg.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = token.Issuer,
+                        ValidAudience = token.Issuer,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(token.Key)),
+                        ClockSkew = TimeSpan.Zero // remove delay of token when expire
+                    };
+                });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Permission", p =>
+                    p.Requirements.Add(new PermissionAuthorizationRequirement()));
             });
 
             return services;

@@ -44,9 +44,17 @@ namespace CustomFramework.WebApiUtils.Identity.Business
 
                     foreach (var userClaim in userClaims)
                     {
-                        if (userClaim.Type == permissionAttribute.ClaimType &&
-                            String.IsNullOrEmpty(userClaim.Value) == false ? userClaim.Value == permissionAttribute.ClaimValue : 1 == 1)
-                            return true;
+                        if (userClaim.Type == permissionAttribute.ClaimType)
+                        {
+                            if (String.IsNullOrEmpty(permissionAttribute.ClaimValue))
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return (userClaim.Value == permissionAttribute.ClaimValue);
+                            }
+                        }
                     }
 
                     var roleClaims = new List<Claim>();
@@ -57,9 +65,17 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                     }
                     foreach (var roleClaim in roleClaims)
                     {
-                        if (roleClaim.Type == permissionAttribute.ClaimType &&
-                            String.IsNullOrEmpty(roleClaim.Value) == false ? roleClaim.Value == permissionAttribute.ClaimValue : 1 == 1)
-                            return true;
+                        if (roleClaim.Type == permissionAttribute.ClaimType)
+                        {
+                            if (String.IsNullOrEmpty(permissionAttribute.ClaimValue))
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return (roleClaim.Value == permissionAttribute.ClaimValue);
+                            }
+                        }
                     }
 
                     throw new UnauthorizedAccessException($"{permissionAttribute.ClaimType} - {permissionAttribute.ClaimValue}");
