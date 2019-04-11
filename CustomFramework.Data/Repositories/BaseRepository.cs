@@ -20,7 +20,7 @@ namespace CustomFramework.Data.Repositories
 
         }
 
-        public void Add(TEntity entity, int userId)
+        public virtual void Add(TEntity entity, int userId)
         {
             entity.CreateDateTime = DateTime.Now;
             entity.CreateUserId = userId;
@@ -28,7 +28,7 @@ namespace CustomFramework.Data.Repositories
             DbSet.Add(entity);
         }
 
-        public void Update(TEntity entity, int userId)
+        public virtual void Update(TEntity entity, int userId)
         {
             entity.UpdateDateTime = DateTime.Now;
             entity.UpdateUserId = userId;
@@ -37,7 +37,7 @@ namespace CustomFramework.Data.Repositories
             DbContext.Entry(entity).State = EntityState.Modified;
         }
 
-        public void Delete(TEntity entity, int userId)
+        public virtual void Delete(TEntity entity, int userId)
         {
             entity.DeleteDateTime = DateTime.Now;
             entity.DeleteUserId = userId;

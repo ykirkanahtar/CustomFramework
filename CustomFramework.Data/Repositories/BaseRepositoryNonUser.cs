@@ -14,14 +14,14 @@ namespace CustomFramework.Data.Repositories
 
         }
 
-        public void Add(TEntity entity)
+        public virtual void Add(TEntity entity)
         {
             entity.CreateDateTime = DateTime.Now;
             entity.Status = Status.Active;
             DbSet.Add(entity);
         }
 
-        public void Update(TEntity entity)
+        public virtual void Update(TEntity entity)
         {
             entity.UpdateDateTime = DateTime.Now;
 
@@ -29,7 +29,7 @@ namespace CustomFramework.Data.Repositories
             DbContext.Entry(entity).State = EntityState.Modified;
         }
 
-        public void Delete(TEntity entity)
+        public virtual void Delete(TEntity entity)
         {
             entity.DeleteDateTime = DateTime.Now;
             entity.Status = Status.Deleted;

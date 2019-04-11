@@ -40,7 +40,7 @@ namespace CustomFramework.Data.Repositories
 
         #region IRepository members
 
-        public async Task<TEntity> GetByIdAsync(TKey id)
+        public async virtual Task<TEntity> GetByIdAsync(TKey id)
         {
             var query = from p in DbContext.Set<TEntity>()
                         where p.Id.Equals(id) && p.Status == Status.Active
@@ -53,7 +53,7 @@ namespace CustomFramework.Data.Repositories
             return await query.FirstOrDefaultAsync();
         }
 
-        public TEntity GetById(TKey id)
+        public virtual TEntity GetById(TKey id)
         {
             var query = from p in DbContext.Set<TEntity>()
                 where p.Id.Equals(id) && p.Status == Status.Active
@@ -64,13 +64,13 @@ namespace CustomFramework.Data.Repositories
             return query.FirstOrDefault();
         }
 
-        public IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> predicate)
+        public virtual IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> predicate)
         {
             return DbSet.Where(PredicateBuild(predicate));
         }
 
         //OrderBy kullanımı örneği : GetAll(orderBy: q => q.OrderByDescending(s => s.CreateDateTime), take: 10)
-        public IQueryable<TEntity> GetAll(
+        public virtual IQueryable<TEntity> GetAll(
             Expression<Func<TEntity, bool>> predicate = null
             , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
             , int? take = null
@@ -94,7 +94,7 @@ namespace CustomFramework.Data.Repositories
             return query;
         }
 
-        public async Task<ICustomQueryable<TEntity>> GetAllWithPagingAsync(
+        public virtual async Task<ICustomQueryable<TEntity>> GetAllWithPagingAsync(
             IPaging paging
             , Expression<Func<TEntity, bool>> predicate = null
             , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
@@ -122,7 +122,7 @@ namespace CustomFramework.Data.Repositories
             };
         }
 
-        public ICustomQueryable<TEntity> GetAllWithPaging(
+        public virtual ICustomQueryable<TEntity> GetAllWithPaging(
             IPaging paging
             , Expression<Func<TEntity, bool>> predicate = null
             , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
