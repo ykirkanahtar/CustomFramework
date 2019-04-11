@@ -49,9 +49,9 @@ namespace CustomFramework.WebApiUtils.Authorization.Business.Managers
 
                 foreach (var permissionAttribute in hasPermissionRequest.PermissionAttributes)
                 {
-                    if (permissionAttribute.CustomClaim != null)
+                    if (permissionAttribute.ClaimType != null)
                     {
-                        await CheckCustomClaimAsync(hasPermissionRequest.ApplicationId, userId, roles, permissionAttribute.CustomClaim);
+                        await CheckCustomClaimAsync(hasPermissionRequest.ApplicationId, userId, roles, permissionAttribute.ClaimType);
                     }
                     else if (permissionAttribute.Entity != null && permissionAttribute.Crud != null)
                     {
