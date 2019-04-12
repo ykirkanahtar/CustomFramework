@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>CustomFramework.WebApiUtils</id>
-    <version>1.1.7</version>
+    <version>1.1.8</version>
     <authors>YEK</authors>
     <owners>CuteSafe Tech.</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -12,7 +12,7 @@
     <tags>CustomFramework, WebApi, Framework</tags>
     <dependencies>
       <dependency id="AutoMapper" version="8.0.0" />
-      <dependency id="CustomFramework.LogProvider" version="1.1.3" />
+      <dependency id="CustomFramework.LogProvider" version="1.1.4" />
       <dependency id="CustomFramework.WebApiUtils.Contracts" version="1.0.1" />
       <dependency id="Microsoft.AspNetCore" version="2.2.0" />
       <dependency id="Microsoft.AspNetCore.Cors" version="2.2.0" />
