@@ -10,9 +10,9 @@ namespace CustomFramework.Data.Repositories
     public interface IBaseRepository<TEntity, in TKey> : IDisposable
     where TEntity : BaseModelNonUser<TKey>
     {
-        Task<TEntity> GetByIdAsync(TKey id);
+        Task<TEntity> GetByIdAsync(TKey id, bool selectPassives = false);
 
-        TEntity GetById(TKey id);
+        TEntity GetById(TKey id, bool selectPassives = false);
 
         IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> predicate, bool selectPassives = false);
 

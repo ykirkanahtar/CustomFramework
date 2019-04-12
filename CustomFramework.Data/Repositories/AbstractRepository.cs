@@ -40,11 +40,21 @@ namespace CustomFramework.Data.Repositories
 
             #region IRepository members
 
-            public async virtual Task<TEntity> GetByIdAsync(TKey id)
+            public async virtual Task<TEntity> GetByIdAsync(TKey id, bool selectPassives = false)
             {
-                var query = from p in DbContext.Set<TEntity>()
-                where p.Id.Equals(id) && p.Status == Status.Active
-                select p;
+                IQueryable<TEntity> query;
+                if (selectPassives)
+                {
+                    query = from p in DbContext.Set<TEntity>()
+                    where p.Id.Equals(id) && (p.Status == Status.Active || p.Status == Status.Passive)
+                    select p;
+                }
+                else
+                {
+                    query = from p in DbContext.Set<TEntity>()
+                    where p.Id.Equals(id) && p.Status == Status.Active
+                    select p;
+                }
 
                 //var s = query.ToSql();
 
@@ -53,11 +63,21 @@ namespace CustomFramework.Data.Repositories
                 return await query.FirstOrDefaultAsync();
             }
 
-            public virtual TEntity GetById(TKey id)
+            public virtual TEntity GetById(TKey id, bool selectPassives = false)
             {
-                var query = from p in DbContext.Set<TEntity>()
-                where p.Id.Equals(id) && p.Status == Status.Active
-                select p;
+                IQueryable<TEntity> query;
+                if (selectPassives)
+                {
+                    query = from p in DbContext.Set<TEntity>()
+                    where p.Id.Equals(id) && (p.Status == Status.Active || p.Status == Status.Passive)
+                    select p;
+                }
+                else
+                {
+                    query = from p in DbContext.Set<TEntity>()
+                    where p.Id.Equals(id) && p.Status == Status.Active
+                    select p;
+                }
 
                 query = _includeProperties.Aggregate(query, (current, includedProperty) => current.Include(includedProperty));
 
