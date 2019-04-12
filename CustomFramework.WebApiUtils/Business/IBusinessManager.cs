@@ -8,12 +8,12 @@ namespace CustomFramework.WebApiUtils.Business
     {
         Task<TEntity> CreateAsync(TCreateRequest request);
         Task DeleteAsync(TKey id);
-        Task<TEntity> GetByIdAsync(TKey id);
+        Task<TEntity> GetByIdAsync(TKey id, bool selectPassives = false);
     }
 
     public interface IBusinessManager<TEntity, in TKey> where TEntity : BaseModel<TKey>
     {
         Task DeleteAsync(TKey id);
-        Task<TEntity> GetByIdAsync(TKey id);
+        Task<TEntity> GetByIdAsync(TKey id, bool selectPassives = false);
     }
 }
