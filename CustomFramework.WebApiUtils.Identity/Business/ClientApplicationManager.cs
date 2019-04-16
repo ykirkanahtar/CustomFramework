@@ -106,9 +106,9 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             }, new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() });
         }
 
-        public Task<ClientApplication> GetByIdAsync(int id, bool selectPassives = false)
+        public Task<ClientApplication> GetByIdAsync(int id)
         {
-            return CommonOperationAsync(async() => await _uow.ClientApplications.GetByIdAsync(id, selectPassives), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
+            return CommonOperationAsync(async() => await _uow.ClientApplications.GetByIdAsync(id), new BusinessBaseRequest { MethodBase = MethodBase.GetCurrentMethod() },
                 BusinessUtilMethod.CheckRecordIsExist, GetType().Name);
         }
 
