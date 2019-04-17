@@ -52,7 +52,8 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                             }
                             else
                             {
-                                return (userClaim.Value == permissionAttribute.ClaimValue);
+                                if (userClaim.Value == permissionAttribute.ClaimValue) return true;
+                                else throw new UnauthorizedAccessException($"{permissionAttribute.ClaimType} - {permissionAttribute.ClaimValue}");
                             }
                         }
                     }
@@ -73,7 +74,8 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                             }
                             else
                             {
-                                return (roleClaim.Value == permissionAttribute.ClaimValue);
+                                if (roleClaim.Value == permissionAttribute.ClaimValue) return true;
+                                else throw new UnauthorizedAccessException($"{permissionAttribute.ClaimType} - {permissionAttribute.ClaimValue}");
                             }
                         }
                     }
