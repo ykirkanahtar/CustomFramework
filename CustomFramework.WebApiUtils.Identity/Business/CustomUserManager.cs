@@ -170,16 +170,26 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         public async Task<IList<Claim>> GetLoggedUserAllClaims()
         {
             var userId = GetUserId();
-            var claims = await GetUserClaimsAsync(userId);
+            var userClaims = await GetUserClaimsAsync(userId);
+            var claims = userClaims;
 
             var roles = await GetRolesAsync(userId);
-            foreach(var role in roles)
+            foreach (var role in roles)
             {
                 var roleClaims = await _roleManager.GetClaimsAsync(role);
-                foreach(var roleClaim in roleClaims)
+                foreach (var roleClaim in roleClaims)
                 {
-                    if(!claims.Contains(roleClaim))
-                    claims.Add(roleClaim);
+                    //UserClaim RoleClaiim'i ezdiği için öncelikle UserClaim'de yetki var mı diye kontrol ediliyor.
+                    var claimIsExistInUserClaims = (from p in userClaims where p.Type == roleClaim.Type select p).Count() > 0;
+                    
+                    if (!claimIsExistInUserClaims)
+                    {
+                        //Çift kaydı engellemek için ClaimType ve ClaimValue değerleri eşleşen kayıtlar eklenmiyor.
+                        var claimIsExistInClaims = (from p in claims where p.Type == roleClaim.Type && p.Value == roleClaim.Value select p).Count() > 0;
+
+                        if (!claimIsExistInClaims)
+                            claims.Add(roleClaim);
+                    }
                 }
             }
 
