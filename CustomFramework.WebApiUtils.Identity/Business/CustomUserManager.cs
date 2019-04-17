@@ -12,6 +12,7 @@ using CustomFramework.WebApiUtils.Identity.Data;
 using CustomFramework.WebApiUtils.Identity.Data.Repositories;
 using CustomFramework.WebApiUtils.Identity.Models;
 using CustomFramework.WebApiUtils.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -26,7 +27,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         private readonly UserManager<TUser> _userManager;
         private readonly ICustomRoleManager<TRole> _roleManager;
 
-        public CustomUserManager(UserManager<TUser> userManager, ICustomRoleManager<TRole> roleManager, ILogger<CustomRoleManager<TUser, TRole>> logger, IMapper mapper) : base(logger, mapper)
+        public CustomUserManager(UserManager<TUser> userManager, ICustomRoleManager<TRole> roleManager, ILogger<CustomRoleManager<TUser, TRole>> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(logger, mapper, httpContextAccessor)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -181,7 +182,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                 {
                     //UserClaim RoleClaiim'i ezdiği için öncelikle UserClaim'de yetki var mı diye kontrol ediliyor.
                     var claimIsExistInUserClaims = (from p in userClaims where p.Type == roleClaim.Type select p).Count() > 0;
-                    
+
                     if (!claimIsExistInUserClaims)
                     {
                         //Çift kaydı engellemek için ClaimType ve ClaimValue değerleri eşleşen kayıtlar eklenmiyor.
