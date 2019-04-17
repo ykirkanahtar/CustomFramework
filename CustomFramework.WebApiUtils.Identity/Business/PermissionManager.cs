@@ -40,7 +40,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
 
                 foreach (var permissionAttribute in attributes)
                 {
-                    var userClaims = await _userManager.GetClaimsAsync(userId);
+                    var userClaims = await _userManager.GetUserClaimsAsync(userId);
 
                     foreach (var userClaim in userClaims)
                     {

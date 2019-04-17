@@ -39,14 +39,16 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
     {
         private readonly SignInManager<TUser> _signInManager;
         protected readonly ICustomUserManager<TUser> CustomUserManager;
+        private readonly ICustomRoleManager<TRole> _customRoleManager;
         private readonly IClientApplicationManager _clientApplicationManager;
         private readonly IEmailSender _emailSender;
         private readonly IdentityModel _identityModel;
 
-        public BaseAccountController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, SignInManager<TUser> signInManager, ICustomUserManager<TUser> customUserManager, IClientApplicationManager clientApplicationManager, IEmailSender emailSender) : base(localizationService, logger, mapper)
+        public BaseAccountController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, SignInManager<TUser> signInManager, ICustomUserManager<TUser> customUserManager, ICustomRoleManager<TRole> customRoleManager, IClientApplicationManager clientApplicationManager, IEmailSender emailSender) : base(localizationService, logger, mapper)
         {
             _signInManager = signInManager;
             CustomUserManager = customUserManager;
+            _customRoleManager = customRoleManager;
             _clientApplicationManager = clientApplicationManager;
             _emailSender = emailSender;
             _identityModel = IdentityModelExtension<TUser, TRole>.IdentityConfig;
@@ -253,6 +255,16 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - Parolanız değiştirildi", $"Parolanız değiştirildi.Eğer bu işlemi siz yapmadıysanız lütfen site yöneticisi ile iletişim geçiniz.");
 
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+        }
+
+        protected Task<IActionResult> BaseGetLoggedUserAllClaims()
+        {
+            return CommonOperationAsync<IActionResult>(async() =>
+            {
+                var result = await CustomUserManager.GetLoggedUserAllClaims();
+                return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                    Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result)));
+            });
         }
 
         private async Task ResetPasswordEmailSenderAsync(TUser user, string title, string text, string callbackUrl = "")

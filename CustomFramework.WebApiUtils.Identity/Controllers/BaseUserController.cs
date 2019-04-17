@@ -154,11 +154,11 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             });
         }
 
-        public virtual Task<IActionResult> GetClaimsAsync(int id)
+        public virtual Task<IActionResult> GetUserClaimsAsync(int id)
         {
             return CommonOperationAsync<IActionResult>(async() =>
             {
-                var claims = await _userManager.GetClaimsAsync(id);
+                var claims = await _userManager.GetUserClaimsAsync(id);
                 if (claims == null || claims.Count == 0)
                     throw new KeyNotFoundException("Yetki bulunamadı");
                 return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<IList<Claim>, IList<ClaimResponse>>(claims), claims.Count));

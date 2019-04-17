@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoMapper;
 using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Enums;
 using CustomFramework.Data.Utils;
+using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Identity.Data;
 using CustomFramework.WebApiUtils.Identity.Data.Repositories;
 using CustomFramework.WebApiUtils.Identity.Models;
@@ -17,14 +19,14 @@ using Microsoft.Extensions.Options;
 
 namespace CustomFramework.WebApiUtils.Identity.Business
 {
-    public class CustomUserManager<TUser, TRole> : ICustomUserManager<TUser>
+    public class CustomUserManager<TUser, TRole> : BaseBusinessManager, ICustomUserManager<TUser>
         where TUser : CustomUser
     where TRole : CustomRole
     {
         private readonly UserManager<TUser> _userManager;
         private readonly ICustomRoleManager<TRole> _roleManager;
 
-        public CustomUserManager(UserManager<TUser> userManager, ICustomRoleManager<TRole> roleManager)
+        public CustomUserManager(UserManager<TUser> userManager, ICustomRoleManager<TRole> roleManager, ILogger<CustomRoleManager<TUser, TRole>> logger, IMapper mapper) : base(logger, mapper)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -159,10 +161,29 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return user;
         }
 
-        public async Task<IList<Claim>> GetClaimsAsync(int id)
+        public async Task<IList<Claim>> GetUserClaimsAsync(int id)
         {
             var user = await GetByIdAsync(id);
             return await _userManager.GetClaimsAsync(user);
+        }
+
+        public async Task<IList<Claim>> GetLoggedUserAllClaims()
+        {
+            var userId = GetUserId();
+            var claims = await GetUserClaimsAsync(userId);
+
+            var roles = await GetRolesAsync(userId);
+            foreach(var role in roles)
+            {
+                var roleClaims = await _roleManager.GetClaimsAsync(role);
+                foreach(var roleClaim in roleClaims)
+                {
+                    if(!claims.Contains(roleClaim))
+                    claims.Add(roleClaim);
+                }
+            }
+
+            return claims;
         }
 
         public async Task<IList<TUser>> GetUsersInRoleAsync(string roleName)
