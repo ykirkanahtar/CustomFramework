@@ -24,7 +24,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             Task<TUser> GetByEmailAsync(string email);
             Task<TUser> GetByNameAsync(string userName);
             Task<IList<Claim>> GetUserClaimsAsync(int id);
-            Task<IList<Claim>> GetLoggedUserAllClaims();
+            Task<IList<Claim>> GetAllClaimsForLoggedUserAsync();
             Task<IList<TUser>> GetUsersInRoleAsync(string roleName);
             Task<IList<string>> GetRolesAsync(int id);
             Task<string> GenerateEmailConfirmationTokenAsync(TUser user);

@@ -167,7 +167,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _userManager.GetClaimsAsync(user);
         }
 
-        public async Task<IList<Claim>> GetLoggedUserAllClaims()
+        public async Task<IList<Claim>> GetAllClaimsForLoggedUserAsync()
         {
             var userId = GetUserId();
             var userClaims = await GetUserClaimsAsync(userId);
