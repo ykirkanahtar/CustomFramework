@@ -44,7 +44,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
 
                     foreach (var userClaim in userClaims)
                     {
-                        if (userClaim.Type == permissionAttribute.ClaimType)
+                        if (userClaim.Type.ToLower() == permissionAttribute.ClaimType.ToLower())
                         {
                             if (String.IsNullOrEmpty(permissionAttribute.ClaimValue))
                             {
@@ -52,7 +52,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                             }
                             else
                             {
-                                if (userClaim.Value == permissionAttribute.ClaimValue) return true;
+                                if (userClaim.Value.ToLower() == permissionAttribute.ClaimValue.ToLower()) return true;
                                 else throw new UnauthorizedAccessException($"{permissionAttribute.ClaimType} - {permissionAttribute.ClaimValue}");
                             }
                         }
@@ -66,7 +66,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                     }
                     foreach (var roleClaim in roleClaims)
                     {
-                        if (roleClaim.Type == permissionAttribute.ClaimType)
+                        if (roleClaim.Type.ToLower() == permissionAttribute.ClaimType.ToLower())
                         {
                             if (String.IsNullOrEmpty(permissionAttribute.ClaimValue))
                             {
@@ -74,7 +74,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                             }
                             else
                             {
-                                if (roleClaim.Value == permissionAttribute.ClaimValue) return true;
+                                if (roleClaim.Value.ToLower() == permissionAttribute.ClaimValue.ToLower()) return true;
                                 else throw new UnauthorizedAccessException($"{permissionAttribute.ClaimType} - {permissionAttribute.ClaimValue}");
                             }
                         }
