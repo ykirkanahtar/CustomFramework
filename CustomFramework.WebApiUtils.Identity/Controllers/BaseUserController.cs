@@ -135,6 +135,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             });
         }
 
+        [NonAction]
         public virtual Task<IActionResult> BaseAddClaimAsync(int id, ClaimRequest claimRequest, IList<ClaimRequest> existingClaimsRequest)
         {
             return CommonOperationAsync<IActionResult>(async() =>
