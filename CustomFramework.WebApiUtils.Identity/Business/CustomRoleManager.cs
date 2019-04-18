@@ -10,6 +10,7 @@ using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Identity.Contracts.Requests;
 using CustomFramework.WebApiUtils.Identity.Models;
+using CustomFramework.WebApiUtils.Identity.Utils;
 using CustomFramework.WebApiUtils.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -34,15 +35,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             var role = await GetByIdAsync(id);
             var claims = await GetClaimsAsync(role.Name);
 
-            var claimIsExist = (from p in existingClaims where p.Type == claim.Type &&
-                p.Value == claim.Value select p).Count() > 0;
-
-            if(!claimIsExist) throw new KeyNotFoundException(nameof(Claim));
-
-            var claimHasAlreadyAssigned = (from p in claims where p.Type == claim.Type &&
-                p.Value == claim.Value select p).Count() > 0;
-
-            if (claimHasAlreadyAssigned) throw new DuplicateNameException(nameof(Claim));
+            ClaimChecker.CheckClaimStatus(claim, claims, existingClaims);
 
             return await _roleManager.AddClaimAsync(role, claim);
         }
@@ -55,21 +48,30 @@ namespace CustomFramework.WebApiUtils.Identity.Business
 
             foreach (var claim in claims)
             {
-                var claimIsExist = (from p in existingClaims where p.Type == claim.Type &&
-                    p.Value == claim.Value select p).Count() > 0;
-
-                if (claimIsExist)
+                Claim checkedClaim;
+                bool claimCheckSuccess = false;
+                try
                 {
-                    var claimHasAlreadyAssigned = (from p in claimsInRole where p.Type == claim.Type &&
-                        p.Value == claim.Value select p).Count() > 0;
+                    //CheckClaimStaus metodu hata oluştuğunda Exception fırlatıyor.
+                    //Fakat bu metotta claim değerleri bir dizi halinde olduğu için 
+                    //Başarısız işlemlerde hata üretilmesini değil, diziye eklenmemesini istiyoruz
+                    //Bu yüzden boş bir try catch bloğu içerisine alındı
+                    checkedClaim = ClaimChecker.CheckClaimStatus(claim, claimsInRole, existingClaims);
+                    claimCheckSuccess = true;
+                }
+                catch (KeyNotFoundException)
+                {
+                    throw new KeyNotFoundException(nameof(Claim));
+                }
+                catch { }
 
-                    if (!claimHasAlreadyAssigned)
-                    {
-                        await _roleManager.AddClaimAsync(role, claim);
-                        addedClaims.Add(claim);
-                    }
+                if (claimCheckSuccess)
+                {
+                    await _roleManager.AddClaimAsync(role, claim);
+                    addedClaims.Add(claim);
                 }
             }
+
             return addedClaims;
         }
 
@@ -154,8 +156,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
 
             foreach (var claim in claims)
             {
-                var claimIsExist = (from p in claimsInRole where p.Type == claim.Type &&
-                    p.Value == claim.Value select p).Count() > 0;
+                var claimIsExist = (from p in claimsInRole where p.Type == claim.Type && p.Value == claim.Value select p).Count() > 0;
 
                 if (claimIsExist)
                 {

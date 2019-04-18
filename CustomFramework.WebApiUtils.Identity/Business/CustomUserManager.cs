@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Identity.Data;
 using CustomFramework.WebApiUtils.Identity.Data.Repositories;
 using CustomFramework.WebApiUtils.Identity.Models;
+using CustomFramework.WebApiUtils.Identity.Utils;
 using CustomFramework.WebApiUtils.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -33,16 +35,49 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             _roleManager = roleManager;
         }
 
-        public async Task<IdentityResult> AddClaimAsync(int id, Claim claim)
+        public async Task<IdentityResult> AddClaimAsync(int id, Claim claim, IList<Claim> existingClaims)
         {
             var user = await GetByIdAsync(id);
+            var claims = await GetUserClaimsAsync(user.Id);
+
+            ClaimChecker.CheckClaimStatus(claim, claims, existingClaims);
+
             return await _userManager.AddClaimAsync(user, claim);
         }
 
-        public async Task<IdentityResult> AddClaimsAsync(int id, IEnumerable<Claim> claims)
+        public async Task<IList<Claim>> AddClaimsAsync(int id, IEnumerable<Claim> claims, IList<Claim> existingClaims)
         {
+            var addedClaims = new List<Claim>();
             var user = await GetByIdAsync(id);
-            return await _userManager.AddClaimsAsync(user, claims);
+            var userClaims = await GetUserClaimsAsync(user.Id);
+
+            foreach (var claim in claims)
+            {
+                Claim checkedClaim;
+                bool claimCheckSuccess = false;
+                try
+                {
+                    //CheckClaimStaus metodu hata oluştuğunda Exception fırlatıyor.
+                    //Fakat bu metotta claim değerleri bir dizi halinde olduğu için 
+                    //Başarısız işlemlerde hata üretilmesini değil, diziye eklenmemesini istiyoruz
+                    //Bu yüzden boş bir try catch bloğu içerisine alındı
+                    checkedClaim = ClaimChecker.CheckClaimStatus(claim, userClaims, existingClaims);
+                    claimCheckSuccess = true;
+                }
+                catch (KeyNotFoundException)
+                {
+                    throw new KeyNotFoundException(nameof(Claim));
+                }
+                catch { }
+
+                if (claimCheckSuccess)
+                {
+                    await _userManager.AddClaimAsync(user, claim);
+                    addedClaims.Add(claim);
+                }
+            }
+
+            return addedClaims;
         }
 
         public async Task<IdentityResult> AddToRoleAsync(int id, string role)

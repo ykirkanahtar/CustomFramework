@@ -11,8 +11,8 @@ namespace CustomFramework.WebApiUtils.Identity.Business
     public interface ICustomUserManager<TUser>
         where TUser : CustomUser
         {
-            Task<IdentityResult> AddClaimAsync(int id, Claim claim);
-            Task<IdentityResult> AddClaimsAsync(int id, IEnumerable<Claim> claims);
+            Task<IdentityResult> AddClaimAsync(int id, Claim claim, IList<Claim> existingClaims);
+            Task<IList<Claim>> AddClaimsAsync(int id, IEnumerable<Claim> claims, IList<Claim> existingClaims);
             Task<IdentityResult> AddToRoleAsync(int id, string role);
             Task<IdentityResult> AddToRolesAsync(int id, IEnumerable<string> roles);
             Task<IdentityResult> ChangeEmailAsync(int id, string newEmail, string token);

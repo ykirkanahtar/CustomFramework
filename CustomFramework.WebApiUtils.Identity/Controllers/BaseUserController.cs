@@ -135,12 +135,14 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             });
         }
 
-        public virtual Task<IActionResult> AddClaimAsync(int id, [FromBody] ClaimRequest claimRequest)
+        public virtual Task<IActionResult> BaseAddClaimAsync(int id, ClaimRequest claimRequest, IList<ClaimRequest> existingClaimsRequest)
         {
             return CommonOperationAsync<IActionResult>(async() =>
             {
                 var claim = Mapper.Map<Claim>(claimRequest);
-                var result = await _userManager.AddClaimAsync(id, claim);
+                var existingClaims = Mapper.Map<IList<Claim>>(existingClaimsRequest);
+
+                var result = await _userManager.AddClaimAsync(id, claim, existingClaims);
                 if (!result.Succeeded)
                 {
                     foreach (var error in result.Errors)
