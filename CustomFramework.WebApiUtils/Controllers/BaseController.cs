@@ -1,14 +1,14 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Transactions;
+using AutoMapper;
 using CustomFramework.WebApiUtils.Constants;
 using CustomFramework.WebApiUtils.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Transactions;
 
 namespace CustomFramework.WebApiUtils.Controllers
 {
@@ -27,7 +27,10 @@ namespace CustomFramework.WebApiUtils.Controllers
 
         protected async Task<T> CommonOperationAsync<T>(Func<Task<T>> func)
         {
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using(var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadCommitted
+            }, TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
@@ -50,7 +53,10 @@ namespace CustomFramework.WebApiUtils.Controllers
 
         protected async Task<T> CommonOperationAsync<T>(Func<Task<T>> func, List<object> request)
         {
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using(var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadCommitted
+            }, TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
