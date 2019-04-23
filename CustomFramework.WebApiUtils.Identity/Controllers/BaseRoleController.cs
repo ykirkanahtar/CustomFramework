@@ -38,32 +38,33 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             _roleManager = roleManager;
         }
 
-        public virtual Task<IActionResult> CreateAsync([FromBody] TRoleRequest request)
+        public async virtual Task<IActionResult> CreateAsync([FromBody] TRoleRequest request)
         {
-            return CommonOperationAsync<IActionResult>(async() =>
+            var result = await CommonOperationAsync<TRole>(async() =>
             {
                 if (!ModelState.IsValid)
                     throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
 
                 var role = Mapper.Map<TRole>(request);
 
-                var result = await _roleManager.CreateAsync(role);
-                if (!result.Succeeded)
+                var response = await _roleManager.CreateAsync(role);
+                if (!response.Succeeded)
                 {
-                    foreach (var error in result.Errors)
+                    foreach (var error in response.Errors)
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                     throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
                 }
-
-                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
+                return role;
             });
+
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(result)));
         }
 
-        public virtual Task<IActionResult> UpdateAsync(int id, [FromBody] TRoleRequest request)
+        public async virtual Task<IActionResult> UpdateAsync(int id, [FromBody] TRoleRequest request)
         {
-            return CommonOperationAsync<IActionResult>(async() =>
+            var result = await CommonOperationAsync<TRole>(async() =>
             {
                 if (!ModelState.IsValid)
                     throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
@@ -71,62 +72,61 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 var role = await _roleManager.GetByIdAsync(id);
                 Mapper.Map(request, role);
 
-                var result = await _roleManager.UpdateAsync(id, role);
-                if (!result.Succeeded)
+                var response = await _roleManager.UpdateAsync(id, role);
+                if (!response.Succeeded)
                 {
-                    foreach (var error in result.Errors)
+                    foreach (var error in response.Errors)
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                     throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
                 }
-
-                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
+                return role;
             });
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(result)));
+
         }
 
-        public virtual Task<IActionResult> DeleteAsync(int id)
+        public async virtual Task<IActionResult> DeleteAsync(int id)
         {
-            return CommonOperationAsync<IActionResult>(async() =>
+            await _roleManager.DeleteAsync(id);
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+        }
+
+        public async virtual Task<IActionResult> GetByIdAsync(int id)
+        {
+            var result = await CommonOperationAsync<TRole>(async() =>
             {
-                await _roleManager.DeleteAsync(id);
-                return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+                return await _roleManager.GetByIdAsync(id);
             });
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(result)));
         }
 
-        public virtual Task<IActionResult> GetByIdAsync(int id)
+        public async virtual Task<IActionResult> GetByNameAsync(string name)
         {
-            return CommonOperationAsync<IActionResult>(async() =>
+            var result = await CommonOperationAsync<TRole>(async() =>
             {
-                var role = await _roleManager.GetByIdAsync(id);
-                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
+                return await _roleManager.GetByNameAsync(name);
             });
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(result)));
         }
 
-        public virtual Task<IActionResult> GetByNameAsync(string name)
+        public async virtual Task<IActionResult> GetAllAsync()
         {
-            return CommonOperationAsync<IActionResult>(async() =>
-            {
-                var role = await _roleManager.GetByNameAsync(name);
-                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(role)));
-            });
-        }
-
-        public virtual Task<IActionResult> GetAllAsync()
-        {
-            return CommonOperationAsync<IActionResult>(async() =>
+            var result = await CommonOperationAsync<IList<TRole>>(async() =>
             {
                 var roles = await _roleManager.GetAllAsync();
                 if (roles == null || roles.Count == 0)
                     throw new ArgumentException("Rolbulunamadı");
-                return Ok(new ApiResponse(LocalizationService, Logger).Ok<TRoleResponse>(Mapper.Map<IList<TRole>, IList<TRoleResponse>>(roles), roles.Count));
+                return roles;
             });
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok<TRoleResponse>(Mapper.Map<IList<TRole>, IList<TRoleResponse>>(result), result.Count));
         }
 
         [NonAction]
-        public Task<IActionResult> BaseAddClaimsAsync(int id, IList<ClaimRequest> claimsRequest, IList<ClaimRequest> existingClaimsRequest)
+        public async Task<IActionResult> BaseAddClaimsAsync(int id, IList<ClaimRequest> claimsRequest, IList<ClaimRequest> existingClaimsRequest)
         {
-            return CommonOperationAsync<IActionResult>(async() =>
+            var result = await CommonOperationAsync<List<ClaimResponse>>(async() =>
             {
                 var claims = Mapper.Map<IList<Claim>>(claimsRequest);
                 var existingClaims = Mapper.Map<IList<Claim>>(existingClaimsRequest);
@@ -141,46 +141,48 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                             Value = claim.Value
                     });
                 }
-                return Ok(new ApiResponse(LocalizationService, Logger).Ok(claimsResponse));
+                return claimsResponse;
             });
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(result));
         }
 
         [NonAction]
-        public Task<IActionResult> BaseAddClaimAsync(int id, ClaimRequest claimRequest, IList<ClaimRequest> existingClaimsRequest)
+        public async Task<IActionResult> BaseAddClaimAsync(int id, ClaimRequest claimRequest, IList<ClaimRequest> existingClaimsRequest)
         {
-            return CommonOperationAsync<IActionResult>(async() =>
+            var result = await CommonOperationAsync<bool>(async() =>
             {
                 var claim = Mapper.Map<Claim>(claimRequest);
                 var existingClaims = Mapper.Map<IList<Claim>>(existingClaimsRequest);
 
-                var result = await _roleManager.AddClaimAsync(id, claim, existingClaims);
-                if (!result.Succeeded)
+                var response = await _roleManager.AddClaimAsync(id, claim, existingClaims);
+                if (!response.Succeeded)
                 {
-                    foreach (var error in result.Errors)
+                    foreach (var error in response.Errors)
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                     throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
                 }
-
-                return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+                return true;
             });
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(result));
         }
 
-        public virtual Task<IActionResult> GetClaimsAsync(string roleName)
+        public async virtual Task<IActionResult> GetClaimsAsync(string roleName)
         {
-            return CommonOperationAsync<IActionResult>(async() =>
+            var result = await CommonOperationAsync<IList<Claim>>(async() =>
             {
                 var claims = await _roleManager.GetClaimsAsync(roleName);
                 if (claims == null || claims.Count == 0)
                     throw new KeyNotFoundException("Yetki bulunamadı");
-                return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<IList<Claim>, IList<ClaimResponse>>(claims), claims.Count));
+                return claims;
             });
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result), result.Count));
         }
 
-        public virtual Task<IActionResult> RemoveClaimsAsync(int id, [FromBody] List<ClaimRequest> claimsRequest)
+        public async virtual Task<IActionResult> RemoveClaimsAsync(int id, [FromBody] List<ClaimRequest> claimsRequest)
         {
-            return CommonOperationAsync<IActionResult>(async() =>
+            var result = await CommonOperationAsync<List<ClaimResponse>>(async() =>
             {
                 var claims = Mapper.Map<IList<Claim>>(claimsRequest);
 
@@ -194,26 +196,28 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                             Value = claim.Value
                     });
                 }
-                return Ok(new ApiResponse(LocalizationService, Logger).Ok(claimsResponse));
+                return claimsResponse;
             });
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(result));
         }
 
-        public virtual Task<IActionResult> RemoveClaimAsync(int id, [FromBody] ClaimRequest claimRequest)
+        public async virtual Task<IActionResult> RemoveClaimAsync(int id, [FromBody] ClaimRequest claimRequest)
         {
-            return CommonOperationAsync<IActionResult>(async() =>
+            var result = await CommonOperationAsync<bool>(async() =>
             {
                 var claim = Mapper.Map<Claim>(claimRequest);
-                var result = await _roleManager.RemoveClaimAsync(id, claim);
-                if (!result.Succeeded)
+                var response = await _roleManager.RemoveClaimAsync(id, claim);
+                if (!response.Succeeded)
                 {
-                    foreach (var error in result.Errors)
+                    foreach (var error in response.Errors)
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                     throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
                 }
-                return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+                return true;
             });
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(result));
         }
     }
 }

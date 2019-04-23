@@ -255,14 +255,14 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
         }
 
-        protected Task<IActionResult> BaseGetAllClaimsForLoggedUserAsync()
+        protected async Task<IActionResult> BaseGetAllClaimsForLoggedUserAsync()
         {
-            return CommonOperationAsync<IActionResult>(async() =>
+            var result = await CommonOperationAsync<IList<Claim>>(async() =>
             {
-                var result = await CustomUserManager.GetAllClaimsForLoggedUserAsync();
-                return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                    Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result)));
+                return await CustomUserManager.GetAllClaimsForLoggedUserAsync();
             });
+            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
+                Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result)));
         }
 
         private async Task ResetPasswordEmailSenderAsync(TUser user, string title, string text, string callbackUrl = "")
