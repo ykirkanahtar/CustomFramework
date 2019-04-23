@@ -192,7 +192,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 throw new ArgumentException($"E-posta doğrulaması sırasında hata oluştu : {ModelState.ModelStateToString(LocalizationService)}"); //Error confirming email for user with ID '{userId}':
             }
 
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
+            return Ok("Hesabınız onaylanmıştır");
         }
 
         protected async Task<IActionResult> BaseForgotPasswordAsync(ForgotPasswordRequest request)
@@ -292,6 +292,24 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{text}. - {callbackUrl} ya da kodu ilgili forma giriniz. {codeEncoded}"); //Please reset your password by clicking here
         }
 
+        private async Task ConfirmationEmailSenderAsync(TUser user, string title, string text, string callbackUrl = "")
+        {
+            var code = await CustomUserManager.GenerateEmailConfirmationTokenAsync(user);
+            var codeBytes = Encoding.UTF8.GetBytes(code);
+            var codeEncoded = WebEncoders.Base64UrlEncode(codeBytes);
+
+            var receiverList = new List<string>();
+            receiverList.Add(user.Email);
+
+            var emailBody = string.Empty;
+
+            if (_identityModel.EmailConfirmationViaUrl) emailBody = $"{ConfirmationEmailUrlCreator(user.Id, codeEncoded, text, callbackUrl)}";
+            else emailBody = $"{text} Hesap onay kodunuz : {codeEncoded}";
+
+            await _emailSender.SendEmailAsync(
+                _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{emailBody}");
+        }
+
         private string ConfirmationEmailUrlCreator(int userId, string codeEncoded, string emailText, string callbackUrl = "")
         {
             if (String.IsNullOrEmpty(callbackUrl))
@@ -311,25 +329,6 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
 
             return $"{emailText} Hesabınızı onaylamak için lütfen bağlantıya tıklayınız - {callbackUrl}";
         }
-
-        private async Task ConfirmationEmailSenderAsync(TUser user, string title, string text, string callbackUrl = "")
-        {
-            var code = await CustomUserManager.GenerateEmailConfirmationTokenAsync(user);
-            var codeBytes = Encoding.UTF8.GetBytes(code);
-            var codeEncoded = WebEncoders.Base64UrlEncode(codeBytes);
-
-            var receiverList = new List<string>();
-            receiverList.Add(user.Email);
-
-            var emailBody = string.Empty;
-
-            if (_identityModel.EmailConfirmationViaUrl) emailBody = $"{text} ConfirmationEmailUrlCreator(user.Id, codeEncoded, text, callbackUrl)";
-            else emailBody = $"{text} Hesap onay kodunuz : {codeEncoded}";
-
-            await _emailSender.SendEmailAsync(
-                _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{emailBody}");
-        }
-
         private TokenResponse GenerateJwtToken(int userId, IApiRequest apiRequest)
         {
             var apiRequestJson = JsonConvert.SerializeObject(apiRequest,
