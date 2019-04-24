@@ -52,7 +52,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             _identityModel = IdentityModelExtension<TUser, TRole>.IdentityConfig;
         }
 
-        protected async Task<IActionResult> BaseRegisterAsync([FromBody] TUserRequest request, Func<Task> func, bool generatePassword = false)
+        protected async Task<IActionResult> BaseRegisterAsync([FromBody] TUserRequest request, Func<Task> func, bool requireConfirmedEmail, bool generatePassword = false)
         {
             if (generatePassword)
             {
@@ -93,7 +93,8 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 var text = string.Empty;
                 if (generatePassword) text = $"Sistem tarafından oluşturulan yeni parolanız: {request.Password}";
 
-                await ConfirmationEmailSenderAsync(user, $"{_identityModel.AppName} - Hesap Kaydınız", text, request.CallBackUrl);
+                if (requireConfirmedEmail)
+                    await ConfirmationEmailSenderAsync(user, $"{_identityModel.AppName} - Hesap Kaydınız", text, request.CallBackUrl);
 
                 scope.Complete();
             }

@@ -27,7 +27,7 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
     where TRole : CustomRole
     {
         public static IdentityModel IdentityConfig { get; set; }
-        public static IServiceCollection AddIdentityModel(IServiceCollection services, IdentityModel identityModel, Token token)
+        public static IServiceCollection AddIdentityModel(IServiceCollection services, IdentityModel identityModel, Token token, bool requireConfirmedEmail)
         {
             IdentityConfig = identityModel;
 
@@ -47,7 +47,7 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
 
             services.AddIdentity<TUser, TRole>(config =>
                 {
-                    config.SignIn.RequireConfirmedEmail = true;
+                    config.SignIn.RequireConfirmedEmail = requireConfirmedEmail;
                 })
                 .AddEntityFrameworkStores<IdentityContext<TUser, TRole>>()
                 .AddDefaultTokenProviders();
