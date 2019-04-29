@@ -2,11 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CustomFramework.WebApiUtils.Identity.Contracts.Requests
 {
-    public class ChangePasswordRequest
+    public class BaseChangePasswordRequest
     {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
 
         [Required]
         public string OldPassword { get; set; }

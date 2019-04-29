@@ -15,10 +15,6 @@ namespace CustomFramework.WebApiUtils.Identity.Contracts.Requests
         public string Surname { get; set; }
 
         [Required]
-        [DataType(DataType.Date)]
-        public DateTime BirthDate { get; set; }
-
-        [Required]
         [EmailAddress]
         public string Email { get; set; }
 

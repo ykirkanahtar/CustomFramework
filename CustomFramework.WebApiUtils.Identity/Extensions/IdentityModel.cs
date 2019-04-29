@@ -3,7 +3,7 @@ using CustomFramework.Authorization.Utils;
 
 namespace CustomFramework.WebApiUtils.Identity.Extensions
 {
-    public class IdentityModel
+    public class IdentityModel : IIdentityModel
     {
         public IdentityModel()
         {
@@ -16,7 +16,6 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
         public string AppName { get; set; }
         public Token Token { get; set; }
         public EmailConfig EmailConfig { get; set; }
-
         public int GeneratedPasswordLength { get; set; }
     }
 }

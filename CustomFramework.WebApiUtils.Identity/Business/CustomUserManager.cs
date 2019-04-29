@@ -2,20 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using CS.Common.EmailProvider;
 using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Enums;
 using CustomFramework.Data.Utils;
+using CustomFramework.Utils;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Identity.Data;
 using CustomFramework.WebApiUtils.Identity.Data.Repositories;
+using CustomFramework.WebApiUtils.Identity.Extensions;
 using CustomFramework.WebApiUtils.Identity.Models;
 using CustomFramework.WebApiUtils.Identity.Utils;
 using CustomFramework.WebApiUtils.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -28,11 +35,99 @@ namespace CustomFramework.WebApiUtils.Identity.Business
     {
         private readonly UserManager<TUser> _userManager;
         private readonly ICustomRoleManager<TRole> _roleManager;
+        private readonly IIdentityModel _identityModel;
+        private readonly IEmailSender _emailSender;
 
-        public CustomUserManager(UserManager<TUser> userManager, ICustomRoleManager<TRole> roleManager, ILogger<CustomRoleManager<TUser, TRole>> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(logger, mapper, httpContextAccessor)
+        public CustomUserManager(UserManager<TUser> userManager, ICustomRoleManager<TRole> roleManager, IIdentityModel identityModel, IEmailSender emailSender, ILogger<CustomRoleManager<TUser, TRole>> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(logger, mapper, httpContextAccessor)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _identityModel = identityModel;
+            _emailSender = emailSender;
+        }
+
+        public async Task<IdentityResult> RegisterAsync(TUser user, string password, Func<Task> func)
+        {
+            return await CreateAsync(user, password, func);
+        }
+
+        public async Task<IdentityResult> RegisterAsync(TUser user, string password, Func<Task> func, List<string> roles)
+        {
+            var result = await RegisterAsync(user, password, func);
+            if (!result.Succeeded) return result;
+
+            var addToRoleResult = await AddToRolesAsync(user.Id, roles);
+            if (!result.Succeeded) return result;
+
+            return result;
+        }
+
+        public async Task<IdentityResult> RegisterWithGeneratedPasswordAsync(TUser user, string password, Func<Task> func, List<string> roles, int generatePasswordLength)
+        {
+            var passwordLength = generatePasswordLength < 6 ? 6 : (int) generatePasswordLength;
+            var passwordGenerated = Password.Generate(passwordLength, 1);
+            password = passwordGenerated;
+
+            return await RegisterAsync(user, password, func, roles);
+        }
+
+        public async Task<IdentityResult> RegisterWithConfirmationEmailAsync(TUser user, string password, Func<Task> func, List<string> roles, IUrlHelper url, string emailTitle, string emailBody, string requestScheme, string callbackUrl)
+        {
+            var result = await RegisterAsync(user, password, func, roles);
+            if (!result.Succeeded) return result;
+
+            await ConfirmationEmailSenderAsync(user, emailTitle, emailBody, url, callbackUrl);
+
+            return result;
+        }
+
+        public async Task<IdentityResult> RegisterWithConfirmationAndGeneratedPasswordAsync(TUser user, string password, Func<Task> func, List<string> roles, int generatePasswordLength, IUrlHelper url, string emailTitle, string emailBody, string requestScheme, string callbackUrl)
+        {
+            var result = await RegisterWithGeneratedPasswordAsync(user, password, func, roles, generatePasswordLength);
+            if (!result.Succeeded) return result;
+
+            emailBody += $"Sistem tarafından oluşturulan yeni parolanız: {password}";
+
+            await ConfirmationEmailSenderAsync(user, emailTitle, emailBody, url, callbackUrl);
+
+            return result;
+        }
+
+        public async Task<IdentityResult> ChangePasswordWithEmailAsync(string email, string oldPassword, string newPassword, string confirmPassword)
+        {
+            var user = await GetByEmailAsync(email);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"Kullanıcı bulunamadı.");
+            }
+
+            return await BaseChangePasswordAsync(user, oldPassword, newPassword, confirmPassword);
+        }
+
+        public async Task<IdentityResult> ChangePasswordWithUserNameAsync(string userName, string oldPassword, string newPassword, string confirmPassword)
+        {
+            var user = await GetByUserNameAsync(userName);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"Kullanıcı bulunamadı.");
+            }
+
+            return await BaseChangePasswordAsync(user, oldPassword, newPassword, confirmPassword);
+        }
+
+        private async Task<IdentityResult> BaseChangePasswordAsync(TUser user, string oldPassword, string newPassword, string confirmPassword)
+        {
+            if (newPassword != confirmPassword)
+            {
+                throw new ArgumentException($"Yeni parola ile onay parolası uyumsuz");
+            }
+
+            if (oldPassword == newPassword)
+            {
+                throw new ArgumentException($"Eski parola yeni parola ile aynı olamaz.");
+            }
+
+            return await ChangePasswordAsync(user.Id, oldPassword, newPassword);
         }
 
         public async Task<IdentityResult> AddClaimAsync(int id, Claim claim, IList<Claim> existingClaims)
@@ -114,9 +209,14 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _userManager.CheckPasswordAsync(user, password);
         }
 
-        public async Task<IdentityResult> ConfirmEmailAsync(TUser user, string token)
+        public async Task<IdentityResult> ConfirmEmailAsync(int id, string token)
         {
-            return await _userManager.ConfirmEmailAsync(user, token);
+            var user = await GetByIdAsync(id);
+
+            var codeDecodedBytes = WebEncoders.Base64UrlDecode(token);
+            var codeDecoded = Encoding.UTF8.GetString(codeDecodedBytes);
+
+            return await _userManager.ConfirmEmailAsync(user, codeDecoded);
         }
 
         public async Task<IdentityResult> CreateAsync(TUser user, string password, Func<Task> func)
@@ -156,7 +256,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return user;
         }
 
-        public async Task<TUser> GetByNameAsync(string userName)
+        public async Task<TUser> GetByUserNameAsync(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
             if (user == null || user.Status != Status.Active) throw new KeyNotFoundException("User");
@@ -183,6 +283,21 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         public async Task<TUser> FindByIdAsync(string id)
         {
             return await _userManager.FindByIdAsync(id);
+        }
+
+        public async Task ForgotPasswordAsync(string emailAddress, string emailTitle, string emailText, IUrlHelper url, string requestScheme, string callbackUrl)
+        {
+            var user = await GetByEmailAsync(emailAddress);
+
+            if (!await IsEmailConfirmedAsync(user))
+            {
+                throw new ArgumentException("Lütfen kaydınızı onaylayınız."); //Please confirm your registration.
+            }
+
+            // For more information on how to enable account confirmation and password reset please 
+            // visit https://go.microsoft.com/fwlink/?LinkID=532713
+
+            await ResetPasswordEmailSenderAsync(user, emailTitle, emailText, url, requestScheme, callbackUrl);
         }
 
         public async Task<IList<TUser>> GetAllAsync()
@@ -267,10 +382,36 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _userManager.RemoveFromRolesAsync(user, roles);
         }
 
-        public async Task<IdentityResult> ResetPasswordAsync(TUser user, string token, string newPassword)
+        public async Task<IdentityResult> ResetPasswordAsync(int id, string token, string newPassword)
         {
-            await GetByIdAsync(user.Id);
+            var user = await GetByIdAsync(id);
             return await _userManager.ResetPasswordAsync(user, token, newPassword);
+        }
+
+        public async Task<IdentityResult> ResetPasswordAsync(string emailAddress, string token, string newPassword, string confirmPassword, string emailTitle, string emailText)
+        {
+            if (token == null)
+            {
+                throw new ArgumentException("Parola yenilemek için kod gerekmektedir."); //A code must be supplied for password reset.
+            }
+
+            if (newPassword != confirmPassword)
+            {
+                throw new ArgumentException($"Yeni parola ile onay parolası uyumsuz");
+            }
+
+            var user = await GetByEmailAsync(emailAddress);
+
+            var codeDecodedBytes = WebEncoders.Base64UrlDecode(token);
+            var codeDecoded = Encoding.UTF8.GetString(codeDecodedBytes);
+
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+            if (!result.Succeeded) return result;
+
+            await _emailSender.SendEmailAsync(
+                _identityModel.SenderEmailAddress, new List<string> { emailAddress }, emailTitle, emailText);
+
+            return result;
         }
 
         public async Task<IdentityResult> UpdateAsync(TUser user)
@@ -278,5 +419,71 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             await GetByIdAsync(user.Id);
             return await _userManager.UpdateAsync(user);
         }
+
+        private async Task ConfirmationEmailSenderAsync(TUser user, string title, string text, IUrlHelper url, string requestScheme, string callbackUrl = "")
+        {
+            var code = await GenerateEmailConfirmationTokenAsync(user);
+            var codeBytes = Encoding.UTF8.GetBytes(code);
+            var codeEncoded = WebEncoders.Base64UrlEncode(codeBytes);
+
+            var receiverList = new List<string>();
+            receiverList.Add(user.Email);
+
+            var emailBody = string.Empty;
+
+            if (_identityModel.EmailConfirmationViaUrl) emailBody = $"{ConfirmationEmailUrlCreator(user.Id, codeEncoded, text,url, requestScheme, callbackUrl)}";
+            else emailBody = $"{text} Hesap onay kodunuz : {codeEncoded}";
+
+            await _emailSender.SendEmailAsync(
+                _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{emailBody}");
+        }
+
+        private string ConfirmationEmailUrlCreator(int userId, string codeEncoded, string emailText, IUrlHelper url, string requestScheme, string callbackUrl = "")
+        {
+            if (String.IsNullOrEmpty(callbackUrl))
+            {
+                callbackUrl = url.Action(
+                    action: "ConfirmEmailAsync",
+                    controller: "Account",
+                    values : new { userId = userId, code = codeEncoded },
+                    protocol : requestScheme);
+
+            }
+            else
+            {
+                callbackUrl = callbackUrl.Replace("ReplaceUserIdValue", userId.ToString());
+                callbackUrl = callbackUrl.Replace("ReplaceCodeValue", codeEncoded);
+            }
+
+            return $"{emailText} Hesabınızı onaylamak için lütfen bağlantıya tıklayınız - {callbackUrl}";
+        }
+
+        private async Task ResetPasswordEmailSenderAsync(TUser user, string title, string text, IUrlHelper url, string requestScheme, string callbackUrl = "")
+        {
+            var code = await GeneratePasswordResetTokenAsync(user);
+            var codeBytes = Encoding.UTF8.GetBytes(code);
+            var codeEncoded = WebEncoders.Base64UrlEncode(codeBytes);
+
+            var receiverList = new List<string>();
+            receiverList.Add(user.Email);
+
+            if (String.IsNullOrEmpty(callbackUrl))
+            {
+                callbackUrl = url.Action(
+                    action: "ResetPasswordAsync",
+                    controller: "Account",
+                    values : new { code = codeEncoded },
+                    protocol : requestScheme);
+            }
+            else
+            {
+                callbackUrl = callbackUrl.Replace("ReplaceUserIdValue", user.Id.ToString());
+                callbackUrl = callbackUrl.Replace("ReplaceCodeValue", codeEncoded);
+            }
+
+            await _emailSender.SendEmailAsync(
+                _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{text}. - {callbackUrl} ya da kodu ilgili forma giriniz. {codeEncoded}"); //Please reset your password by clicking here
+        }
+
     }
 }

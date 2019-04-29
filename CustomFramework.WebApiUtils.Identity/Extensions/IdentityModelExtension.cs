@@ -37,6 +37,7 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
 
             services.AddSingleton<IToken, Token>(p => IdentityConfig.Token);
             services.AddSingleton<IEmailConfig, EmailConfig>(p => IdentityConfig.EmailConfig);
+            services.AddSingleton<IIdentityModel, IdentityModel>(p => IdentityConfig);
 
             services.AddTransient<IClientApplicationRepository, ClientApplicationRepository>();
 
