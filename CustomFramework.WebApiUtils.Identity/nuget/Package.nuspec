@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>CustomFramework.WebApiUtils.Identity</id> //Bu versiyon numarası yayınlanmadı. 
+    <id>CustomFramework.WebApiUtils.Identity</id> 
     <version>1.0.6</version>
     <authors>YEK</authors>
     <owners>CuteSafe Tech.</owners>
@@ -14,7 +14,7 @@
       <dependency id="CS.Common.EmailProvider" version="1.1.0" />
       <dependency id="CustomFramework.Authorization" version="1.1.9" />
       <dependency id="CustomFramework.WebApiUtils" version="1.2.3" />
-      <dependency id="CustomFramework.WebApiUtils.Identity.Contracts" version="1.1.0" />
+      <dependency id="CustomFramework.WebApiUtils.Identity.Contracts" version="1.1.1" />
       <dependency id="Microsoft.AspNetCore.Identity" version="2.2.0" />
       <dependency id="Microsoft.AspNetCore.Identity.EntityFrameworkCore" version="2.2.0" />
       <dependency id="Microsoft.Extensions.Identity.Stores" version="2.2.0" />
