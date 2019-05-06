@@ -70,7 +70,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
         }
 
         [NonAction]
-        public TokenResponse GenerateJwtToken(int userId, IApiRequest apiRequest)
+        public TokenResponse GenerateJwtToken(int userId, IApiRequest apiRequest, List<Claim> additionalClaims = null)
         {
             var apiRequestJson = JsonConvert.SerializeObject(apiRequest,
                 new JsonSerializerSettings
@@ -86,6 +86,8 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 new Claim(typeof(IApiRequest).Name, apiRequestJson),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
+
+            if(additionalClaims != null) claims.AddRange(additionalClaims);
 
             var key = _identityModel.Token.Key;
             var issuer = _identityModel.Token.Issuer;
