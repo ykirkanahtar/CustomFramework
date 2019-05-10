@@ -12,6 +12,7 @@ using CustomFramework.Authorization.Utils;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Controllers;
 using CustomFramework.WebApiUtils.Identity.Business;
+using CustomFramework.WebApiUtils.Identity.Constants;
 using CustomFramework.WebApiUtils.Identity.Contracts.Requests;
 using CustomFramework.WebApiUtils.Identity.Contracts.Responses;
 using CustomFramework.WebApiUtils.Identity.Extensions;
@@ -117,7 +118,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             {
                 var roles = await _roleManager.GetAllAsync();
                 if (roles == null || roles.Count == 0)
-                    throw new ArgumentException("Rolbulunamadı");
+                    throw new KeyNotFoundException(IdentityStringMessages.Role);
                 return roles;
             });
             return Ok(new ApiResponse(LocalizationService, Logger).Ok<TRoleResponse>(Mapper.Map<IList<TRole>, IList<TRoleResponse>>(result), result.Count));
@@ -174,7 +175,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             {
                 var claims = await _roleManager.GetClaimsAsync(roleName);
                 if (claims == null || claims.Count == 0)
-                    throw new KeyNotFoundException("Yetki bulunamadı");
+                    throw new KeyNotFoundException(IdentityStringMessages.Authority);
                 return claims;
             });
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result), result.Count));

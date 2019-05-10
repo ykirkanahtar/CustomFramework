@@ -13,11 +13,13 @@ using CustomFramework.Data.Enums;
 using CustomFramework.Data.Utils;
 using CustomFramework.Utils;
 using CustomFramework.WebApiUtils.Business;
+using CustomFramework.WebApiUtils.Identity.Constants;
 using CustomFramework.WebApiUtils.Identity.Data;
 using CustomFramework.WebApiUtils.Identity.Data.Repositories;
 using CustomFramework.WebApiUtils.Identity.Extensions;
 using CustomFramework.WebApiUtils.Identity.Models;
 using CustomFramework.WebApiUtils.Identity.Utils;
+using CustomFramework.WebApiUtils.Resources;
 using CustomFramework.WebApiUtils.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -37,13 +39,16 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         private readonly ICustomRoleManager<TRole> _roleManager;
         private readonly IIdentityModel _identityModel;
         private readonly IEmailSender _emailSender;
+        private readonly ILocalizationService _localizationService;
 
-        public CustomUserManager(UserManager<TUser> userManager, ICustomRoleManager<TRole> roleManager, IIdentityModel identityModel, IEmailSender emailSender, ILogger<CustomRoleManager<TUser, TRole>> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(logger, mapper, httpContextAccessor)
+
+        public CustomUserManager(ILocalizationService localizationService, UserManager<TUser> userManager, ICustomRoleManager<TRole> roleManager, IIdentityModel identityModel, IEmailSender emailSender, ILogger<CustomRoleManager<TUser, TRole>> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(logger, mapper, httpContextAccessor)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _identityModel = identityModel;
             _emailSender = emailSender;
+            _localizationService = localizationService;
         }
 
         public async Task<IdentityResult> RegisterAsync(TUser user, string password, Func<Task> func)
@@ -64,7 +69,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
 
         public async Task<IdentityResult> RegisterWithGeneratedPasswordAsync(TUser user, string password, Func<Task> func, List<string> roles, int generatePasswordLength)
         {
-            var passwordLength = generatePasswordLength < 6 ? 6 : (int) generatePasswordLength;
+            var passwordLength = generatePasswordLength < 6 ? 6 : (int)generatePasswordLength;
             var passwordGenerated = Password.Generate(passwordLength, 1);
             password = passwordGenerated;
 
@@ -86,7 +91,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             var result = await RegisterWithGeneratedPasswordAsync(user, password, func, roles, generatePasswordLength);
             if (!result.Succeeded) return result;
 
-            emailBody += $"Sistem tarafından oluşturulan yeni parolanız: {password}";
+            emailBody += $"{_localizationService.GetValue(IdentityStringMessages.ThePasswordCreatedBySystem)}: {password}";
 
             await ConfirmationEmailSenderAsync(user, emailTitle, emailBody, url, callbackUrl);
 
@@ -98,7 +103,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             var user = await GetByEmailAsync(email);
             if (user == null)
             {
-                throw new KeyNotFoundException($"Kullanıcı bulunamadı.");
+                throw new KeyNotFoundException($"{IdentityStringMessages.User}");
             }
 
             return await BaseChangePasswordAsync(user, oldPassword, newPassword, confirmPassword);
@@ -109,7 +114,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             var user = await GetByUserNameAsync(userName);
             if (user == null)
             {
-                throw new KeyNotFoundException($"Kullanıcı bulunamadı.");
+                throw new KeyNotFoundException($"{IdentityStringMessages.User}");
             }
 
             return await BaseChangePasswordAsync(user, oldPassword, newPassword, confirmPassword);
@@ -119,12 +124,12 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         {
             if (newPassword != confirmPassword)
             {
-                throw new ArgumentException($"Yeni parola ile onay parolası uyumsuz");
+                throw new ArgumentException($"{IdentityStringMessages.PasswordAndConfirmPasswordDoesntMatch}");
             }
 
             if (oldPassword == newPassword)
             {
-                throw new ArgumentException($"Eski parola yeni parola ile aynı olamaz.");
+                throw new ArgumentException($"{IdentityStringMessages.OldPasswordAndNewPasswordCanNotBeSame}");
             }
 
             return await ChangePasswordAsync(user.Id, oldPassword, newPassword);
@@ -226,9 +231,11 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _userManager.CreateAsync(user, password);
         }
 
-        public async Task<IdentityResult> DeleteAsync(int id)
+        public async Task<IdentityResult> DeleteAsync(int id, Func<Task> deleteCheck)
         {
             var user = await GetByIdAsync(id);
+
+            await deleteCheck.Invoke();
 
             var roles = await _userManager.GetRolesAsync(user);
 
@@ -291,7 +298,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
 
             if (!await IsEmailConfirmedAsync(user))
             {
-                throw new ArgumentException("Lütfen kaydınızı onaylayınız."); //Please confirm your registration.
+                throw new ArgumentException($"{IdentityStringMessages.PleaseConfirmYourRegistration}"); //Please confirm your registration.
             }
 
             // For more information on how to enable account confirmation and password reset please 
@@ -392,12 +399,12 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         {
             if (token == null)
             {
-                throw new ArgumentException("Parola yenilemek için kod gerekmektedir."); //A code must be supplied for password reset.
+                throw new ArgumentException($"{IdentityStringMessages.CodeIsNeededForCompleteRegistration}"); //A code must be supplied for password reset.
             }
 
             if (newPassword != confirmPassword)
             {
-                throw new ArgumentException($"Yeni parola ile onay parolası uyumsuz");
+                throw new ArgumentException($"{IdentityStringMessages.PasswordAndConfirmPasswordDoesntMatch}");
             }
 
             var user = await GetByEmailAsync(emailAddress);
@@ -431,8 +438,8 @@ namespace CustomFramework.WebApiUtils.Identity.Business
 
             var emailBody = string.Empty;
 
-            if (_identityModel.EmailConfirmationViaUrl) emailBody = $"{ConfirmationEmailUrlCreator(user.Id, codeEncoded, text,url, requestScheme, callbackUrl)}";
-            else emailBody = $"{text} Hesap onay kodunuz : {codeEncoded}";
+            if (_identityModel.EmailConfirmationViaUrl) emailBody = $"{ConfirmationEmailUrlCreator(user.Id, codeEncoded, text, url, requestScheme, callbackUrl)}";
+            else emailBody = $"{text} {_localizationService.GetValue(IdentityStringMessages.YourAccountConfirmCode)}: {codeEncoded}";
 
             await _emailSender.SendEmailAsync(
                 _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{emailBody}");
@@ -445,8 +452,8 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                 callbackUrl = url.Action(
                     action: "ConfirmEmailAsync",
                     controller: "Account",
-                    values : new { userId = userId, code = codeEncoded },
-                    protocol : requestScheme);
+                    values: new { userId = userId, code = codeEncoded },
+                    protocol: requestScheme);
 
             }
             else
@@ -455,7 +462,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                 callbackUrl = callbackUrl.Replace("ReplaceCodeValue", codeEncoded);
             }
 
-            return $"{emailText} Hesabınızı onaylamak için lütfen bağlantıya tıklayınız - {callbackUrl}";
+            return $"{emailText} {_localizationService.GetValue(IdentityStringMessages.ClickTheLinkForConfirmationYourAccount)} - {callbackUrl}";
         }
 
         private async Task ResetPasswordEmailSenderAsync(TUser user, string title, string text, IUrlHelper url, string requestScheme, string callbackUrl = "")
@@ -472,8 +479,8 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                 callbackUrl = url.Action(
                     action: "ResetPasswordAsync",
                     controller: "Account",
-                    values : new { code = codeEncoded },
-                    protocol : requestScheme);
+                    values: new { code = codeEncoded },
+                    protocol: requestScheme);
             }
             else
             {
@@ -482,7 +489,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             }
 
             await _emailSender.SendEmailAsync(
-                _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{text}. - {callbackUrl} ya da kodu ilgili forma giriniz. {codeEncoded}"); //Please reset your password by clicking here
+                _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{text}. - {callbackUrl} {_localizationService.GetValue(IdentityStringMessages.OrEnterTheCodeToTheForm)} {codeEncoded}"); //Please reset your password by clicking here
         }
 
     }

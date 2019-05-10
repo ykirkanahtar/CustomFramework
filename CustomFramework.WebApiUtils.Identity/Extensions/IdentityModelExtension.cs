@@ -39,7 +39,7 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
             services.AddSingleton<IEmailConfig, EmailConfig>(p => IdentityConfig.EmailConfig);
             services.AddSingleton<IIdentityModel, IdentityModel>(p => IdentityConfig);
 
-            services.AddTransient<IClientApplicationRepository, ClientApplicationRepository>();
+                        services.AddTransient<IClientApplicationRepository, ClientApplicationRepository>();
 
             services.AddTransient<ICustomUserManager<TUser>, CustomUserManager<TUser, TRole>>();
             services.AddTransient<ICustomRoleManager<TRole>, CustomRoleManager<TUser, TRole>>();

@@ -27,7 +27,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             Task<IdentityResult> ChangePasswordAsync(int id, string currentPassword, string newPassword);
             Task<IdentityResult> ConfirmEmailAsync(int id, string token);
             Task<IdentityResult> CreateAsync(TUser user, string password, Func<Task> func);
-            Task<IdentityResult> DeleteAsync(int id);
+            Task<IdentityResult> DeleteAsync(int id, Func<Task> deleteCheck);
             Task<TUser> FindByIdAsync(string id);
             Task ForgotPasswordAsync(string emailAddress, string emailTitle, string emailText, IUrlHelper url, string requestScheme, string callbackUrl);
             Task<TUser> GetByEmailAsync(string email);

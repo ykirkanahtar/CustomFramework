@@ -51,7 +51,7 @@ namespace CustomFramework.WebApiUtils.Middlewares
                 context.Response.StatusCode = (int)ex.ExceptionToStatusCode();
                 context.Response.ContentType = "application/json";
 
-                var apiResponse = new ApiResponse(_localizationService, _logger).Error((HttpStatusCode)context.Response.StatusCode, ex);
+                var apiResponse = new ApiResponse(_localizationService, _logger).Error((HttpStatusCode)context.Response.StatusCode, errorMessage, ex);
 
                 _logger.LogError(0, ex, errorMessage);
 

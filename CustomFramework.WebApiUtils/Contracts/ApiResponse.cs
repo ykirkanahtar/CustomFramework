@@ -69,7 +69,7 @@ namespace CustomFramework.WebApiUtils.Contracts
         {
             ErrorResponse = new ErrorResponse(exception);
             StatusCode = statusCode;
-            Message = $"{_localizationService.GetValue(DefaultResponseMessages.AnErrorHasOccured)} : {GetDefaultMessageForException(exception)}";
+            Message = $"{GetDefaultMessageForException(exception)}";
 
             //_logger.LogError(0, exception, Message);
             return this;
@@ -82,7 +82,7 @@ namespace CustomFramework.WebApiUtils.Contracts
             );
 
             StatusCode = statusCode;
-            Message = $"{_localizationService.GetValue(DefaultResponseMessages.AnErrorHasOccured)} : {GetDefaultMessageForException(exception)} {_localizationService.GetValue(message)}";
+            Message = $"{GetDefaultMessageForException(exception)} : {_localizationService.GetValue(message)}";
 
             //_logger.LogError(0, exception, Message);
             return this;
@@ -130,7 +130,8 @@ namespace CustomFramework.WebApiUtils.Contracts
             var returnMessage = new ExceptionOperation(exception).GetReturnMessage(ref message);
 
             var localizatedReturnMessage = _localizationService.GetValue(returnMessage);
-            return $"{localizatedReturnMessage} : {_localizationService.GetValue(message)}";
+            return localizatedReturnMessage == string.Empty 
+                ? $"{_localizationService.GetValue(message)}" : $"{localizatedReturnMessage}";
         }
     }
 }

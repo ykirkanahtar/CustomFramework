@@ -34,10 +34,10 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                 var result = Mapper.Map<ClientApplication>(request);
 
                 var tempResult = await _uow.ClientApplications.GetByNameAsync(result.ClientApplicationName);
-                tempResult.CheckUniqueValue(IdentityConstants.ClientApplicationName);
+                tempResult.CheckUniqueValue(IdentityStringMessages.ClientApplicationName);
 
                 tempResult = await _uow.ClientApplications.GetByCodeAsync(result.ClientApplicationCode);
-                tempResult.CheckUniqueValue(IdentityConstants.ClientApplicationCode);
+                tempResult.CheckUniqueValue(IdentityStringMessages.ClientApplicationCode);
 
                 var salt = HashString.GetSalt();
                 var hashPassword = HashString.Hash(result.ClientApplicationPassword, salt,
@@ -61,10 +61,10 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                 Mapper.Map(request, result);
 
                 var tempResult = await _uow.ClientApplications.GetByNameAsync(result.ClientApplicationName);
-                tempResult.CheckUniqueValueForUpdate(id, IdentityConstants.ClientApplicationName);
+                tempResult.CheckUniqueValueForUpdate(id, IdentityStringMessages.ClientApplicationName);
 
                 tempResult = await _uow.ClientApplications.GetByCodeAsync(result.ClientApplicationCode);
-                tempResult.CheckUniqueValueForUpdate(id, IdentityConstants.ClientApplicationCode);
+                tempResult.CheckUniqueValueForUpdate(id, IdentityStringMessages.ClientApplicationCode);
 
                 _uow.ClientApplications.Update(result, GetUserId());
 
