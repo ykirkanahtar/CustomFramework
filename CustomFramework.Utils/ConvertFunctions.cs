@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace CustomFramework.Utils
@@ -34,6 +35,13 @@ namespace CustomFramework.Utils
         public static decimal RoundValue(this decimal value)
         {
             return Math.Round(value, 2, MidpointRounding.ToEven);
+        }
+
+        public static string MakeFirstCharUpper(this string value)
+        {
+            if(value.Length < 2) return value.ToUpper();
+            
+            return char.ToUpper(value.First()) + value.Substring(1).ToLower();
         }
     }
 }
