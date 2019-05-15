@@ -41,11 +41,11 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
 
         public async virtual Task<IActionResult> CreateAsync([FromBody] TRoleRequest request)
         {
-            var result = await CommonOperationAsync<TRole>(async() =>
-            {
-                if (!ModelState.IsValid)
-                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+            if (!ModelState.IsValid)
+                throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
 
+            var result = await CommonOperationAsync<TRole>(async () =>
+            {
                 var role = Mapper.Map<TRole>(request);
 
                 var response = await _roleManager.CreateAsync(role);
@@ -65,11 +65,11 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
 
         public async virtual Task<IActionResult> UpdateAsync(int id, [FromBody] TRoleRequest request)
         {
-            var result = await CommonOperationAsync<TRole>(async() =>
-            {
-                if (!ModelState.IsValid)
-                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+            if (!ModelState.IsValid)
+                throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
 
+            var result = await CommonOperationAsync<TRole>(async () =>
+            {
                 var role = await _roleManager.GetByIdAsync(id);
                 Mapper.Map(request, role);
 
@@ -96,7 +96,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
 
         public async virtual Task<IActionResult> GetByIdAsync(int id)
         {
-            var result = await CommonOperationAsync<TRole>(async() =>
+            var result = await CommonOperationAsync<TRole>(async () =>
             {
                 return await _roleManager.GetByIdAsync(id);
             });
@@ -105,7 +105,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
 
         public async virtual Task<IActionResult> GetByNameAsync(string name)
         {
-            var result = await CommonOperationAsync<TRole>(async() =>
+            var result = await CommonOperationAsync<TRole>(async () =>
             {
                 return await _roleManager.GetByNameAsync(name);
             });
@@ -114,7 +114,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
 
         public async virtual Task<IActionResult> GetAllAsync()
         {
-            var result = await CommonOperationAsync<IList<TRole>>(async() =>
+            var result = await CommonOperationAsync<IList<TRole>>(async () =>
             {
                 var roles = await _roleManager.GetAllAsync();
                 if (roles == null || roles.Count == 0)
@@ -127,7 +127,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
         [NonAction]
         public async Task<IActionResult> BaseAddClaimsAsync(int id, IList<ClaimRequest> claimsRequest, IList<ClaimRequest> existingClaimsRequest)
         {
-            var result = await CommonOperationAsync<List<ClaimResponse>>(async() =>
+            var result = await CommonOperationAsync<List<ClaimResponse>>(async () =>
             {
                 var claims = Mapper.Map<IList<Claim>>(claimsRequest);
                 var existingClaims = Mapper.Map<IList<Claim>>(existingClaimsRequest);
@@ -139,7 +139,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                     claimsResponse.Add(new ClaimResponse
                     {
                         Type = claim.Type,
-                            Value = claim.Value
+                        Value = claim.Value
                     });
                 }
                 return claimsResponse;
@@ -150,7 +150,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
         [NonAction]
         public async Task<IActionResult> BaseAddClaimAsync(int id, ClaimRequest claimRequest, IList<ClaimRequest> existingClaimsRequest)
         {
-            var result = await CommonOperationAsync<bool>(async() =>
+            var result = await CommonOperationAsync<bool>(async () =>
             {
                 var claim = Mapper.Map<Claim>(claimRequest);
                 var existingClaims = Mapper.Map<IList<Claim>>(existingClaimsRequest);
@@ -171,7 +171,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
 
         public async virtual Task<IActionResult> GetClaimsAsync(string roleName)
         {
-            var result = await CommonOperationAsync<IList<Claim>>(async() =>
+            var result = await CommonOperationAsync<IList<Claim>>(async () =>
             {
                 var claims = await _roleManager.GetClaimsAsync(roleName);
                 if (claims == null || claims.Count == 0)
@@ -183,7 +183,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
 
         public async virtual Task<IActionResult> RemoveClaimsAsync(int id, [FromBody] List<ClaimRequest> claimsRequest)
         {
-            var result = await CommonOperationAsync<List<ClaimResponse>>(async() =>
+            var result = await CommonOperationAsync<List<ClaimResponse>>(async () =>
             {
                 var claims = Mapper.Map<IList<Claim>>(claimsRequest);
 
@@ -194,7 +194,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                     claimsResponse.Add(new ClaimResponse
                     {
                         Type = claim.Type,
-                            Value = claim.Value
+                        Value = claim.Value
                     });
                 }
                 return claimsResponse;
@@ -204,7 +204,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
 
         public async virtual Task<IActionResult> RemoveClaimAsync(int id, [FromBody] ClaimRequest claimRequest)
         {
-            var result = await CommonOperationAsync<bool>(async() =>
+            var result = await CommonOperationAsync<bool>(async () =>
             {
                 var claim = Mapper.Map<Claim>(claimRequest);
                 var response = await _roleManager.RemoveClaimAsync(id, claim);

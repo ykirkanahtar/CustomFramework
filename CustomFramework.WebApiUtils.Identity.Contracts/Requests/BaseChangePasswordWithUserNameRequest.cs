@@ -4,7 +4,7 @@ namespace CustomFramework.WebApiUtils.Identity.Contracts.Requests
 {
     public class BaseChangePasswordWithUserNameRequest : BaseChangePasswordRequest
     {
-        [Required]
+        [Required(ErrorMessage = "<field>{0}</field> <message>RequiredError</message>")]
         public string UserName { get; set; }
     }
 }
