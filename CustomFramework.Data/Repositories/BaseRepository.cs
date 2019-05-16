@@ -20,26 +20,26 @@ namespace CustomFramework.Data.Repositories
 
         }
 
-        public virtual void Add(TEntity entity, int userId)
+        public virtual void Add(TEntity entity, int userId, DateTime? logDateTime = null)
         {
-            entity.CreateDateTime = DateTime.Now;
+            entity.CreateDateTime = logDateTime != null ? (DateTime)logDateTime : DateTime.UtcNow;
             entity.CreateUserId = userId;
             entity.Status = Status.Active;
             DbSet.Add(entity);
         }
 
-        public virtual void Update(TEntity entity, int userId)
+        public virtual void Update(TEntity entity, int userId, DateTime? logDateTime = null)
         {
-            entity.UpdateDateTime = DateTime.Now;
+            entity.UpdateDateTime = logDateTime != null ? (DateTime)logDateTime : DateTime.UtcNow;
             entity.UpdateUserId = userId;
 
             DbSet.Attach(entity);
             DbContext.Entry(entity).State = EntityState.Modified;
         }
 
-        public virtual void Delete(TEntity entity, int userId)
+        public virtual void Delete(TEntity entity, int userId, DateTime? logDateTime = null)
         {
-            entity.DeleteDateTime = DateTime.Now;
+            entity.DeleteDateTime = logDateTime != null ? (DateTime)logDateTime : DateTime.UtcNow;
             entity.DeleteUserId = userId;
             entity.Status = Status.Deleted;
 
