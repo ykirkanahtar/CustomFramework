@@ -106,7 +106,7 @@ namespace CustomFramework.WebApiUtils.Business
 
         protected int GetUserId()
         {
-            if(_userId == 0) throw new Exception($"{DefaultResponseMessages.AnErrorHasOccured} - UserId is null");
+            if(_userId == 0) throw new Exception($"{DefaultResponseMessages.AnErrorHasOccured} - UserIdNullError");
             return _userId;
         }
     }

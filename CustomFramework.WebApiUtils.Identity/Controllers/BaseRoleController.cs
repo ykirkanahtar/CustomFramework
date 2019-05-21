@@ -39,7 +39,8 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             _roleManager = roleManager;
         }
 
-        public async virtual Task<IActionResult> CreateAsync([FromBody] TRoleRequest request)
+        [NonAction]
+        public async virtual Task<IActionResult> CreateAsync([FromBody] TRoleRequest request, Func<Task> logFunction = null)
         {
             if (!ModelState.IsValid)
                 throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
@@ -60,10 +61,13 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 return role;
             });
 
+            if (logFunction != null) await logFunction.Invoke();
+
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(result)));
         }
 
-        public async virtual Task<IActionResult> UpdateAsync(int id, [FromBody] TRoleRequest request)
+        [NonAction]
+        public async virtual Task<IActionResult> UpdateAsync(int id, [FromBody] TRoleRequest request, Func<Task> logFunction = null)
         {
             if (!ModelState.IsValid)
                 throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
@@ -84,16 +88,22 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 }
                 return role;
             });
+
+            if (logFunction != null) await logFunction.Invoke();
+
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(result)));
 
         }
 
-        public async virtual Task<IActionResult> DeleteAsync(int id)
+        [NonAction]
+        public async virtual Task<IActionResult> DeleteAsync(int id, Func<Task> logFunction = null)
         {
             await _roleManager.DeleteAsync(id);
+            if (logFunction != null) await logFunction.Invoke();
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(true));
         }
 
+        [NonAction]
         public async virtual Task<IActionResult> GetByIdAsync(int id)
         {
             var result = await CommonOperationAsync<TRole>(async () =>
@@ -103,6 +113,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(result)));
         }
 
+        [NonAction]
         public async virtual Task<IActionResult> GetByNameAsync(string name)
         {
             var result = await CommonOperationAsync<TRole>(async () =>
@@ -112,6 +123,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TRole, TRoleResponse>(result)));
         }
 
+        [NonAction]
         public async virtual Task<IActionResult> GetAllAsync()
         {
             var result = await CommonOperationAsync<IList<TRole>>(async () =>
@@ -125,7 +137,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
         }
 
         [NonAction]
-        public async Task<IActionResult> BaseAddClaimsAsync(int id, IList<ClaimRequest> claimsRequest, IList<ClaimRequest> existingClaimsRequest)
+        public async Task<IActionResult> BaseAddClaimsAsync(int id, IList<ClaimRequest> claimsRequest, IList<ClaimRequest> existingClaimsRequest, Func<Task> logFunction = null)
         {
             var result = await CommonOperationAsync<List<ClaimResponse>>(async () =>
             {
@@ -144,11 +156,14 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 }
                 return claimsResponse;
             });
+
+            if (logFunction != null) await logFunction.Invoke();
+
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(result));
         }
 
         [NonAction]
-        public async Task<IActionResult> BaseAddClaimAsync(int id, ClaimRequest claimRequest, IList<ClaimRequest> existingClaimsRequest)
+        public async Task<IActionResult> BaseAddClaimAsync(int id, ClaimRequest claimRequest, IList<ClaimRequest> existingClaimsRequest, Func<Task> logFunction = null)
         {
             var result = await CommonOperationAsync<bool>(async () =>
             {
@@ -166,9 +181,13 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 }
                 return true;
             });
+
+            if (logFunction != null) await logFunction.Invoke();
+
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(result));
         }
 
+        [NonAction]
         public async virtual Task<IActionResult> GetClaimsAsync(string roleName)
         {
             var result = await CommonOperationAsync<IList<Claim>>(async () =>
@@ -181,7 +200,8 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result), result.Count));
         }
 
-        public async virtual Task<IActionResult> RemoveClaimsAsync(int id, [FromBody] List<ClaimRequest> claimsRequest)
+        [NonAction]
+        public async virtual Task<IActionResult> RemoveClaimsAsync(int id, [FromBody] List<ClaimRequest> claimsRequest, Func<Task> logFunction = null)
         {
             var result = await CommonOperationAsync<List<ClaimResponse>>(async () =>
             {
@@ -199,10 +219,14 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 }
                 return claimsResponse;
             });
+
+            if (logFunction != null) await logFunction.Invoke();
+
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(result));
         }
 
-        public async virtual Task<IActionResult> RemoveClaimAsync(int id, [FromBody] ClaimRequest claimRequest)
+        [NonAction]
+        public async virtual Task<IActionResult> RemoveClaimAsync(int id, [FromBody] ClaimRequest claimRequest, Func<Task> logFunction = null)
         {
             var result = await CommonOperationAsync<bool>(async () =>
             {
@@ -218,6 +242,9 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 }
                 return true;
             });
+
+            if (logFunction != null) await logFunction.Invoke();
+
             return Ok(new ApiResponse(LocalizationService, Logger).Ok(result));
         }
     }

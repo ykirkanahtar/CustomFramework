@@ -31,22 +31,14 @@ using Newtonsoft.Json;
 namespace CustomFramework.WebApiUtils.Identity.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class BaseAccountController<TUser, TUserRequest, TUserResponse, TRole> : BaseController
+    public class BaseAccountController<TUser, TRole> : BaseController
     where TUser : CustomUser
     where TRole : CustomRole
     {
-        private readonly SignInManager<TUser> _signInManager;
-        protected readonly ICustomUserManager<TUser> CustomUserManager;
-        private readonly IClientApplicationManager _clientApplicationManager;
-        private readonly IEmailSender _emailSender;
         private readonly IdentityModel _identityModel;
 
-        public BaseAccountController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, SignInManager<TUser> signInManager, ICustomUserManager<TUser> customUserManager, IClientApplicationManager clientApplicationManager, IEmailSender emailSender) : base(localizationService, logger, mapper)
+        public BaseAccountController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper) : base(localizationService, logger, mapper)
         {
-            _signInManager = signInManager;
-            CustomUserManager = customUserManager;
-            _clientApplicationManager = clientApplicationManager;
-            _emailSender = emailSender;
             _identityModel = IdentityModelExtension<TUser, TRole>.IdentityConfig;
         }
 
@@ -59,24 +51,13 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
         }
 
         [NonAction]
-        protected async Task<IActionResult> BaseGetAllClaimsForLoggedUserAsync()
-        {
-            var result = await CommonOperationAsync<IList<Claim>>(async() =>
-            {
-                return await CustomUserManager.GetAllClaimsForLoggedUserAsync();
-            });
-            return Ok(new ApiResponse(LocalizationService, Logger).Ok(
-                Mapper.Map<IList<Claim>, IList<ClaimResponse>>(result)));
-        }
-
-        [NonAction]
         public TokenResponse GenerateJwtToken(int userId, IApiRequest apiRequest, List<Claim> additionalClaims = null)
         {
             var apiRequestJson = JsonConvert.SerializeObject(apiRequest,
                 new JsonSerializerSettings
                 {
                     PreserveReferencesHandling = PreserveReferencesHandling.All,
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 }
             );
 
@@ -87,7 +68,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
-            if(additionalClaims != null) claims.AddRange(additionalClaims);
+            if (additionalClaims != null) claims.AddRange(additionalClaims);
 
             var key = _identityModel.Token.Key;
             var issuer = _identityModel.Token.Issuer;
@@ -100,10 +81,10 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
             return new TokenResponse
             {
                 Token = token,
-                    ExpireInMinutes = expireInMinutes,
-                    RequestUtcDateTime = DateTime.UtcNow,
-                    ExpireUtcDateTime = expireDateTime,
-                    UserId = userId
+                ExpireInMinutes = expireInMinutes,
+                RequestUtcDateTime = DateTime.UtcNow,
+                ExpireUtcDateTime = expireDateTime,
+                UserId = userId
             };
         }
 
