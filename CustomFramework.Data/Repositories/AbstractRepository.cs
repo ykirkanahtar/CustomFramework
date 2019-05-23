@@ -133,7 +133,10 @@ namespace CustomFramework.Data.Repositories
                 return new CustomQueryable<TEntity>
                 {
                     Result = query,
-                    Count = rowCount
+                    TotalCount = rowCount,
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    PageCount = rowCount / paging.PageSize
                 };
             }
 
@@ -158,7 +161,10 @@ namespace CustomFramework.Data.Repositories
                 return new CustomQueryable<TEntity>
                 {
                     Result = query,
-                    Count = rowCount
+                    TotalCount = rowCount,
+                    PageIndex = paging.PageIndex,
+                    PageSize = paging.PageSize,
+                    PageCount = rowCount / paging.PageSize
                 };
             }
 

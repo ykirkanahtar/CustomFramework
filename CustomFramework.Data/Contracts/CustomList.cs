@@ -4,7 +4,10 @@ namespace CustomFramework.Data.Contracts
 {
     public class CustomList<T> : ICustomList<T> where T : class
     {
-        public int Count { get; set; }
-        public IList<T> ResultList { get; set; }
+        public int TotalCount { get; set; }
+        public int PageIndex { get; set; }
+        public int PageSize { get; set; }
+        public int PageCount { get; set; }
+        public IList<T> Result { get; set; }
     }
 }

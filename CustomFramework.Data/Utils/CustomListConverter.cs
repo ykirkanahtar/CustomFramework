@@ -9,32 +9,41 @@ namespace CustomFramework.Data.Utils
 {
     public static class CustomListConverter
     {
-        public static async Task<ICustomList<T>> ToCustomList<T>(this ICustomQueryable<T> query)
+        public static async Task<ICustomList<T>> ToCustomList<T>(this ICustomQueryable<T> query, Paging paging)
         where T : class
         {
             return new CustomList<T>
             {
-                ResultList = await query.Result.ToListAsync(),
-                Count = query.Count,
+                Result = await query.Result.ToListAsync(),
+                TotalCount = query.TotalCount,
+                PageIndex = paging.PageIndex,
+                PageSize = paging.PageSize,
+                PageCount = query.TotalCount / paging.PageSize
             };
         }
 
-        public static async Task<ICustomList<T>> ToCustomList<T>(this IQueryable<T> result) where T : class
+        public static async Task<ICustomList<T>> ToCustomList<T>(this IQueryable<T> result, Paging paging) where T : class
         {
             var list = await result.ToListAsync();
             return new CustomList<T>
             {
-                Count = list.Count,
-                ResultList = list
+                Result = list,
+                TotalCount = list.Count,
+                PageIndex = paging.PageIndex,
+                PageSize = paging.PageSize,
+                PageCount = list.Count / paging.PageSize
             };
         }
 
-        public static ICustomList<T> ToCustomList<T>(this IList<T> result) where T:class
+        public static ICustomList<T> ToCustomList<T>(this IList<T> result, Paging paging) where T : class
         {
             return new CustomList<T>
             {
-                Count = result.Count,
-                ResultList = result
+                Result = result,
+                TotalCount = result.Count,
+                PageIndex = paging.PageIndex,
+                PageSize = paging.PageSize,
+                PageCount = result.Count / paging.PageSize
             };
         }
     }
