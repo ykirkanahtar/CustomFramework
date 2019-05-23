@@ -1,4 +1,5 @@
-﻿using CustomFramework.WebApiUtils.Constants;
+﻿using CustomFramework.Data.Contracts;
+using CustomFramework.WebApiUtils.Constants;
 using CustomFramework.WebApiUtils.Resources;
 using CustomFramework.WebApiUtils.Utils.Exceptions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -48,6 +49,17 @@ namespace CustomFramework.WebApiUtils.Contracts
             StatusCode = HttpStatusCode.OK;
             Result = result;
             TotalCount = 1;
+            Message = _localizationService.GetValue(DefaultResponseMessages.SuccessMessage);
+
+            //_logger.LogInformation(Message, Result);
+            return this;
+        }
+
+        public ApiResponse Ok<T>(ICustomList<T> list) where T : class
+        {
+            StatusCode = HttpStatusCode.OK;
+            Result = list;
+            TotalCount = list.TotalCount;
             Message = _localizationService.GetValue(DefaultResponseMessages.SuccessMessage);
 
             //_logger.LogInformation(Message, Result);
@@ -130,7 +142,7 @@ namespace CustomFramework.WebApiUtils.Contracts
             var returnMessage = new ExceptionOperation(exception).GetReturnMessage(ref message);
 
             var localizatedReturnMessage = _localizationService.GetValue(returnMessage);
-            return localizatedReturnMessage == string.Empty 
+            return localizatedReturnMessage == string.Empty
                 ? $"{_localizationService.GetValue(message)}" : $"{localizatedReturnMessage}";
         }
     }

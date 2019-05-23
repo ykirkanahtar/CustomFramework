@@ -4,8 +4,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CustomFramework.Data" Version="1.1.7" />
-  </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CustomFramework.Data\CustomFramework.Data.csproj" />
+  </ItemGroup>
 </Project>

@@ -6,7 +6,9 @@ namespace CustomFramework.Data
     {
         public Paging(int pageIndex, int pageSize)
         {
+            if (pageIndex == 0) throw new ArgumentException("PageIndexCanNotBeZero");
             if (pageSize == 0) throw new ArgumentException("PageSizeCanNotBeZero");
+            
             PageIndex = pageIndex;
             PageSize = pageSize;
         }

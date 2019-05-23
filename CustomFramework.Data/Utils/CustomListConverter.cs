@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,20 +10,21 @@ namespace CustomFramework.Data.Utils
 {
     public static class CustomListConverter
     {
-        public static async Task<ICustomList<T>> ToCustomList<T>(this ICustomQueryable<T> query, Paging paging)
+        public static async Task<ICustomList<T>> ToCustomListAsync<T>(this ICustomQueryable<T> query, Paging paging)
         where T : class
         {
+            var result = await query.Result.ToListAsync();
             return new CustomList<T>
             {
-                Result = await query.Result.ToListAsync(),
+                Result = result,
                 TotalCount = query.TotalCount,
-                PageIndex = paging.PageIndex,
-                PageSize = paging.PageSize,
-                PageCount = query.TotalCount / paging.PageSize
+                PageIndex = query.PageIndex,
+                PageSize = query.PageSize,
+                PageCount = query.PageCount
             };
         }
 
-        public static async Task<ICustomList<T>> ToCustomList<T>(this IQueryable<T> result, Paging paging) where T : class
+        public static async Task<ICustomList<T>> ToCustomListAsync<T>(this IQueryable<T> result, Paging paging) where T : class
         {
             var list = await result.ToListAsync();
             return new CustomList<T>
@@ -45,6 +47,25 @@ namespace CustomFramework.Data.Utils
                 PageSize = paging.PageSize,
                 PageCount = result.Count / paging.PageSize
             };
+        }
+
+        public async static Task<ICustomList<T>> GetCustomListFromQueryAsync<T>(this IQueryable<T> query, Paging paging) where T : class
+        {
+            var rowCount = query.Count();
+            query = query.Skip(Math.Abs(paging.PageIndex - 1) * paging.PageSize).Take(paging.PageSize);
+
+            var pageCount = (rowCount + paging.PageSize - 1) / paging.PageSize;
+
+            var customQuery = new CustomQueryable<T>
+            {
+                Result = query,
+                TotalCount = rowCount,
+                PageIndex = paging.PageIndex,
+                PageSize = paging.PageSize,
+                PageCount = pageCount
+            };
+
+            return await customQuery.ToCustomListAsync(paging);
         }
     }
 }
