@@ -29,7 +29,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         Task<IdentityResult> CreateAsync(TUser user, string password, Func<Task> func = null);
         Task<IdentityResult> DeleteAsync(int id, Func<Task> deleteCheck = null);
         Task<TUser> FindByIdAsync(string id);
-        Task ForgotPasswordAsync(string emailAddress, string emailTitle, string emailText, IUrlHelper urlHelper, string requestScheme);
+        Task ForgotPasswordAsync(string emailAddress, string emailTitle, string emailText, IUrlHelper urlHelper, string requestScheme, string callbackUrl = null);
         Task<TUser> GetUserAsync(ClaimsPrincipal claimsPrincipal);
         Task<TUser> GetByEmailAsync(string email);
         Task<TUser> GetByUserNameAsync(string userName);

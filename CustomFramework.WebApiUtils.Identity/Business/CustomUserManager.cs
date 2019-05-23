@@ -297,7 +297,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _userManager.FindByIdAsync(id);
         }
 
-        public async Task ForgotPasswordAsync(string emailAddress, string emailTitle, string emailText, IUrlHelper urlHelper, string requestScheme)
+        public async Task ForgotPasswordAsync(string emailAddress, string emailTitle, string emailText, IUrlHelper urlHelper, string requestScheme, string callbackUrl = null)
         {
             var user = await GetByEmailAsync(emailAddress);
 
@@ -309,7 +309,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             // For more information on how to enable account confirmation and password reset please 
             // visit https://go.microsoft.com/fwlink/?LinkID=532713
 
-            await ResetPasswordEmailSenderAsync(user, emailTitle, emailText, urlHelper, requestScheme);
+            await ResetPasswordEmailSenderAsync(user, emailTitle, emailText, urlHelper, requestScheme, callbackUrl);
         }
 
         public async Task<IList<TUser>> GetAllAsync()
@@ -417,7 +417,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             var codeDecodedBytes = WebEncoders.Base64UrlDecode(token);
             var codeDecoded = Encoding.UTF8.GetString(codeDecodedBytes);
 
-            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+            var result = await _userManager.ResetPasswordAsync(user, codeDecoded, newPassword);
             if (!result.Succeeded) return result;
 
             await _emailSender.SendEmailAsync(
@@ -455,17 +455,24 @@ namespace CustomFramework.WebApiUtils.Identity.Business
 
         private string ConfirmationEmailUrlCreator(int userId, string codeEncoded, string emailText, IUrlHelper url, string requestScheme, string callbackUrl = null)
         {
+            if (string.IsNullOrEmpty(callbackUrl))
+            {
+                callbackUrl = url.Action(
+                    action: "ConfirmEmailAsync",
+                    controller: "Account",
+                    values: new { userId = userId, code = codeEncoded },
+                    protocol: requestScheme);
+            }
+            else
+            {
+                callbackUrl = callbackUrl.Replace("ReplaceUserIdValue", userId.ToString()).Replace("ReplaceCodeValue", codeEncoded);
+            }
 
-            callbackUrl = callbackUrl != null ? callbackUrl : url.Action(
-                action: "ConfirmEmailAsync",
-                controller: "Account",
-                values: new { userId = userId, code = codeEncoded },
-                protocol: requestScheme);
 
             return $"{emailText} {_localizationService.GetValue(IdentityStringMessages.ClickTheLinkForConfirmationYourAccount)} - {callbackUrl}";
         }
 
-        private async Task ResetPasswordEmailSenderAsync(TUser user, string title, string text, IUrlHelper url, string requestScheme)
+        private async Task ResetPasswordEmailSenderAsync(TUser user, string title, string text, IUrlHelper url, string requestScheme, string callbackUrl = null)
         {
             var code = await GeneratePasswordResetTokenAsync(user);
             var codeBytes = Encoding.UTF8.GetBytes(code);
@@ -474,14 +481,18 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             var receiverList = new List<string>();
             receiverList.Add(user.Email);
 
-            var callbackUrl = url.Action(
-                action: "ResetPasswordAsync",
-                controller: "Account",
-                values: new { code = codeEncoded },
-                protocol: requestScheme);
-
+            if (string.IsNullOrEmpty(callbackUrl))
+            {
+                callbackUrl = url.Action(
+                  action: "ResetPasswordAsync",
+                  controller: "Account",
+                  values: new { code = codeEncoded },
+                  protocol: requestScheme);
+            }
+            else callbackUrl = callbackUrl.Replace("ReplaceCodeValue", codeEncoded);
+            
             await _emailSender.SendEmailAsync(
-                _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{text}. - {callbackUrl} {_localizationService.GetValue(IdentityStringMessages.OrEnterTheCodeToTheForm)} {codeEncoded}"); //Please reset your password by clicking here
+                _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{text}. - {callbackUrl}"); //Please reset your password by clicking here
         }
 
     }
