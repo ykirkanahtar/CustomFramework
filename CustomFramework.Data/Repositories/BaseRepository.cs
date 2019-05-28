@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq.Expressions;
 using CustomFramework.Data.Models;
+using System.Linq;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace CustomFramework.Data.Repositories
 {
@@ -15,7 +17,7 @@ namespace CustomFramework.Data.Repositories
 
         }
 
-        public BaseRepository(DbContext dbContext, Expression<Func<TEntity, object>>[] includeProperties) : base(dbContext, includeProperties)
+        public BaseRepository(DbContext dbContext, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes) : base(dbContext, includes)
         {
 
         }

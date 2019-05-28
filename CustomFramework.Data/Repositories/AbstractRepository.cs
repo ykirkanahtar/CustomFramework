@@ -8,6 +8,7 @@ using CustomFramework.Data.Models;
 using CustomFramework.Data.Utils;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace CustomFramework.Data.Repositories
 {
@@ -18,6 +19,7 @@ namespace CustomFramework.Data.Repositories
         protected readonly DbSet<TEntity> DbSet;
         private bool _disposed;
         private readonly Expression<Func<TEntity, object>>[] _includeProperties = { };
+        private readonly Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> _includes;
 
         protected AbstractRepository(DbContext dbContext)
         {
@@ -30,6 +32,13 @@ namespace CustomFramework.Data.Repositories
             DbContext = dbContext;
             DbSet = DbContext.Set<TEntity>();
             _includeProperties = includeProperties;
+        }
+
+        protected AbstractRepository(DbContext dbContext, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes)
+        {
+            DbContext = dbContext;
+            DbSet = DbContext.Set<TEntity>();
+            _includes = includes;
         }
 
         protected AbstractRepository(DbContext dbContext, bool eager)
@@ -58,7 +67,10 @@ namespace CustomFramework.Data.Repositories
 
             //var s = query.ToSql();
 
-            query = _includeProperties.Aggregate(query, (current, includedProperty) => current.Include(includedProperty));
+            if (_includes != null)
+            {
+                query = _includes(query);
+            }
 
             return await query.FirstOrDefaultAsync();
         }
