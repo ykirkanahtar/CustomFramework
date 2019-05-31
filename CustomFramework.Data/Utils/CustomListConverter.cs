@@ -65,7 +65,9 @@ namespace CustomFramework.Data.Utils
                 PageCount = pageCount
             };
 
-            return await customQuery.ToCustomListAsync(paging);
+            var result = await customQuery.ToCustomListAsync(paging);
+
+            return result;
         }
     }
 }
