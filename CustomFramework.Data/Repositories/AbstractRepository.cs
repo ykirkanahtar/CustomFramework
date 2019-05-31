@@ -18,7 +18,6 @@ namespace CustomFramework.Data.Repositories
         protected readonly DbContext DbContext;
         protected readonly DbSet<TEntity> DbSet;
         private bool _disposed;
-        private readonly Expression<Func<TEntity, object>>[] _includeProperties = { };
         private readonly Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> _includes;
 
         protected AbstractRepository(DbContext dbContext)
@@ -26,14 +25,6 @@ namespace CustomFramework.Data.Repositories
             DbContext = dbContext;
             DbSet = DbContext.Set<TEntity>();
         }
-
-        protected AbstractRepository(DbContext dbContext, Expression<Func<TEntity, object>>[] includeProperties)
-        {
-            DbContext = dbContext;
-            DbSet = DbContext.Set<TEntity>();
-            _includeProperties = includeProperties;
-        }
-
         protected AbstractRepository(DbContext dbContext, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes)
         {
             DbContext = dbContext;
@@ -91,7 +82,10 @@ namespace CustomFramework.Data.Repositories
                         select p;
             }
 
-            query = _includeProperties.Aggregate(query, (current, includedProperty) => current.Include(includedProperty));
+            if (_includes != null)
+            {
+                query = _includes(query);
+            }
 
             return query.FirstOrDefault();
         }
@@ -109,7 +103,11 @@ namespace CustomFramework.Data.Repositories
             IQueryable<TEntity> query = DbSet;
 
             query = query.Where(predicate != null ? PredicateBuild(predicate, selectPassives) : PredicateBuild(selectPassives));
-            query = _includeProperties.Aggregate(query, (current, includedProperty) => current.Include(includedProperty));
+
+            if (_includes != null)
+            {
+                query = _includes(query);
+            }
 
             if (orderBy != null)
             {
@@ -133,7 +131,11 @@ namespace CustomFramework.Data.Repositories
             query = query.Where(predicate != null ? PredicateBuild(predicate, selectPassives) : PredicateBuild(selectPassives));
 
             var rowCount = await query.CountAsync();
-            query = _includeProperties.Aggregate(query, (current, includedProperty) => current.Include(includedProperty));
+
+            if (_includes != null)
+            {
+                query = _includes(query);
+            }
 
             if (orderBy != null)
             {
@@ -163,7 +165,11 @@ namespace CustomFramework.Data.Repositories
             query = query.Where(predicate != null ? PredicateBuild(predicate, selectPassives) : PredicateBuild(selectPassives));
 
             var rowCount = query.Count();
-            query = _includeProperties.Aggregate(query, (current, includedProperty) => current.Include(includedProperty));
+
+            if (_includes != null)
+            {
+                query = _includes(query);
+            }
 
             if (orderBy != null)
             {
