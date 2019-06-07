@@ -120,8 +120,8 @@ namespace CustomFramework.WebApiUtils.Contracts
         private string GetDefaultMessageForException(Exception exception)
         {
 
-            var message = exception.Message;
-            if (exception.InnerException != null) message += $"-- {exception.InnerException.Message}";
+            var message = $"{_localizationService.GetValue(exception.Message)}";
+            if (exception.InnerException != null) message += $"-- {_localizationService.GetValue(exception.InnerException.Message)}";
 
             if (message.Contains("See the inner exception for details"))
                 if (exception.InnerException != null)
