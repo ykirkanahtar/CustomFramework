@@ -12,11 +12,11 @@ namespace CustomFramework.WebApiUtils.Identity.Business
     public interface ICustomUserManager<TUser>
         where TUser : CustomUser
     {
-        Task<IdentityResult> RegisterAsync(TUser user, string password, Func<Task> func = null);
-        Task<IdentityResult> RegisterAsync(TUser user, string password, List<string> roles, Func<Task> func = null);
-        Task<IdentityResult> RegisterWithGeneratedPasswordAsync(TUser user, string password, List<string> roles, int generatePasswordLength, Func<Task> func = null);
-        Task<IdentityResult> RegisterWithConfirmationEmailAsync(TUser user, string password, List<string> roles, IUrlHelper url, string emailTitle, string emailBody, string requestScheme, string callbackUrl = null, Func<Task> func = null);
-        Task<IdentityResult> RegisterWithConfirmationAndGeneratedPasswordAsync(TUser user, string password, List<string> roles, int generatePasswordLength, IUrlHelper url, string emailTitle, string emailBody, string requestScheme, Func<Task> func = null);
+        Task<IdentityResult> RegisterAsync(TUser user, string password, int createUserId, Func<Task> func = null);
+        Task<IdentityResult> RegisterAsync(TUser user, string password, List<string> roles, int createUserId, Func<Task> func = null);
+        Task<IdentityResult> RegisterWithGeneratedPasswordAsync(TUser user, string password, List<string> roles, int generatePasswordLength, int createUserId, Func<Task> func = null);
+        Task<IdentityResult> RegisterWithConfirmationEmailAsync(TUser user, string password, List<string> roles, IUrlHelper url, string emailTitle, string emailBody, string requestScheme, int createUserId, string callbackUrl = null, Func<Task> func = null);
+        Task<IdentityResult> RegisterWithConfirmationAndGeneratedPasswordAsync(TUser user, string password, List<string> roles, int generatePasswordLength, IUrlHelper url, string emailTitle, string emailBody, string requestScheme, int createUserId, Func<Task> func = null);
         Task<IdentityResult> ChangePasswordWithEmailAsync(string email, string oldPassword, string newPassword, string confirmPassword);
         Task<IdentityResult> ChangePasswordWithUserNameAsync(string userName, string oldPassword, string newPassword, string confirmPassword);
         Task<IdentityResult> AddClaimAsync(int id, Claim claim, IList<Claim> existingClaims);
@@ -26,8 +26,8 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         Task<IdentityResult> ChangeEmailAsync(int id, string newEmail, string token);
         Task<IdentityResult> ChangePasswordAsync(int id, string currentPassword, string newPassword);
         Task<IdentityResult> ConfirmEmailAsync(int id, string token);
-        Task<IdentityResult> CreateAsync(TUser user, string password, Func<Task> func = null);
-        Task<IdentityResult> DeleteAsync(int id, Func<Task> deleteCheck = null);
+        Task<IdentityResult> CreateAsync(TUser user, string password, int createUserId, Func<Task> func = null);
+        Task<IdentityResult> DeleteAsync(int id, int deleteUserId, Func<Task> deleteCheck = null);
         Task<TUser> FindByIdAsync(string id);
         Task ForgotPasswordAsync(string emailAddress, string emailTitle, string emailText, IUrlHelper urlHelper, string requestScheme, string callbackUrl = null);
         Task<TUser> GetUserAsync(ClaimsPrincipal claimsPrincipal);
@@ -47,6 +47,6 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         Task<IdentityResult> RemoveFromRolesAsync(int id, IEnumerable<string> roles);
         Task<IdentityResult> ResetPasswordAsync(int id, string token, string newPassword);
         Task<IdentityResult> ResetPasswordAsync(string emailAddress, string token, string newPassword, string confirmPassword, string emailTitle, string emailText);
-        Task<IdentityResult> UpdateAsync(TUser user);
+        Task<IdentityResult> UpdateAsync(TUser user, int updateUserId);
     }
 }

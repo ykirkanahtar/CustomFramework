@@ -51,14 +51,14 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             _localizationService = localizationService;
         }
 
-        public async Task<IdentityResult> RegisterAsync(TUser user, string password, Func<Task> func = null)
+        public async Task<IdentityResult> RegisterAsync(TUser user, string password, int createUserId, Func<Task> func = null)
         {
-            return await CreateAsync(user, password, func);
+            return await CreateAsync(user, password, createUserId, func);
         }
 
-        public async Task<IdentityResult> RegisterAsync(TUser user, string password, List<string> roles, Func<Task> func = null)
+        public async Task<IdentityResult> RegisterAsync(TUser user, string password, List<string> roles, int createUserId, Func<Task> func = null)
         {
-            var result = await RegisterAsync(user, password, func);
+            var result = await RegisterAsync(user, password, createUserId, func);
             if (!result.Succeeded) return result;
 
             var addToRoleResult = await AddToRolesAsync(user.Id, roles);
@@ -67,18 +67,18 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return result;
         }
 
-        public async Task<IdentityResult> RegisterWithGeneratedPasswordAsync(TUser user, string password, List<string> roles, int generatePasswordLength, Func<Task> func = null)
+        public async Task<IdentityResult> RegisterWithGeneratedPasswordAsync(TUser user, string password, List<string> roles, int generatePasswordLength, int createUserId, Func<Task> func = null)
         {
             var passwordLength = generatePasswordLength < 6 ? 6 : (int)generatePasswordLength;
             var passwordGenerated = Password.Generate(passwordLength, 1);
             password = passwordGenerated;
 
-            return await RegisterAsync(user, password, roles, func);
+            return await RegisterAsync(user, password, roles, createUserId, func);
         }
 
-        public async Task<IdentityResult> RegisterWithConfirmationEmailAsync(TUser user, string password, List<string> roles, IUrlHelper url, string emailTitle, string emailBody, string requestScheme, string callbackUrl = null, Func<Task> func = null)
+        public async Task<IdentityResult> RegisterWithConfirmationEmailAsync(TUser user, string password, List<string> roles, IUrlHelper url, string emailTitle, string emailBody, string requestScheme, int createUserId, string callbackUrl = null, Func<Task> func = null)
         {
-            var result = await RegisterAsync(user, password, roles, func);
+            var result = await RegisterAsync(user, password, roles, createUserId, func);
             if (!result.Succeeded) return result;
 
             await ConfirmationEmailSenderAsync(user, emailTitle, emailBody, url, requestScheme, callbackUrl);
@@ -86,9 +86,9 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return result;
         }
 
-        public async Task<IdentityResult> RegisterWithConfirmationAndGeneratedPasswordAsync(TUser user, string password, List<string> roles, int generatePasswordLength, IUrlHelper url, string emailTitle, string emailBody, string requestScheme, Func<Task> func = null)
+        public async Task<IdentityResult> RegisterWithConfirmationAndGeneratedPasswordAsync(TUser user, string password, List<string> roles, int generatePasswordLength, IUrlHelper url, string emailTitle, string emailBody, string requestScheme, int createUserId, Func<Task> func = null)
         {
-            var result = await RegisterWithGeneratedPasswordAsync(user, password, roles, generatePasswordLength, func);
+            var result = await RegisterWithGeneratedPasswordAsync(user, password, roles, generatePasswordLength, createUserId, func);
             if (!result.Succeeded) return result;
 
             emailBody += $"{_localizationService.GetValue(IdentityStringMessages.ThePasswordCreatedBySystem)}: {password}";
@@ -224,14 +224,16 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _userManager.ConfirmEmailAsync(user, codeDecoded);
         }
 
-        public async Task<IdentityResult> CreateAsync(TUser user, string password, Func<Task> func = null)
+        public async Task<IdentityResult> CreateAsync(TUser user, string password, int createUserId, Func<Task> func = null)
         {
             user.Status = Status.Active;
+            user.CreateDateTime = DateTime.UtcNow;
+            user.CreateUserId = createUserId;
             if (func != null) await func.Invoke();
             return await _userManager.CreateAsync(user, password);
         }
 
-        public async Task<IdentityResult> DeleteAsync(int id, Func<Task> deleteCheck = null)
+        public async Task<IdentityResult> DeleteAsync(int id, int deleteUserId, Func<Task> deleteCheck = null)
         {
             var user = await GetByIdAsync(id);
 
@@ -253,6 +255,8 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             user.UserName = userNameValue; //user.Email ile aynı değeri alınca hata vermiyor fakat entity'i de güncellemiyordu. Bu yüzden kısa bir değer seçildi
 
             user.Status = Status.Deleted;
+            user.DeleteDateTime = DateTime.UtcNow;
+            user.DeleteUserId = deleteUserId;
             return await _userManager.UpdateAsync(user);
         }
 
@@ -426,9 +430,11 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return result;
         }
 
-        public async Task<IdentityResult> UpdateAsync(TUser user)
+        public async Task<IdentityResult> UpdateAsync(TUser user, int updateUserId)
         {
             await GetByIdAsync(user.Id);
+            user.UpdateDateTime = DateTime.UtcNow;
+            user.UpdateUserId = updateUserId;
             return await _userManager.UpdateAsync(user);
         }
 
@@ -490,7 +496,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
                   protocol: requestScheme);
             }
             else callbackUrl = callbackUrl.Replace("ReplaceCodeValue", codeEncoded);
-            
+
             await _emailSender.SendEmailAsync(
                 _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{text}. - {callbackUrl}"); //Please reset your password by clicking here
         }
