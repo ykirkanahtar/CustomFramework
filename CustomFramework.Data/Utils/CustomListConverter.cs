@@ -14,6 +14,7 @@ namespace CustomFramework.Data.Utils
         where T : class
         {
             var result = await query.Result.ToListAsync();
+
             return new CustomList<T>
             {
                 Result = result,
@@ -49,10 +50,10 @@ namespace CustomFramework.Data.Utils
             };
         }
 
-        public async static Task<ICustomList<T>> GetCustomListFromQueryAsync<T>(this IQueryable<T> query, Paging paging) where T : class
+        public async static Task<ICustomList<T>> GetCustomListFromQueryAsync<T>(this IQueryable<T> query, Paging paging, bool applyPagingToquery = true) where T : class
         {
             var rowCount = query.Count();
-            query = query.Skip(Math.Abs(paging.PageIndex - 1) * paging.PageSize).Take(paging.PageSize);
+            if (applyPagingToquery) query = query.Skip(Math.Abs(paging.PageIndex - 1) * paging.PageSize).Take(paging.PageSize);
 
             var pageCount = (rowCount + paging.PageSize - 1) / paging.PageSize;
 
@@ -69,5 +70,6 @@ namespace CustomFramework.Data.Utils
 
             return result;
         }
+
     }
 }
