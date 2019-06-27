@@ -227,7 +227,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         public async Task<IdentityResult> CreateAsync(TUser user, string password, int createUserId, Func<Task> func = null)
         {
             user.Status = Status.Active;
-            user.CreateDateTime = DateTime.UtcNow;
+            user.CreateDateTime = DateTime.Now;
             user.CreateUserId = createUserId;
             if (func != null) await func.Invoke();
             return await _userManager.CreateAsync(user, password);
@@ -255,8 +255,26 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             user.UserName = userNameValue; //user.Email ile aynı değeri alınca hata vermiyor fakat entity'i de güncellemiyordu. Bu yüzden kısa bir değer seçildi
 
             user.Status = Status.Deleted;
-            user.DeleteDateTime = DateTime.UtcNow;
+            user.DeleteDateTime = DateTime.Now;
             user.DeleteUserId = deleteUserId;
+            return await _userManager.UpdateAsync(user);
+        }
+
+        public async Task<IdentityResult> SetPassiveAsync(int id, int operatorUserId, Func<Task> passiveCheck = null)
+        {
+            var user = await GetByIdAsync(id);
+
+            await passiveCheck.Invoke();
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            await _userManager.RemoveFromRolesAsync(user, roles);
+
+            (await GetRolesAsync(id)).CheckSubFieldIsExistForDelete("Role");
+
+            user.Status = Status.Passive;
+            user.UpdateDateTime = DateTime.Now;
+            user.UpdateUserId = operatorUserId;
             return await _userManager.UpdateAsync(user);
         }
 
@@ -433,7 +451,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         public async Task<IdentityResult> UpdateAsync(TUser user, int updateUserId)
         {
             await GetByIdAsync(user.Id);
-            user.UpdateDateTime = DateTime.UtcNow;
+            user.UpdateDateTime = DateTime.Now;
             user.UpdateUserId = updateUserId;
             return await _userManager.UpdateAsync(user);
         }

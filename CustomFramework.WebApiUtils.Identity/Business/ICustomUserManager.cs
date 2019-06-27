@@ -28,6 +28,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         Task<IdentityResult> ConfirmEmailAsync(int id, string token);
         Task<IdentityResult> CreateAsync(TUser user, string password, int createUserId, Func<Task> func = null);
         Task<IdentityResult> DeleteAsync(int id, int deleteUserId, Func<Task> deleteCheck = null);
+        Task<IdentityResult> SetPassiveAsync(int id, int operatorUserId, Func<Task> passiveCheck = null);
         Task<TUser> FindByIdAsync(string id);
         Task ForgotPasswordAsync(string emailAddress, string emailTitle, string emailText, IUrlHelper urlHelper, string requestScheme, string callbackUrl = null);
         Task<TUser> GetUserAsync(ClaimsPrincipal claimsPrincipal);
