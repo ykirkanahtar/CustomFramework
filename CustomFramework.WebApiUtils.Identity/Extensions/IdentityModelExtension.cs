@@ -1,7 +1,6 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using System.Threading.Tasks;
 using CS.Common.EmailProvider;
 using CustomFramework.Authorization.Attributes;
 using CustomFramework.Authorization.Utils;
@@ -10,14 +9,12 @@ using CustomFramework.WebApiUtils.Identity.Data;
 using CustomFramework.WebApiUtils.Identity.Data.Repositories;
 using CustomFramework.WebApiUtils.Identity.Handlers;
 using CustomFramework.WebApiUtils.Identity.Models;
+using CustomFramework.WebApiUtils.Identity.Resources;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CustomFramework.WebApiUtils.Identity.Extensions
@@ -39,7 +36,7 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
             services.AddSingleton<IEmailConfig, EmailConfig>(p => IdentityConfig.EmailConfig);
             services.AddSingleton<IIdentityModel, IdentityModel>(p => IdentityConfig);
 
-                        services.AddTransient<IClientApplicationRepository, ClientApplicationRepository>();
+            services.AddTransient<IClientApplicationRepository, ClientApplicationRepository>();
 
             services.AddTransient<ICustomUserManager<TUser>, CustomUserManager<TUser, TRole>>();
             services.AddTransient<ICustomRoleManager<TRole>, CustomRoleManager<TUser, TRole>>();
@@ -51,6 +48,7 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
                     config.SignIn.RequireConfirmedEmail = requireConfirmedEmail;
                 })
                 .AddEntityFrameworkStores<IdentityContext<TUser, TRole>>()
+                .AddErrorDescriber<MultilanguageIdentityErrorDescriber>()
                 .AddDefaultTokenProviders();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
