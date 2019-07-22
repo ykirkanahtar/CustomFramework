@@ -123,7 +123,11 @@ namespace CustomFramework.Data.Repositories
         }
 
         public virtual async Task<ICustomQueryable<TEntity>> GetAllWithPagingAsync(
-            IPaging paging, Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, bool selectPassives = false
+            IPaging paging
+            , Expression<Func<TEntity, bool>> predicate = null
+            , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
+            , Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes = null
+            , bool selectPassives = false
         )
         {
             IQueryable<TEntity> query = DbSet;
@@ -135,6 +139,11 @@ namespace CustomFramework.Data.Repositories
             if (_includes != null)
             {
                 query = _includes(query);
+            }
+
+            if (includes != null)
+            {
+                query = includes(query);
             }
 
             if (orderBy != null)

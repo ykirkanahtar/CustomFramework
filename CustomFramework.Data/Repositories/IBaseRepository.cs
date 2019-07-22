@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Models;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace CustomFramework.Data.Repositories
 {
@@ -21,7 +22,11 @@ namespace CustomFramework.Data.Repositories
         );
 
         Task<ICustomQueryable<TEntity>> GetAllWithPagingAsync(
-            IPaging paging, Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, bool selectPassives = false
+            IPaging paging
+            , Expression<Func<TEntity, bool>> predicate = null
+            , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
+            , Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes = null
+            , bool selectPassives = false
         );
 
         ICustomQueryable<TEntity> GetAllWithPaging(
