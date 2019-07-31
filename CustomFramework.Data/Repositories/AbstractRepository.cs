@@ -240,30 +240,40 @@ namespace CustomFramework.Data.Repositories
 
         private static Expression<Func<TEntity, bool>> PredicateBuild(Expression<Func<TEntity, bool>> predicate, StatusSelector statusSelector = StatusSelector.OnlyActives)
         {
+            var innerPredicate = PredicateBuilder.New<TEntity>();
             switch (statusSelector)
             {
                 case StatusSelector.OnlyActives:
-                    return predicate.And(p => (int)p.Status == (int)Status.Active);
+                    innerPredicate = innerPredicate.And(p => (int)p.Status == (int)Status.Active);
+                    break;
                 case StatusSelector.ActivesAndPassives:
-                    return predicate.And(p => (int)p.Status == (int)Status.Active || (int)p.Status == (int)Status.Passive);
+                    innerPredicate = innerPredicate.And(p => (int)p.Status == (int)Status.Active).Or(p => (int)p.Status == (int)Status.Passive);
+                    break;
                 case StatusSelector.ActivesAndDeleted:
-                    return predicate.And(p => (int)p.Status == (int)Status.Active || (int)p.Status == (int)Status.Deleted);
+                    innerPredicate = innerPredicate.Or(p => (int)p.Status == (int)Status.Active).Or(p => (int)p.Status == (int)Status.Deleted);
+                    break;
                 case StatusSelector.PassivesAndDeleted:
-                    return predicate.And(p => (int)p.Status == (int)Status.Passive || (int)p.Status == (int)Status.Deleted);
+                    innerPredicate = innerPredicate.Or(p => (int)p.Status == (int)Status.Passive).Or(p => (int)p.Status == (int)Status.Deleted);
+                    break;
                 case StatusSelector.OnlyPassives:
-                    return predicate.And(p => (int)p.Status == (int)Status.Passive);
+                    innerPredicate = innerPredicate.And(p => (int)p.Status == (int)Status.Passive);
+                    break;
                 case StatusSelector.OnlyDeleted:
-                    return predicate.And(p => (int)p.Status == (int)Status.Deleted);
+                    innerPredicate = innerPredicate.And(p => (int)p.Status == (int)Status.Deleted);
+                    break;
                 case StatusSelector.All:
-                    return predicate.And(p => (int)p.Status == (int)Status.Active || (int)p.Status == (int)Status.Passive || (int)p.Status == (int)Status.Deleted);
+                    innerPredicate = innerPredicate.Or(p => (int)p.Status == (int)Status.Active).Or(p => (int)p.Status == (int)Status.Passive).Or(p => (int)p.Status == (int)Status.Deleted);
+                    break;
                 default:
-                    return predicate.And(p => (int)p.Status == (int)Status.Active);
+                    innerPredicate = innerPredicate.And(p => (int)p.Status == (int)Status.Active);
+                    break;
             }
+            return predicate.And(innerPredicate);
         }
 
         private static Expression<Func<TEntity, bool>> PredicateBuild(StatusSelector statusSelector = StatusSelector.OnlyActives)
         {
-            var predicate = PredicateBuilder.New<TEntity>();
+            var predicate = PredicateBuilder.New<TEntity>(true);
             return PredicateBuild(predicate, statusSelector);
         }
 
