@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CustomFramework.Data.Contracts;
+using CustomFramework.Data.Enums;
 using CustomFramework.Data.Models;
 using Microsoft.EntityFrameworkCore.Query;
 
@@ -11,14 +12,14 @@ namespace CustomFramework.Data.Repositories
     public interface IBaseRepository<TEntity, in TKey> : IDisposable
     where TEntity : BaseModelNonUser<TKey>
     {
-        Task<TEntity> GetByIdAsync(TKey id, bool selectPassives = false);
+        Task<TEntity> GetByIdAsync(TKey id, StatusSelector statusSelector = StatusSelector.OnlyActives);
 
-        TEntity GetById(TKey id, bool selectPassives = false);
+        TEntity GetById(TKey id, StatusSelector statusSelector = StatusSelector.OnlyActives);
 
-        IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> predicate, bool selectPassives = false);
+        IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> predicate, StatusSelector statusSelector = StatusSelector.OnlyActives);
 
         IQueryable<TEntity> GetAll(
-            Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, int? take = null, bool selectPassives = false
+            Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, int? take = null, StatusSelector statusSelector = StatusSelector.OnlyActives
         );
 
         Task<ICustomQueryable<TEntity>> GetAllWithPagingAsync(
@@ -26,11 +27,11 @@ namespace CustomFramework.Data.Repositories
             , Expression<Func<TEntity, bool>> predicate = null
             , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
             , Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes = null
-            , bool selectPassives = false
+            , StatusSelector statusSelector = StatusSelector.OnlyActives
         );
 
         ICustomQueryable<TEntity> GetAllWithPaging(
-            IPaging paging, Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, bool selectPassives = false
+            IPaging paging, Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, StatusSelector statusSelector = StatusSelector.OnlyActives
         );
     }
 }

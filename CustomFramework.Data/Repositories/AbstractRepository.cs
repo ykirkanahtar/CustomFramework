@@ -40,21 +40,48 @@ namespace CustomFramework.Data.Repositories
 
         #region IRepository members
 
-        public async virtual Task<TEntity> GetByIdAsync(TKey id, bool selectPassives = false)
+        private IQueryable<TEntity> GetQueryByStatusSelector(TKey id, StatusSelector statusSelector)
         {
-            IQueryable<TEntity> query;
-            if (selectPassives)
+            switch (statusSelector)
             {
-                query = from p in DbContext.Set<TEntity>()
-                        where p.Id.Equals(id) && (p.Status == Status.Active || p.Status == Status.Passive)
-                        select p;
+                case StatusSelector.OnlyActives:
+                    return from p in DbContext.Set<TEntity>()
+                           where p.Id.Equals(id) && p.Status == Status.Active
+                           select p;
+                case StatusSelector.ActivesAndPassives:
+                    return from p in DbContext.Set<TEntity>()
+                           where p.Id.Equals(id) && (p.Status == Status.Active || p.Status == Status.Passive)
+                           select p;
+                case StatusSelector.ActivesAndDeleted:
+                    return from p in DbContext.Set<TEntity>()
+                           where p.Id.Equals(id) && (p.Status == Status.Active || p.Status == Status.Deleted)
+                           select p;
+                case StatusSelector.PassivesAndDeleted:
+                    return from p in DbContext.Set<TEntity>()
+                           where p.Id.Equals(id) && (p.Status == Status.Passive || p.Status == Status.Deleted)
+                           select p;
+                case StatusSelector.OnlyPassives:
+                    return from p in DbContext.Set<TEntity>()
+                           where p.Id.Equals(id) && (p.Status == Status.Passive)
+                           select p;
+                case StatusSelector.OnlyDeleted:
+                    return from p in DbContext.Set<TEntity>()
+                           where p.Id.Equals(id) && (p.Status == Status.Deleted)
+                           select p;
+                case StatusSelector.All:
+                    return from p in DbContext.Set<TEntity>()
+                           where p.Id.Equals(id) && (p.Status == Status.Active || p.Status == Status.Passive || p.Status == Status.Deleted)
+                           select p;
+                default:
+                    return from p in DbContext.Set<TEntity>()
+                           where p.Id.Equals(id) && p.Status == Status.Active
+                           select p;
             }
-            else
-            {
-                query = from p in DbContext.Set<TEntity>()
-                        where p.Id.Equals(id) && p.Status == Status.Active
-                        select p;
-            }
+        }
+
+        public async virtual Task<TEntity> GetByIdAsync(TKey id, StatusSelector statusSelector = StatusSelector.OnlyActives)
+        {
+            var query = GetQueryByStatusSelector(id, statusSelector);
 
             //var s = query.ToSql();
 
@@ -66,21 +93,9 @@ namespace CustomFramework.Data.Repositories
             return await query.FirstOrDefaultAsync();
         }
 
-        public virtual TEntity GetById(TKey id, bool selectPassives = false)
+        public virtual TEntity GetById(TKey id, StatusSelector statusSelector = StatusSelector.OnlyActives)
         {
-            IQueryable<TEntity> query;
-            if (selectPassives)
-            {
-                query = from p in DbContext.Set<TEntity>()
-                        where p.Id.Equals(id) && (p.Status == Status.Active || p.Status == Status.Passive)
-                        select p;
-            }
-            else
-            {
-                query = from p in DbContext.Set<TEntity>()
-                        where p.Id.Equals(id) && p.Status == Status.Active
-                        select p;
-            }
+            var query = GetQueryByStatusSelector(id, statusSelector);
 
             if (_includes != null)
             {
@@ -90,19 +105,19 @@ namespace CustomFramework.Data.Repositories
             return query.FirstOrDefault();
         }
 
-        public virtual IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> predicate, bool selectPassives = false)
+        public virtual IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> predicate, StatusSelector statusSelector = StatusSelector.OnlyActives)
         {
-            return DbSet.Where(PredicateBuild(predicate, selectPassives));
+            return DbSet.Where(PredicateBuild(predicate, statusSelector));
         }
 
         //OrderBy kullanımı örneği : GetAll(orderBy: q => q.OrderByDescending(s => s.CreateDateTime), take: 10)
         public virtual IQueryable<TEntity> GetAll(
-            Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, int? take = null, bool selectPassives = false
+            Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, int? take = null, StatusSelector statusSelector = StatusSelector.OnlyActives
         )
         {
             IQueryable<TEntity> query = DbSet;
 
-            query = query.Where(predicate != null ? PredicateBuild(predicate, selectPassives) : PredicateBuild(selectPassives));
+            query = query.Where(predicate != null ? PredicateBuild(predicate, statusSelector) : PredicateBuild(statusSelector));
 
             if (_includes != null)
             {
@@ -127,12 +142,12 @@ namespace CustomFramework.Data.Repositories
             , Expression<Func<TEntity, bool>> predicate = null
             , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
             , Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes = null
-            , bool selectPassives = false
+            , StatusSelector statusSelector = StatusSelector.OnlyActives
         )
         {
             IQueryable<TEntity> query = DbSet;
 
-            query = query.Where(predicate != null ? PredicateBuild(predicate, selectPassives) : PredicateBuild(selectPassives));
+            query = query.Where(predicate != null ? PredicateBuild(predicate, statusSelector) : PredicateBuild(statusSelector));
 
             var rowCount = await query.CountAsync();
 
@@ -166,12 +181,12 @@ namespace CustomFramework.Data.Repositories
         }
 
         public virtual ICustomQueryable<TEntity> GetAllWithPaging(
-            IPaging paging, Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, bool selectPassives = false
+            IPaging paging, Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, StatusSelector statusSelector = StatusSelector.OnlyActives
         )
         {
             IQueryable<TEntity> query = DbSet;
 
-            query = query.Where(predicate != null ? PredicateBuild(predicate, selectPassives) : PredicateBuild(selectPassives));
+            query = query.Where(predicate != null ? PredicateBuild(predicate, statusSelector) : PredicateBuild(statusSelector));
 
             var rowCount = query.Count();
 
@@ -223,18 +238,33 @@ namespace CustomFramework.Data.Repositories
             _disposed = true;
         }
 
-        private static Expression<Func<TEntity, bool>> PredicateBuild(Expression<Func<TEntity, bool>> predicate, bool selectPassives = false)
+        private static Expression<Func<TEntity, bool>> PredicateBuild(Expression<Func<TEntity, bool>> predicate, StatusSelector statusSelector = StatusSelector.OnlyActives)
         {
-            if (selectPassives) return predicate.And(p => (int)p.Status == (int)Status.Active || (int)p.Status == (int)Status.Passive);
-            return predicate.And(p => (int)p.Status == (int)Status.Active);
+            switch (statusSelector)
+            {
+                case StatusSelector.OnlyActives:
+                    return predicate.And(p => (int)p.Status == (int)Status.Active);
+                case StatusSelector.ActivesAndPassives:
+                    return predicate.And(p => (int)p.Status == (int)Status.Active || (int)p.Status == (int)Status.Passive);
+                case StatusSelector.ActivesAndDeleted:
+                    return predicate.And(p => (int)p.Status == (int)Status.Active || (int)p.Status == (int)Status.Deleted);
+                case StatusSelector.PassivesAndDeleted:
+                    return predicate.And(p => (int)p.Status == (int)Status.Passive || (int)p.Status == (int)Status.Deleted);
+                case StatusSelector.OnlyPassives:
+                    return predicate.And(p => (int)p.Status == (int)Status.Passive);
+                case StatusSelector.OnlyDeleted:
+                    return predicate.And(p => (int)p.Status == (int)Status.Deleted);
+                case StatusSelector.All:
+                    return predicate.And(p => (int)p.Status == (int)Status.Active || (int)p.Status == (int)Status.Passive || (int)p.Status == (int)Status.Deleted);
+                default:
+                    return predicate.And(p => (int)p.Status == (int)Status.Active);
+            }
         }
 
-        private static Expression<Func<TEntity, bool>> PredicateBuild(bool selectPassives = false)
+        private static Expression<Func<TEntity, bool>> PredicateBuild(StatusSelector statusSelector = StatusSelector.OnlyActives)
         {
             var predicate = PredicateBuilder.New<TEntity>();
-
-            if (selectPassives) return predicate.And(p => (int)p.Status == (int)Status.Active || (int)p.Status == (int)Status.Passive);
-            return predicate.And(p => (int)p.Status == (int)Status.Active);
+            return PredicateBuild(predicate, statusSelector);
         }
 
         #endregion
