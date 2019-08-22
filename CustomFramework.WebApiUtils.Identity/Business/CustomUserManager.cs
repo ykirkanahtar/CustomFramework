@@ -1,21 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using CS.Common.EmailProvider;
-using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Enums;
-using CustomFramework.Data.Utils;
+using CustomFramework.Data.Contracts;
 using CustomFramework.Utils;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Identity.Constants;
-using CustomFramework.WebApiUtils.Identity.Data;
-using CustomFramework.WebApiUtils.Identity.Data.Repositories;
 using CustomFramework.WebApiUtils.Identity.Extensions;
 using CustomFramework.WebApiUtils.Identity.Models;
 using CustomFramework.WebApiUtils.Identity.Utils;
@@ -27,7 +22,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using CustomFramework.WebApiUtils.Identity.Data.Repositories;
 
 namespace CustomFramework.WebApiUtils.Identity.Business
 {
@@ -40,15 +35,17 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         private readonly IIdentityModel _identityModel;
         private readonly IEmailSender _emailSender;
         private readonly ILocalizationService _localizationService;
+        private readonly ICustomUserRepository<TUser> _customUserRepository;
 
 
-        public CustomUserManager(ILocalizationService localizationService, UserManager<TUser> userManager, ICustomRoleManager<TRole> roleManager, IIdentityModel identityModel, IEmailSender emailSender, ILogger<CustomRoleManager<TUser, TRole>> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(logger, mapper, httpContextAccessor)
+        public CustomUserManager(ILocalizationService localizationService,ICustomUserRepository<TUser> customUserRepository, UserManager<TUser> userManager, ICustomRoleManager<TRole> roleManager, IIdentityModel identityModel, IEmailSender emailSender, ILogger<CustomRoleManager<TUser, TRole>> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(logger, mapper, httpContextAccessor)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _identityModel = identityModel;
             _emailSender = emailSender;
             _localizationService = localizationService;
+            _customUserRepository = customUserRepository;
         }
 
         public async Task<IdentityResult> RegisterAsync(TUser user, string password, int createUserId, Func<Task> func = null)
@@ -455,6 +452,11 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             user.UpdateUserId = updateUserId;
             return await _userManager.UpdateAsync(user);
         }
+
+        public async Task<ICustomList<TUser>> GetOnlineUsers(int sessionMinutes, int pageIndex, int pageSize, DateTime? DateTimeNowValue = null)
+        {
+            return await _customUserRepository.GetOnlineUsers(sessionMinutes, pageIndex, pageSize, DateTimeNowValue);
+        }        
 
         private async Task ConfirmationEmailSenderAsync(TUser user, string title, string text, IUrlHelper urlHelper, string requestScheme, string callbackUrl = null)
         {

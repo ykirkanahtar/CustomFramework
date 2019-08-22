@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 namespace CustomFramework.WebApiUtils.Identity.Models
 {
     public class CustomUser : IdentityUser<int>
-    {        
+    {
         public string FirstName { get; set; }
         public string Surname { get; set; }
         public DateTime BirthDate { get; set; }
@@ -19,5 +19,8 @@ namespace CustomFramework.WebApiUtils.Identity.Models
         public int CreateUserId { get; set; }
         public int? UpdateUserId { get; set; }
         public int? DeleteUserId { get; set; }
+
+        public DateTime LastTokenDate { get; set; }
+        public DateTime LastLogOutDate { get; set; }
     }
 }

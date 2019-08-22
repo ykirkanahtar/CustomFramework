@@ -49,5 +49,6 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         Task<IdentityResult> ResetPasswordAsync(int id, string token, string newPassword);
         Task<IdentityResult> ResetPasswordAsync(string emailAddress, string token, string newPassword, string confirmPassword, string emailTitle, string emailText);
         Task<IdentityResult> UpdateAsync(TUser user, int updateUserId);
+        Task<ICustomList<TUser>> GetOnlineUsers(int sessionMinutes, int pageIndex, int pageSize, DateTime? DateTimeNowValue = null);
     }
 }
