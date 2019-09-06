@@ -27,6 +27,52 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             _logger = logger;
         }
 
+        public async Task<bool> HasPermission(IEnumerable<PermissionAttribute> attributes, IList<string> roles)
+        {
+            if (_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) == null)
+                throw new AuthenticationException();
+
+            try
+            {
+                foreach (var permissionAttribute in attributes)
+                {
+                    var roleClaims = new List<Claim>();
+                    foreach (var role in roles)
+                    {
+                        var claims = await _roleManager.GetClaimsAsync(role);
+                        roleClaims.AddRange(claims);
+                    }
+                    foreach (var roleClaim in roleClaims)
+                    {
+                        if (roleClaim.Type.ToLower() == permissionAttribute.ClaimType.ToLower())
+                        {
+                            if (String.IsNullOrEmpty(permissionAttribute.ClaimValue))
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                if (roleClaim.Value.ToLower() == permissionAttribute.ClaimValue.ToLower()) return true;
+                                else throw new UnauthorizedAccessException($"{permissionAttribute.ClaimType} - {permissionAttribute.ClaimValue}");
+                            }
+                        }
+                    }
+
+                    throw new UnauthorizedAccessException($"{permissionAttribute.ClaimType} - {permissionAttribute.ClaimValue}");
+                }
+            }
+            catch (KeyNotFoundException ex)
+            {
+                throw new UnauthorizedAccessException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex.Message);
+                throw;
+            }
+            throw new UnauthorizedAccessException();
+        }
+
         public async Task<bool> HasPermission(IEnumerable<PermissionAttribute> attributes)
         {
             if (_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier) == null)

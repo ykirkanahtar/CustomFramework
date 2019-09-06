@@ -1,45 +1,34 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Authentication;
 using System.Security.Claims;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using System.Transactions;
 using AutoMapper;
-using CS.Common.EmailProvider;
 using CustomFramework.Authorization;
-using CustomFramework.Authorization.Utils;
-using CustomFramework.Utils;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Controllers;
-using CustomFramework.WebApiUtils.Identity.Business;
-using CustomFramework.WebApiUtils.Identity.Contracts.Requests;
 using CustomFramework.WebApiUtils.Identity.Contracts.Responses;
 using CustomFramework.WebApiUtils.Identity.Extensions;
 using CustomFramework.WebApiUtils.Identity.Models;
 using CustomFramework.WebApiUtils.Resources;
-using CustomFramework.WebApiUtils.Utils.Exceptions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace CustomFramework.WebApiUtils.Identity.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class BaseAccountController<TUser, TRole> : BaseController
+    public class BaseAccountController<TUser, TRole, TContext> : BaseController
     where TUser : CustomUser
     where TRole : CustomRole
+    where TContext : DbContext
     {
         private readonly IdentityModel _identityModel;
 
         public BaseAccountController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper) : base(localizationService, logger, mapper)
         {
-            _identityModel = IdentityModelExtension<TUser, TRole>.IdentityConfig;
+            _identityModel = IdentityModelExtension<TUser, TRole, TContext>.IdentityConfig;
         }
 
         [AllowAnonymous]

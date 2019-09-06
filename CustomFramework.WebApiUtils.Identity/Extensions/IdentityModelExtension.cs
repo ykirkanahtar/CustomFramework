@@ -13,15 +13,17 @@ using CustomFramework.WebApiUtils.Identity.Resources;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CustomFramework.WebApiUtils.Identity.Extensions
 {
-    public static class IdentityModelExtension<TUser, TRole>
+    public static class IdentityModelExtension<TUser, TRole, TContext>
         where TUser : CustomUser
-    where TRole : CustomRole
+        where TRole : CustomRole
+        where TContext : DbContext
     {
         public static IdentityModel IdentityConfig { get; set; }
         public static IServiceCollection AddIdentityModel(IServiceCollection services, IdentityModel identityModel, Token token, bool requireConfirmedEmail)
@@ -29,7 +31,7 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
             IdentityConfig = identityModel;
 
             services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
-            services.AddScoped<DbContext, IdentityContext<TUser, TRole>>();
+            //services.AddScoped<DbContext, IdentityContext<TUser, TRole>>();
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddSingleton<IToken, Token>(p => IdentityConfig.Token);
@@ -48,7 +50,7 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
                 {
                     config.SignIn.RequireConfirmedEmail = requireConfirmedEmail;
                 })
-                .AddEntityFrameworkStores<IdentityContext<TUser, TRole>>()
+                .AddEntityFrameworkStores<TContext>()
                 .AddErrorDescriber<MultilanguageIdentityErrorDescriber>()
                 .AddDefaultTokenProviders();
 
