@@ -1,29 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Authentication;
 using System.Security.Claims;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AutoMapper;
-using CS.Common.EmailProvider;
-using CustomFramework.Authorization;
-using CustomFramework.Authorization.Utils;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Controllers;
 using CustomFramework.WebApiUtils.Identity.Business;
 using CustomFramework.WebApiUtils.Identity.Constants;
 using CustomFramework.WebApiUtils.Identity.Contracts.Requests;
 using CustomFramework.WebApiUtils.Identity.Contracts.Responses;
-using CustomFramework.WebApiUtils.Identity.Extensions;
 using CustomFramework.WebApiUtils.Identity.Models;
 using CustomFramework.WebApiUtils.Resources;
 using CustomFramework.WebApiUtils.Utils.Exceptions;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace CustomFramework.WebApiUtils.Identity.Controllers
 {
@@ -33,7 +23,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
     where TRoleRequest : CustomRoleRequest
     where TRoleResponse : CustomRoleResponse
     {
-        private readonly ICustomRoleManager<TRole> _roleManager;
+        protected readonly ICustomRoleManager<TRole> _roleManager;
         public BaseRoleController(ILocalizationService localizationService, ILogger<Controller> logger, IMapper mapper, ICustomRoleManager<TRole> roleManager) : base(localizationService, logger, mapper)
         {
             _roleManager = roleManager;

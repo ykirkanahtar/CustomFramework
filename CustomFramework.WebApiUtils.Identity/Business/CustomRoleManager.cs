@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Data.Enums;
 using CustomFramework.WebApiUtils.Business;
-using CustomFramework.WebApiUtils.Contracts;
-using CustomFramework.WebApiUtils.Identity.Contracts.Requests;
 using CustomFramework.WebApiUtils.Identity.Models;
 using CustomFramework.WebApiUtils.Identity.Utils;
 using CustomFramework.WebApiUtils.Utils;
