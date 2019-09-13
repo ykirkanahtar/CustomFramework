@@ -1,15 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CustomFramework.Data.Extensions
 {
-    public static class MySqlServerServiceExtension
+    public static class PomeloMySqlServerServiceExtension
     {
-        public static IServiceCollection AddMySqlServer<TContext>(this IServiceCollection services, string connectionString, bool lazyLoading = false) where TContext : DbContext
+        public static IServiceCollection AddPomeloMySqlServer<TContext>(this IServiceCollection services, string connectionString, bool lazyLoading = false) where TContext : DbContext
         {
             services.AddDbContext<TContext>(options =>
                 {
-                    options.UseMySQL(connectionString);
+                    options.UseMySql(connectionString);
                     options.UseLazyLoadingProxies(lazyLoading);
                 }
             );
@@ -18,5 +18,5 @@ namespace CustomFramework.Data.Extensions
 
             return services;
         }
-    }
+    }    
 }
