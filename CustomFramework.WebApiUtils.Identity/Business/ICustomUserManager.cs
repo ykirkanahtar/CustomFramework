@@ -31,6 +31,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         Task<IdentityResult> SetPassiveAsync(int id, int operatorUserId, Func<Task> passiveCheck = null);
         Task<TUser> FindByIdAsync(string id);
         Task ForgotPasswordAsync(string emailAddress, string emailTitle, string emailText, IUrlHelper urlHelper, string requestScheme, string callbackUrl = null);
+        Task<string> GenerateTokenForChangeEmailAsync(int id, string newEmail);
         Task<TUser> GetUserAsync(ClaimsPrincipal claimsPrincipal);
         Task<TUser> GetByEmailAsync(string email);
         Task<TUser> GetByUserNameAsync(string userName);
