@@ -275,9 +275,8 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _userManager.UpdateAsync(user);
         }
 
-        public async Task<string> GenerateTokenForChangeEmailAsync(int id, string newEmail)
+        public async Task<string> GenerateTokenForChangeEmailAsync(TUser user, string newEmail)
         {
-            var user = await GetByIdAsync(id);
             return await _userManager.GenerateChangeEmailTokenAsync(user, newEmail);
         }        
 
