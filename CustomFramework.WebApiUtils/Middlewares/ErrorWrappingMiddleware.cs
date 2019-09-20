@@ -1,5 +1,4 @@
 ﻿using CustomFramework.WebApiUtils.Contracts;
-using CustomFramework.WebApiUtils.Resources;
 using CustomFramework.WebApiUtils.Utils.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -9,6 +8,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using CustomFramework.WebApiUtils.Constants;
+using CustomFramework.WebApiUtils.Contracts.Resources;
 
 namespace CustomFramework.WebApiUtils.Middlewares
 {
@@ -47,6 +47,11 @@ namespace CustomFramework.WebApiUtils.Middlewares
                 //{
                 //    errorMessage = DefaultResponseMessages.DbConnectionError;
                 //}
+
+                if(errorMessage.Contains("is not allowed to connect to this MySQL server"))
+                {
+                    errorMessage = DefaultResponseMessages.DbConnectionError;
+                }
 
                 context.Response.StatusCode = (int)ex.ExceptionToStatusCode();
                 context.Response.ContentType = "application/json";

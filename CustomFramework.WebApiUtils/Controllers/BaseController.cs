@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using AutoMapper;
 using CustomFramework.WebApiUtils.Constants;
-using CustomFramework.WebApiUtils.Resources;
+using CustomFramework.WebApiUtils.Contracts.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;

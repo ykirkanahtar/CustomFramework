@@ -7,7 +7,7 @@ using CustomFramework.WebApiUtils.Identity.Business;
 using CustomFramework.WebApiUtils.Identity.Contracts.Requests;
 using CustomFramework.WebApiUtils.Identity.Contracts.Responses;
 using CustomFramework.WebApiUtils.Identity.Models;
-using CustomFramework.WebApiUtils.Resources;
+using CustomFramework.WebApiUtils.Contracts.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

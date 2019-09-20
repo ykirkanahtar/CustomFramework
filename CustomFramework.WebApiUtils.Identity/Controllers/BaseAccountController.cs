@@ -9,7 +9,7 @@ using CustomFramework.WebApiUtils.Controllers;
 using CustomFramework.WebApiUtils.Identity.Contracts.Responses;
 using CustomFramework.WebApiUtils.Identity.Extensions;
 using CustomFramework.WebApiUtils.Identity.Models;
-using CustomFramework.WebApiUtils.Resources;
+using CustomFramework.WebApiUtils.Contracts.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

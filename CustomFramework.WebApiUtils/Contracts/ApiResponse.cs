@@ -1,6 +1,5 @@
 ﻿using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Constants;
-using CustomFramework.WebApiUtils.Resources;
 using CustomFramework.WebApiUtils.Utils.Exceptions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
@@ -10,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using CustomFramework.WebApiUtils.Contracts.Resources;
 
 namespace CustomFramework.WebApiUtils.Contracts
 {

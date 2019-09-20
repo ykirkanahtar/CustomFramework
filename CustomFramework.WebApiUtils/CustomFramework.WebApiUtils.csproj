@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.1.0" />
-    <PackageReference Include="CustomFramework.WebApiUtils.Contracts" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Localization" Version="2.2.0" />
@@ -16,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CustomFramework.LogProvider\CustomFramework.LogProvider.csproj" />
+    <ProjectReference Include="..\CustomFramework.WebApiUtils.Contracts\CustomFramework.WebApiUtils.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

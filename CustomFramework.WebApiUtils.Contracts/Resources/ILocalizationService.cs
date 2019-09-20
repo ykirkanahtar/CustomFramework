@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Localization;
 
-namespace CustomFramework.WebApiUtils.Resources
+namespace CustomFramework.WebApiUtils.Contracts.Resources
 {
     public interface ILocalizationService
     {

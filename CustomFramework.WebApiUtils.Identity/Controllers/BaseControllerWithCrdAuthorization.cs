@@ -1,10 +1,12 @@
+using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using CustomFramework.Data.Models;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Contracts;
 using CustomFramework.WebApiUtils.Controllers;
-using CustomFramework.WebApiUtils.Resources;
+using CustomFramework.WebApiUtils.Contracts.Resources;
+using CustomFramework.WebApiUtils.Utils.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -26,6 +28,9 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
         {
             return CommonOperationAsync<IActionResult>(async () =>
             {
+                if (!ModelState.IsValid)
+                    throw new ArgumentException(ModelState.ModelStateToString(LocalizationService));
+
                 var result = await CommonOperationAsync(async () => await Manager.CreateAsync(request));
                 return Ok(new ApiResponse(LocalizationService, Logger).Ok(Mapper.Map<TEntity, TResponse>(result)));
             });

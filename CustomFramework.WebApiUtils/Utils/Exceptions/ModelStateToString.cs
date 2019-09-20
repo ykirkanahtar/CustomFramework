@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using CustomFramework.WebApiUtils.Constants;
-using CustomFramework.WebApiUtils.Resources;
+using CustomFramework.WebApiUtils.Contracts.Resources;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CustomFramework.WebApiUtils.Utils.Exceptions

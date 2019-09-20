@@ -10,7 +10,7 @@ using CustomFramework.WebApiUtils.Identity.Constants;
 using CustomFramework.WebApiUtils.Identity.Contracts.Requests;
 using CustomFramework.WebApiUtils.Identity.Contracts.Responses;
 using CustomFramework.WebApiUtils.Identity.Models;
-using CustomFramework.WebApiUtils.Resources;
+using CustomFramework.WebApiUtils.Contracts.Resources;
 using CustomFramework.WebApiUtils.Utils.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

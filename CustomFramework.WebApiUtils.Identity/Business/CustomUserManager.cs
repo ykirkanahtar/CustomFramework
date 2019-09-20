@@ -14,7 +14,7 @@ using CustomFramework.WebApiUtils.Identity.Constants;
 using CustomFramework.WebApiUtils.Identity.Extensions;
 using CustomFramework.WebApiUtils.Identity.Models;
 using CustomFramework.WebApiUtils.Identity.Utils;
-using CustomFramework.WebApiUtils.Resources;
+using CustomFramework.WebApiUtils.Contracts.Resources;
 using CustomFramework.WebApiUtils.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

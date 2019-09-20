@@ -1,4 +1,4 @@
-using CustomFramework.WebApiUtils.Resources;
+using CustomFramework.WebApiUtils.Contracts.Resources;
 using Microsoft.AspNetCore.Identity;
 
 namespace CustomFramework.WebApiUtils.Identity.Resources
