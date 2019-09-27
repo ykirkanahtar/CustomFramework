@@ -6,10 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CustomFramework.WebApiUtils.Identity.Data
 {
-    public class IdentityContext<TUser, TRole> : IdentityDbContext<TUser, TRole, int> 
+    public class IdentityContext<TUser, TRole> : IdentityDbContext<TUser, TRole, int>
         where TUser : CustomUser
         where TRole : CustomRole
     {
+
         public IdentityContext(DbContextOptions options) : base(options)
         {
 
@@ -19,14 +20,15 @@ namespace CustomFramework.WebApiUtils.Identity.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<TUser>().ToTable("users");
-            builder.Entity<TRole>().ToTable("roles");
-            builder.Entity<IdentityRoleClaim<int>>().ToTable("role_claims");
-            builder.Entity<IdentityUserClaim<int>>().ToTable("user_claims");
-            builder.Entity<IdentityUserLogin<int>>().ToTable("user_logins");
-            builder.Entity<IdentityUserRole<int>>().ToTable("user_roles");
-            builder.Entity<IdentityUserToken<int>>().ToTable("user_tokens");
-            
+            builder.Entity<TUser>().ToTable("Users");
+            builder.Entity<TRole>().ToTable("Roles");
+            builder.Entity<IdentityRoleClaim<int>>().ToTable("RoleClaims");
+            builder.Entity<IdentityUserClaim<int>>().ToTable("UserClaims");
+            builder.Entity<IdentityUserLogin<int>>().ToTable("UserLogins");
+            builder.Entity<IdentityUserRole<int>>().ToTable("UserRoles");
+            builder.Entity<IdentityUserToken<int>>().ToTable("UserTokens");
+
+
             builder.ApplyConfiguration(new ClientApplicationModelConfiguration<ClientApplication>());
         }
 

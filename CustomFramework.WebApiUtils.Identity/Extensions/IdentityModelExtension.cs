@@ -31,7 +31,6 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
             IdentityConfig = identityModel;
 
             services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
-            //services.AddScoped<DbContext, IdentityContext<TUser, TRole>>();
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddSingleton<IToken, Token>(p => IdentityConfig.Token);
