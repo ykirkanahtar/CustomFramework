@@ -20,6 +20,11 @@ namespace CustomFramework.Data.Utils
             {
                 modelBuilder.SetModelToSnakeCase();
             }
+
+            // if (databaseProvider == DatabaseProvider.MsSql)
+            // {
+            //     modelBuilder.HasDefaultSchema("dbo");
+            // }            
         }
 
         public static void BoolToInConverterForMySql(this ModelBuilder modelBuilder)

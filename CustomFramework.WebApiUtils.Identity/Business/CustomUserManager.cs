@@ -338,7 +338,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
 
         public async Task<IList<TUser>> GetAllAsync()
         {
-            return await _userManager.Users.AsQueryable().Where(p => p.Status == Status.Active).OrderBy(p => p.FirstName).ToListAsync();
+            return await _userManager.Users.AsQueryable().Where(p => p.Status == Status.Active).ToListAsync();
         }
 
         public async Task<TUser> GetByIdAsync(int id)

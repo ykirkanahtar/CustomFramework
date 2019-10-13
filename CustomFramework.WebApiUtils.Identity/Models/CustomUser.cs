@@ -7,9 +7,6 @@ namespace CustomFramework.WebApiUtils.Identity.Models
 {
     public class CustomUser : IdentityUser<int>
     {
-        public string FirstName { get; set; }
-        public string Surname { get; set; }
-        public DateTime BirthDate { get; set; }
         public Status Status { get; set; }
 
         public DateTime CreateDateTime { get; set; }

@@ -5,13 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CS.Common.EmailProvider" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\EmailProvider\CS.Common.EmailProvider\CS.Common.EmailProvider.csproj" />
     <ProjectReference Include="..\..\CustomFramework\CustomFramework.WebApiUtils.Identity.Contracts\CustomFramework.WebApiUtils.Identity.Contracts.csproj" />
     <ProjectReference Include="..\..\CustomFramework\CustomFramework.WebApiUtils\CustomFramework.WebApiUtils.csproj" />
     <ProjectReference Include="..\..\CustomFramework\CustomFramework.Authorization\CustomFramework.Authorization.csproj" />

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
 
 namespace CustomFramework.Utils
@@ -39,9 +41,34 @@ namespace CustomFramework.Utils
 
         public static string MakeFirstCharUpper(this string value)
         {
-            if(value.Length < 2) return value.ToUpper();
-            
+            if (value.Length < 2) return value.ToUpper();
+
             return char.ToUpper(value.First()) + value.Substring(1).ToLower();
+        }
+
+        // Convert an object to a byte array
+        public static byte[] ObjectToByteArray(this object obj)
+        {
+            if (obj == null)
+                return null;
+
+            var bf = new BinaryFormatter();
+            var ms = new MemoryStream();
+            bf.Serialize(ms, obj);
+
+            return ms.ToArray();
+        }
+
+        // Convert a byte array to an Object
+        public static object ByteArrayToObject(this byte[] arrBytes)
+        {
+            var memStream = new MemoryStream();
+            var binForm = new BinaryFormatter();
+            memStream.Write(arrBytes, 0, arrBytes.Length);
+            memStream.Seek(0, SeekOrigin.Begin);
+            Object obj = (Object)binForm.Deserialize(memStream);
+
+            return obj;
         }
     }
 }
