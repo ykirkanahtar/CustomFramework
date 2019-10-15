@@ -5,7 +5,6 @@ using CS.Common.EmailProvider;
 using CustomFramework.Authorization.Attributes;
 using CustomFramework.Authorization.Utils;
 using CustomFramework.WebApiUtils.Identity.Business;
-using CustomFramework.WebApiUtils.Identity.Data;
 using CustomFramework.WebApiUtils.Identity.Data.Repositories;
 using CustomFramework.WebApiUtils.Identity.Handlers;
 using CustomFramework.WebApiUtils.Identity.Models;
@@ -13,7 +12,6 @@ using CustomFramework.WebApiUtils.Identity.Resources;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -48,6 +46,9 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
             services.AddIdentity<TUser, TRole>(config =>
                 {
                     config.SignIn.RequireConfirmedEmail = requireConfirmedEmail;
+                    config.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
+                    config.Tokens.ChangeEmailTokenProvider = TokenOptions.DefaultEmailProvider;
+                    config.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
                 })
                 .AddEntityFrameworkStores<TContext>()
                 .AddErrorDescriber<MultilanguageIdentityErrorDescriber>()
@@ -60,7 +61,6 @@ namespace CustomFramework.WebApiUtils.Identity.Extensions
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
                 })
                 .AddJwtBearer(cfg =>
                 {

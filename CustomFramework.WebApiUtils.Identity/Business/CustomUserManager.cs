@@ -38,7 +38,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         private readonly ICustomUserRepository<TUser> _customUserRepository;
 
 
-        public CustomUserManager(ILocalizationService localizationService,ICustomUserRepository<TUser> customUserRepository, UserManager<TUser> userManager, ICustomRoleManager<TRole> roleManager, IIdentityModel identityModel, IEmailSender emailSender, ILogger<CustomRoleManager<TUser, TRole>> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(logger, mapper, httpContextAccessor)
+        public CustomUserManager(ILocalizationService localizationService, ICustomUserRepository<TUser> customUserRepository, UserManager<TUser> userManager, ICustomRoleManager<TRole> roleManager, IIdentityModel identityModel, IEmailSender emailSender, ILogger<CustomRoleManager<TUser, TRole>> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(logger, mapper, httpContextAccessor)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -71,28 +71,6 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             password = passwordGenerated;
 
             return await RegisterAsync(user, password, roles, createUserId, func);
-        }
-
-        public async Task<IdentityResult> RegisterWithConfirmationEmailAsync(TUser user, string password, List<string> roles, IUrlHelper url, string emailTitle, string emailBody, string requestScheme, int createUserId, string callbackUrl = null, Func<Task> func = null)
-        {
-            var result = await RegisterAsync(user, password, roles, createUserId, func);
-            if (!result.Succeeded) return result;
-
-            await ConfirmationEmailSenderAsync(user, emailTitle, emailBody, url, requestScheme, callbackUrl);
-
-            return result;
-        }
-
-        public async Task<IdentityResult> RegisterWithConfirmationAndGeneratedPasswordAsync(TUser user, string password, List<string> roles, int generatePasswordLength, IUrlHelper url, string emailTitle, string emailBody, string requestScheme, int createUserId, Func<Task> func = null)
-        {
-            var result = await RegisterWithGeneratedPasswordAsync(user, password, roles, generatePasswordLength, createUserId, func);
-            if (!result.Succeeded) return result;
-
-            emailBody += $"{_localizationService.GetValue(IdentityStringMessages.ThePasswordCreatedBySystem)}: {password}";
-
-            await ConfirmationEmailSenderAsync(user, emailTitle, emailBody, url, requestScheme);
-
-            return result;
         }
 
         public async Task<IdentityResult> ChangePasswordWithEmailAsync(string email, string oldPassword, string newPassword, string confirmPassword)
@@ -278,7 +256,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         public async Task<string> GenerateTokenForChangeEmailAsync(TUser user, string newEmail)
         {
             return await _userManager.GenerateChangeEmailTokenAsync(user, newEmail);
-        }        
+        }
 
         public async Task<TUser> GetByEmailAsync(string email)
         {
@@ -319,21 +297,6 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         public async Task<TUser> FindByIdAsync(string id)
         {
             return await _userManager.FindByIdAsync(id);
-        }
-
-        public async Task ForgotPasswordAsync(string emailAddress, string emailTitle, string emailText, IUrlHelper urlHelper, string requestScheme, string callbackUrl = null)
-        {
-            var user = await GetByEmailAsync(emailAddress);
-
-            if (!await IsEmailConfirmedAsync(user))
-            {
-                throw new ArgumentException($"{IdentityStringMessages.PleaseConfirmYourRegistration}"); //Please confirm your registration.
-            }
-
-            // For more information on how to enable account confirmation and password reset please 
-            // visit https://go.microsoft.com/fwlink/?LinkID=532713
-
-            await ResetPasswordEmailSenderAsync(user, emailTitle, emailText, urlHelper, requestScheme, callbackUrl);
         }
 
         public async Task<IList<TUser>> GetAllAsync()
@@ -424,7 +387,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return await _userManager.ResetPasswordAsync(user, token, newPassword);
         }
 
-        public async Task<IdentityResult> ResetPasswordAsync(string emailAddress, string token, string newPassword, string confirmPassword, string emailTitle, string emailText)
+        public async Task<IdentityResult> ResetPasswordAsync(string emailAddress, string token, string newPassword, string confirmPassword, string emailTitle, string emailText, bool emailBodyIsHtml)
         {
             if (token == null)
             {
@@ -445,7 +408,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             if (!result.Succeeded) return result;
 
             await _emailSender.SendEmailAsync(
-                _identityModel.SenderEmailAddress, new List<string> { emailAddress }, emailTitle, emailText);
+                _identityModel.SenderEmailAddress, new List<string> { emailAddress }, emailTitle, emailText, emailBodyIsHtml);
 
             return result;
         }
@@ -461,70 +424,6 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         public async Task<ICustomList<TUser>> GetOnlineUsers(int sessionMinutes, int pageIndex, int pageSize, DateTime? DateTimeNowValue = null)
         {
             return await _customUserRepository.GetOnlineUsers(sessionMinutes, pageIndex, pageSize, DateTimeNowValue);
-        }        
-
-        private async Task ConfirmationEmailSenderAsync(TUser user, string title, string text, IUrlHelper urlHelper, string requestScheme, string callbackUrl = null)
-        {
-            var code = await GenerateEmailConfirmationTokenAsync(user);
-            var codeBytes = Encoding.UTF8.GetBytes(code);
-            var codeEncoded = WebEncoders.Base64UrlEncode(codeBytes);
-
-            var receiverList = new List<string>();
-            receiverList.Add(user.Email);
-
-            var emailBody = string.Empty;
-
-            if (_identityModel.EmailConfirmationViaUrl)
-            {
-                emailBody = $"{ConfirmationEmailUrlCreator(user.Id, codeEncoded, text, urlHelper, requestScheme, callbackUrl)}";
-            }
-            else emailBody = $"{text} {_localizationService.GetValue(IdentityStringMessages.YourAccountConfirmCode)}: {codeEncoded}";
-
-            await _emailSender.SendEmailAsync(
-                _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{emailBody}");
         }
-
-        private string ConfirmationEmailUrlCreator(int userId, string codeEncoded, string emailText, IUrlHelper url, string requestScheme, string callbackUrl = null)
-        {
-            if (string.IsNullOrEmpty(callbackUrl))
-            {
-                callbackUrl = url.Action(
-                    action: "ConfirmEmailAsync",
-                    controller: "Account",
-                    values: new { userId = userId, code = codeEncoded },
-                    protocol: requestScheme);
-            }
-            else
-            {
-                callbackUrl = callbackUrl.Replace("ReplaceUserIdValue", userId.ToString()).Replace("ReplaceCodeValue", codeEncoded);
-            }
-
-
-            return $"{emailText} {_localizationService.GetValue(IdentityStringMessages.ClickTheLinkForConfirmationYourAccount)} - {callbackUrl}";
-        }
-
-        private async Task ResetPasswordEmailSenderAsync(TUser user, string title, string text, IUrlHelper url, string requestScheme, string callbackUrl = null)
-        {
-            var code = await GeneratePasswordResetTokenAsync(user);
-            var codeBytes = Encoding.UTF8.GetBytes(code);
-            var codeEncoded = WebEncoders.Base64UrlEncode(codeBytes);
-
-            var receiverList = new List<string>();
-            receiverList.Add(user.Email);
-
-            if (string.IsNullOrEmpty(callbackUrl))
-            {
-                callbackUrl = url.Action(
-                  action: "ResetPasswordAsync",
-                  controller: "Account",
-                  values: new { code = codeEncoded },
-                  protocol: requestScheme);
-            }
-            else callbackUrl = callbackUrl.Replace("ReplaceCodeValue", codeEncoded);
-
-            await _emailSender.SendEmailAsync(
-                _identityModel.SenderEmailAddress, receiverList, $"{_identityModel.AppName} - {title}", $"{text}. - {callbackUrl}"); //Please reset your password by clicking here
-        }
-
     }
 }
