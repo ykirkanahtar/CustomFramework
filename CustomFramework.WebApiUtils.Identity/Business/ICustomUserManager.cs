@@ -28,6 +28,7 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         Task<IdentityResult> DeleteAsync(int id, int deleteUserId, Func<Task> deleteCheck = null);
         Task<IdentityResult> SetPassiveAsync(int id, int operatorUserId, Func<Task> passiveCheck = null);
         Task<TUser> FindByIdAsync(string id);
+        Task<TUser> FindByEmailAsync(string email);
         Task<string> GenerateTokenForChangeEmailAsync(TUser user, string newEmail);
         Task<TUser> GetUserAsync(ClaimsPrincipal claimsPrincipal);
         Task<TUser> GetByEmailAsync(string email);
