@@ -265,6 +265,13 @@ namespace CustomFramework.WebApiUtils.Identity.Business
             return user;
         }
 
+        public async Task<TUser> FindByUserNameAsync(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null || user.Status != Status.Active) return null;
+            return user;
+        }        
+
         public async Task<TUser> GetByEmailAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
@@ -431,6 +438,11 @@ namespace CustomFramework.WebApiUtils.Identity.Business
         public async Task<ICustomList<TUser>> GetOnlineUsers(int sessionMinutes, int pageIndex, int pageSize, DateTime? DateTimeNowValue = null)
         {
             return await _customUserRepository.GetOnlineUsers(sessionMinutes, pageIndex, pageSize, DateTimeNowValue);
+        }
+
+        public IdentityOptions GetOptions()
+        {
+            return _userManager.Options;
         }
     }
 }
