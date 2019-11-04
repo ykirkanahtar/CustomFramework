@@ -1,4 +1,5 @@
 ﻿using System;
+using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Enums;
 
 namespace CustomFramework.Data.Models

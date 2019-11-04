@@ -1,4 +1,4 @@
-using CustomFramework.Data.Enums;
+using CustomFramework.Data.Contracts;
 using Microsoft.AspNetCore.Identity;
 
 namespace CustomFramework.WebApiUtils.Identity.Models

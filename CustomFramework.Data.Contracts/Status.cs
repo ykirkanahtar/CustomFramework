@@ -1,4 +1,5 @@
-﻿namespace CustomFramework.Data.Enums
+﻿
+namespace CustomFramework.Data.Contracts
 {
     public enum Status
     {

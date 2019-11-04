@@ -1,5 +1,5 @@
 ﻿using System;
-using CustomFramework.Data.Enums;
+using CustomFramework.Data.Contracts;
 
 namespace CustomFramework.Data.Models
 {

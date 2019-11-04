@@ -4,6 +4,7 @@ using System;
 using CustomFramework.Data.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Query;
+using CustomFramework.Data.Contracts;
 
 namespace CustomFramework.Data.Repositories
 {

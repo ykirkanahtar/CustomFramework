@@ -77,7 +77,7 @@ namespace CustomFramework.WebApiUtils.Utils
             throw new AccessViolationException(additionalInfo.RemoveManagerString());
         }
 
-        private static bool GenericTypeIsNullOrEmpty<T>(this T value)
+        public static bool GenericTypeIsNullOrEmpty<T>(this T value)
         {
             return value.GetGenericTypeCount() <= 0;
         }

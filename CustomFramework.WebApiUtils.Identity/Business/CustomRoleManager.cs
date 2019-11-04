@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using CustomFramework.Data.Enums;
+using CustomFramework.Data.Contracts;
 using CustomFramework.WebApiUtils.Business;
 using CustomFramework.WebApiUtils.Identity.Models;
 using CustomFramework.WebApiUtils.Identity.Utils;

@@ -7,15 +7,24 @@ namespace CustomFramework.Data.Extensions
 {
     public static class DbContextServiceExtension
     {
-        public static IServiceCollection AddDatabaseContext<TContext>(this IServiceCollection services, string connectionString, DatabaseProvider databaseProvider = DatabaseProvider.MsSql, bool lazyLoading = false)
+        public static IServiceCollection AddDatabaseContext<TContext>(this IServiceCollection services, string connectionString
+        , DatabaseProvider databaseProvider = DatabaseProvider.MsSql, bool lazyLoading = false, bool useNetTopologySuite = false)
             where TContext : DbContext
         {
+            if(useNetTopologySuite && databaseProvider != DatabaseProvider.MsSql)
+            {
+                throw new Exception("NetTopologySuite can use only with sql server database provider");
+            }
+
             switch (databaseProvider)
             {
                 case DatabaseProvider.MsSql:
                     services.AddDbContext<TContext>(options =>
                         {
-                            options.UseSqlServer(connectionString);
+                            if (useNetTopologySuite)
+                                options.UseSqlServer(connectionString, x => x.UseNetTopologySuite());
+                            else
+                                options.UseSqlServer(connectionString);
                             options.UseLazyLoadingProxies(lazyLoading);
                         }
                     );

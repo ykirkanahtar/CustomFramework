@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CustomFramework.Data.Contracts;
 using CustomFramework.Data.Enums;
 using CustomFramework.Data.Models;
 using Microsoft.EntityFrameworkCore;

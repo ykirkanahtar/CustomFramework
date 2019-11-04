@@ -31,7 +31,7 @@ namespace CustomFramework.WebApiUtils.Business
                 _userId = Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
 
-        protected async Task<T> CommonOperationAsync<T>(Func<Task<T>> func, BusinessBaseRequest businessBaseRequest)
+        protected async Task<T> CommonOperationAsync<T>(Func<Task<T>> func, BusinessBaseRequest businessBaseRequest = null)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace CustomFramework.WebApiUtils.Business
             }
         }
 
-        protected async Task CommonOperationAsync(Func<Task> func, BusinessBaseRequest businessBaseRequest)
+        protected async Task CommonOperationAsync(Func<Task> func, BusinessBaseRequest businessBaseRequest = null)
         {
             try
             {
@@ -99,14 +99,14 @@ namespace CustomFramework.WebApiUtils.Business
             }
             catch (Exception ex)
             {
-                _logger.LogError(0, ex, $"{DefaultResponseMessages.AnErrorHasOccured} - {ex.Message}");
+                _logger.LogError(0, ex, $"{ex.Message}");
                 throw;
             }
         }
 
         protected int GetUserId()
         {
-            if(_userId == 0) throw new Exception($"{DefaultResponseMessages.AnErrorHasOccured} - UserIdNullError");
+            if(_userId == 0) throw new Exception($"UserIdNullError");
             return _userId;
         }
     }

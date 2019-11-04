@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using CustomFramework.Data.Models;
+using CustomFramework.Data.Contracts;
 
 namespace CustomFramework.Data.Repositories
 {

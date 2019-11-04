@@ -7,5 +7,8 @@ namespace CustomFramework.WebApiUtils.Contracts
         public const string RangeWithMinValue = "The field {0} must be greater than or equal to {1}.";
         public const string EmailAddressNotValid = "The {0} field is not a valid e-mail address.";
         public const string Compare = "{0} and {1} do not match.";
+        public const string InvalidDateOfBirth = "Invalid date of birth";
+        public const string InvalidDate = "Invalid date";
+
     }
 }
