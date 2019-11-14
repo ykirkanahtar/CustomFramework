@@ -27,7 +27,7 @@ namespace CustomFramework.WebApiUtils.Identity.Controllers
         [Route("create")]
         [HttpPost]
         [Permission(nameof(ClientApplication), Crud.Create)]
-        public async Task<IActionResult> CreateAsync([FromBody] ClientApplicationRequest request)
+        public async virtual Task<IActionResult> CreateAsync([FromBody] ClientApplicationRequest request)
         {
             return await BaseCreateAsync(request);
         }
